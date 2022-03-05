@@ -1,0 +1,47 @@
+<div class="container">
+  <mat-button-toggle-group [(ngModel)]="directed" (change)="change()">
+    <mat-button-toggle [value]="true">Directed</mat-button-toggle>
+    <mat-button-toggle [value]="false">Undericted</mat-button-toggle>
+  </mat-button-toggle-group>
+  <mat-button-toggle-group [(ngModel)]="weighted" (change)="change()">
+    <mat-button-toggle [value]="true">Weighted</mat-button-toggle>
+    <mat-button-toggle [value]="false">Unweighted</mat-button-toggle>
+  </mat-button-toggle-group>
+
+  <!--TODO plus condition for after graph created-->
+  <button
+    mat-button
+    [disabled]="directed == undefined || weighted == undefined"
+  >
+    Start
+  </button>
+  <button
+    mat-button
+    (click)="addGraph()"
+    [disabled]="directed == undefined || weighted == undefined"
+  >
+    Add graph
+  </button>
+  <button
+    mat-button
+    [disabled]="directed == undefined || weighted == undefined"
+  >
+    Clear edges
+  </button>
+  <button
+    mat-button
+    [disabled]="directed == undefined || weighted == undefined"
+  >
+    Clear all
+  </button>
+  <button
+    mat-button
+    [disabled]="directed == undefined || weighted == undefined"
+  >
+    Reset
+  </button>
+  <div style="display: flex">
+    <div id="mynetwork" #siteConfigNetwork></div>
+    <textarea matInput rows="13" cols="20"></textarea>
+  </div>
+</div>
