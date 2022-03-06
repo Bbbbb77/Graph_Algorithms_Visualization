@@ -1,0 +1,38 @@
+<div>
+  <div>
+    <label style="margin-right: 10px">Speed:</label>
+    <mat-slider
+      thumbLabel
+      [(ngModel)]="speed"
+      [displayWith]="formatLabel"
+      tickInterval="1"
+      step="1"
+      min="1"
+      max="5"
+    ></mat-slider>
+    <button
+      mat-button
+      [disabled]="directed == undefined || weighted == undefined"
+    >
+      Step
+    </button>
+    <button
+      mat-button
+      [disabled]="directed == undefined || weighted == undefined"
+    >
+      Start
+    </button>
+    <button
+      mat-button
+      [disabled]="directed == undefined || weighted == undefined"
+    >
+      Pause
+    </button>
+    <button
+      mat-button
+      [disabled]="directed == undefined || weighted == undefined"
+    >
+      Resume
+    </button>
+  </div>
+</div>

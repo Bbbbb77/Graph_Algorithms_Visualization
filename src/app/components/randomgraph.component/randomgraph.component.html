@@ -1,0 +1,36 @@
+<div>
+  <label>Random graph</label>
+  <div>
+    <label style="margin-right: 10px">Edge chance:</label>
+    <mat-slider
+      thumbLabel
+      [(ngModel)]="edgeChance"
+      [displayWith]="formatLabel"
+      tickInterval="1"
+      step="1"
+      min="1"
+      max="100"
+    ></mat-slider>
+    <button
+      mat-button
+      (click)="generateGraph(5)"
+      [disabled]="directed == undefined || weighted == undefined"
+    >
+      Small
+    </button>
+    <button
+      mat-button
+      (click)="generateGraph(7)"
+      [disabled]="directed == undefined || weighted == undefined"
+    >
+      Medium
+    </button>
+    <button
+      mat-button
+      (click)="generateGraph(9)"
+      [disabled]="directed == undefined || weighted == undefined"
+    >
+      Large
+    </button>
+  </div>
+</div>

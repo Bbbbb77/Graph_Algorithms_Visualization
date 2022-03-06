@@ -11,7 +11,10 @@ import { FormsModule } from '@angular/forms';
 import { MainPage } from './components/mainpage/mainpage.component';
 import { AddAndEditNodeDialog } from './components/addandeditnode.dialog/addandeditnode.dialog';
 import { AddGraphDialog } from './components/addgraph.dialog/addgraph.dialog';
-import { AddAndEditWeightedEdge } from './components//addandeditweightededge.dialog/addandeditweightededge.dialog';
+import { AddAndEditWeightedEdge } from './components/addandeditweightededge.dialog/addandeditweightededge.dialog';
+import { RandomGraph } from './components/randomgraph.component/randomgraph.component';
+import { Algorithms } from './components/algorithms.component/algorithms.component';
+import { Player } from './components/player.component/player.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +23,9 @@ import { AddAndEditWeightedEdge } from './components//addandeditweightededge.dia
     AddAndEditNodeDialog,
     AddGraphDialog,
     AddAndEditWeightedEdge,
+    RandomGraph,
+    Algorithms,
+    Player,
   ],
   imports: [
     BrowserModule,
@@ -35,6 +41,9 @@ import { AddAndEditWeightedEdge } from './components//addandeditweightededge.dia
     AddAndEditNodeDialog,
     AddGraphDialog,
     AddAndEditWeightedEdge,
+    RandomGraph,
+    Algorithms,
+    Player,
   ],
 })
 export class AppModule {}

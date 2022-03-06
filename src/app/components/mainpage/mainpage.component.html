@@ -42,6 +42,18 @@
   </button>
   <div style="display: flex">
     <div id="mynetwork" #siteConfigNetwork></div>
-    <textarea matInput rows="13" cols="20"></textarea>
+    <div>
+      <textarea matInput rows="13" cols="20"></textarea>
+      <br />
+      <button
+        mat-button
+        [disabled]="directed == undefined || weighted == undefined"
+      >
+        Draw
+      </button>
+    </div>
   </div>
+  <randomgraph [directed]="directed" [weighted]="weighted"></randomgraph>
+  <algorithms></algorithms>
+  <player [directed]="directed" [weighted]="weighted"></player>
 </div>

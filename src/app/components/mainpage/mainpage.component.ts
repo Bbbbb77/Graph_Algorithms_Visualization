@@ -5,11 +5,15 @@ import {
   ElementRef,
   AfterViewInit,
   NgModule,
+  Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddAndEditNodeDialog } from '../addandeditnode.dialog/addandeditnode.dialog';
 import { AddGraphDialog } from '../addgraph.dialog/addgraph.dialog';
 import { AddAndEditWeightedEdge } from '../addandeditweightededge.dialog/addandeditweightededge.dialog';
+import { RandomGraph } from '../randomgraph.component/randomgraph.component';
+import { Algorithms } from '../algorithms.component/algorithms.component';
+import { Player } from '../player.component/player.component';
 
 declare var vis: any;
 
@@ -22,7 +26,10 @@ export class MainPage implements OnInit, AfterViewInit {
   @ViewChild('siteConfigNetwork')
   networkContainer: ElementRef;
 
+  @Output()
   directed: boolean;
+
+  @Output()
   weighted: boolean;
 
   public network: any;
