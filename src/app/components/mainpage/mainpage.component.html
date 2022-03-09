@@ -11,49 +11,78 @@
   <!--TODO plus condition for after graph created-->
   <button
     mat-button
-    [disabled]="directed == undefined || weighted == undefined"
+    (click)="createGraph()"
+    [disabled]="
+      directed == undefined || weighted == undefined || graph != undefined
+    "
   >
-    Start
+    Create
   </button>
   <button
     mat-button
     (click)="addGraph()"
-    [disabled]="directed == undefined || weighted == undefined"
+    [disabled]="
+      directed == undefined || weighted == undefined || graph == undefined
+    "
   >
     Add graph
   </button>
   <button
     mat-button
-    [disabled]="directed == undefined || weighted == undefined"
+    (click)="clearEdges()"
+    [disabled]="
+      directed == undefined || weighted == undefined || graph == undefined
+    "
   >
     Clear edges
   </button>
   <button
     mat-button
-    [disabled]="directed == undefined || weighted == undefined"
+    (click)="clearAll()"
+    [disabled]="
+      directed == undefined || weighted == undefined || graph == undefined
+    "
   >
     Clear all
   </button>
   <button
     mat-button
-    [disabled]="directed == undefined || weighted == undefined"
+    (click)="reset()"
+    [disabled]="
+      directed == undefined || weighted == undefined || graph == undefined
+    "
   >
     Reset
   </button>
   <div style="display: flex">
     <div id="mynetwork" #siteConfigNetwork></div>
     <div>
-      <textarea matInput rows="13" cols="20"></textarea>
+      <textarea matInput [(ngModel)]="graphText" rows="13" cols="20"></textarea>
       <br />
       <button
         mat-button
-        [disabled]="directed == undefined || weighted == undefined"
+        (click)="drawGraph()"
+        [disabled]="
+          directed == undefined || weighted == undefined || graph == undefined
+        "
       >
         Draw
       </button>
     </div>
   </div>
-  <randomgraph [directed]="directed" [weighted]="weighted"></randomgraph>
-  <algorithms></algorithms>
+  <randomgraph
+    [directed]="directed"
+    [weighted]="weighted"
+    [graph]="graph"
+  ></randomgraph>
+  <algorithms
+    [directed]="directed"
+    [weighted]="weighted"
+    [graph]="graph"
+    (generatorResultEmitter)="stepClicked($event)"
+    (resetAlgoEmitter)="resetAlgo()"
+  ></algorithms>
+  <!--
   <player [directed]="directed" [weighted]="weighted"></player>
+  -->
 </div>

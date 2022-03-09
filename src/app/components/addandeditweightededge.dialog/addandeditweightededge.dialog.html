@@ -6,8 +6,10 @@
     <input matInput [(ngModel)]="edgeValue" />
   </mat-form-field>
   <mat-dialog-actions>
-    <!--Edit label-->
-    <button mat-button>Add</button>
-    <button mat-button>Cancel</button>
+    <button mat-button (click)="addPerEdit()">
+      <label *ngIf="editMode">Edit</label>
+      <label *ngIf="!editMode">Add</label>
+    </button>
+    <button mat-button (click)="close()">Cancel</button>
   </mat-dialog-actions>
 </div>

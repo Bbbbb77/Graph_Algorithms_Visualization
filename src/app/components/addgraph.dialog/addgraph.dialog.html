@@ -1,12 +1,11 @@
 <div>
   <h2>Graph from text</h2>
-
   <mat-form-field class="textInput">
     <mat-label> add graph </mat-label>
     <textarea matInput [ngModel]="graphText" rows="10" cols="50"></textarea>
   </mat-form-field>
   <mat-dialog-actions class="buttons">
-    <button mat-button>Draw</button>
-    <button mat-button>Cancel</button>
+    <button mat-button (click)="draw()">Draw</button>
+    <button mat-button (click)="cancel()">Cancel</button>
   </mat-dialog-actions>
 </div>

@@ -9,6 +9,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class AddAndEditWeightedEdge implements OnInit {
   label: string;
   edgeValue: string;
+  editMode: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<AddAndEditWeightedEdge>,
@@ -16,7 +17,16 @@ export class AddAndEditWeightedEdge implements OnInit {
   ) {
     this.label = data.label;
     this.edgeValue = data.edgeValue;
+    this.editMode = data.editMode;
   }
 
   ngOnInit(): void {}
+
+  addPerEdit(): void {
+    this.dialogRef.close(this.edgeValue);
+  }
+
+  close(): void {
+    this.dialogRef.close();
+  }
 }

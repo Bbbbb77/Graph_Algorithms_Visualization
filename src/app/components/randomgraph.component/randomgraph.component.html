@@ -1,4 +1,4 @@
-<div>
+<div style="margin: 10px">
   <label>Random graph</label>
   <div>
     <label style="margin-right: 10px">Edge chance:</label>
@@ -14,21 +14,27 @@
     <button
       mat-button
       (click)="generateGraph(5)"
-      [disabled]="directed == undefined || weighted == undefined"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
     >
       Small
     </button>
     <button
       mat-button
       (click)="generateGraph(7)"
-      [disabled]="directed == undefined || weighted == undefined"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
     >
       Medium
     </button>
     <button
       mat-button
       (click)="generateGraph(9)"
-      [disabled]="directed == undefined || weighted == undefined"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
     >
       Large
     </button>

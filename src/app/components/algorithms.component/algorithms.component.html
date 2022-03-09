@@ -1,7 +1,65 @@
-<div>
-  <button mat-button>Reset algorithm</button>
-  <label>Start node:</label>
-  <input matInput style="width: 30px; margin-left: 10px" />
-  <button mat-button>BFS</button>
-  <button mat-button>DFS</button>
+<div style="margin: 10px">
+  <div>
+    <button mat-button (click)="resetAlgo()">Reset algorithm</button>
+    <label>Start node:</label>
+    <input
+      matInput
+      [(ngModel)]="startNode"
+      style="width: 30px; margin-left: 10px"
+    />
+    <button mat-button (click)="bfs()" [disabled]="graph == undefined">
+      BFS
+    </button>
+    <button mat-button (click)="dfs()" [disabled]="graph == undefined">
+      DFS
+    </button>
+  </div>
+  <div>
+    <label style="margin-right: 10px">Speed:</label>
+    <mat-slider
+      thumbLabel
+      [(ngModel)]="speed"
+      [displayWith]="formatLabel"
+      tickInterval="1"
+      step="1"
+      min="1"
+      max="5"
+    ></mat-slider>
+    <button
+      mat-button
+      (click)="stepAlgo()"
+      [disabled]="
+        directed == undefined || weighted == undefined || generator == undefined
+      "
+    >
+      Step
+    </button>
+    <button
+      mat-button
+      (click)="startLoop()"
+      [disabled]="
+        directed == undefined || weighted == undefined || generator == undefined
+      "
+    >
+      Start
+    </button>
+    <button
+      mat-button
+      (click)="pause()"
+      [disabled]="
+        directed == undefined || weighted == undefined || generator == undefined
+      "
+    >
+      Pause
+    </button>
+    <button
+      mat-button
+      (click)="resume()"
+      [disabled]="
+        directed == undefined || weighted == undefined || generator == undefined
+      "
+    >
+      Resume
+    </button>
+  </div>
 </div>

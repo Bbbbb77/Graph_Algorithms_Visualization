@@ -17,6 +17,9 @@ export class RandomGraph implements OnInit {
   @Input()
   weighted: boolean;
 
+  @Input()
+  graph;
+
   constructor() {}
 
   ngOnInit(): void {}

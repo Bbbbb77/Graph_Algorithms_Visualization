@@ -88,8 +88,14 @@ export class AddGraphDialog implements OnInit {
           label: String(valuesJson[v].to),
         });
       }
-
-      //TODO return
+      this.dialogRef.close({
+        nodes: this.nodesFromJson,
+        edges: this.edgesFromJson,
+      });
     }
+  }
+
+  cancel(): void {
+    this.dialogRef.close();
   }
 }

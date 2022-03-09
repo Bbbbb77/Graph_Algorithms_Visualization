@@ -9,6 +9,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class AddAndEditNodeDialog implements OnInit {
   label: string;
   nodeValue: string;
+  editMode: boolean = false;
 
   constructor(
     private dialogRef: MatDialogRef<AddAndEditNodeDialog>,
@@ -16,7 +17,16 @@ export class AddAndEditNodeDialog implements OnInit {
   ) {
     this.label = data.label;
     this.nodeValue = data.nodeValue;
+    this.editMode = data.editMode;
   }
 
   ngOnInit(): void {}
+
+  addPerEdit(): void {
+    this.dialogRef.close(this.nodeValue);
+  }
+
+  close(): void {
+    this.dialogRef.close();
+  }
 }

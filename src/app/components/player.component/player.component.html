@@ -12,24 +12,28 @@
     ></mat-slider>
     <button
       mat-button
+      (click)="stepAlgo()"
       [disabled]="directed == undefined || weighted == undefined"
     >
       Step
     </button>
     <button
       mat-button
+      (click)="startLoop()"
       [disabled]="directed == undefined || weighted == undefined"
     >
       Start
     </button>
     <button
       mat-button
+      (click)="pause()"
       [disabled]="directed == undefined || weighted == undefined"
     >
       Pause
     </button>
     <button
       mat-button
+      (click)="resume()"
       [disabled]="directed == undefined || weighted == undefined"
     >
       Resume
