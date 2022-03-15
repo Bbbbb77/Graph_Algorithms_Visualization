@@ -15,6 +15,7 @@ import { AddAndEditWeightedEdge } from './components/addandeditweightededge.dial
 import { RandomGraph } from './components/randomgraph.component/randomgraph.component';
 import { Algorithms } from './components/algorithms.component/algorithms.component';
 import { Player } from './components/player.component/player.component';
+import { ErrorMessageDialog } from './components/errormessage.dialog/errormessage.dialog';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { Player } from './components/player.component/player.component';
     RandomGraph,
     Algorithms,
     Player,
+    ErrorMessageDialog,
   ],
   imports: [
     BrowserModule,
@@ -44,6 +46,7 @@ import { Player } from './components/player.component/player.component';
     RandomGraph,
     Algorithms,
     Player,
+    ErrorMessageDialog,
   ],
 })
 export class AppModule {}

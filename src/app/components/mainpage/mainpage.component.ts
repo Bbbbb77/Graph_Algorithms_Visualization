@@ -14,6 +14,7 @@ import { AddAndEditWeightedEdge } from '../addandeditweightededge.dialog/addande
 import { RandomGraph } from '../randomgraph.component/randomgraph.component';
 import { Algorithms } from '../algorithms.component/algorithms.component';
 import { Player } from '../player.component/player.component';
+import { ErrorMessageDialog } from '../errormessage.dialog/errormessage.dialog';
 
 import { Graph } from '../../models/graphs/graph';
 import { DirectedWeightedGraph } from '../../models/graphs/directedweighted.graph';
@@ -58,12 +59,9 @@ export class MainPage implements OnInit {
   edgesOfNode = new Map();
   nodesOfEdge = new Map();
 
-  constructor(public dialog: MatDialog) {}
+  prevNodeValue = null;
 
-  change(): void {
-    console.log('directed', this.directed);
-    console.log('weighted', this.weighted);
-  }
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {}
 
@@ -92,32 +90,55 @@ export class MainPage implements OnInit {
       edges: { color: { color: '#2b7ce9', inherit: false } },
       manipulation: {
         addNode: (data, callback) => {
-          console.log('addnode');
           this.addNode(data, callback);
         },
         editNode: (data, callback) => {
-          console.log('editnode');
           this.editNode(data, callback);
         },
         deleteNode: (data, callback) => {
-          console.log('deleteNode');
           this.deleteSelectedNode(data, callback);
         },
         addEdge: (data, callback) => {
-          console.log('addEdge');
           if (data.from == data.to) {
-            callback(null);
-            return;
+            this.dialog
+              .open(ErrorMessageDialog, {
+                width: '300px',
+                height: '200px',
+                data: { errorMessage: 'Node cannot be connected with itsel!' },
+              })
+              .afterClosed()
+              .subscribe((result) => {
+                callback(null);
+                return;
+              });
+          } else {
+            this.addEdgeWithoutDrag(data, callback);
           }
-          this.addEdgeWithoutDrag(data, callback);
         },
         editEdge: {
           editWithoutDrag: (data, callback) => {
-            this.editEdgeWithoutDragFunc(data, callback);
+            if (!this.weighted) {
+              this.dialog
+                .open(ErrorMessageDialog, {
+                  width: '300px',
+                  height: '200px',
+                  data: {
+                    errorMessage:
+                      'Edge cannot be edited because the graph is not weighted!',
+                  },
+                })
+                .afterClosed()
+                .subscribe((result) => {
+                  callback(null);
+                  return;
+                });
+            } else {
+              this.editEdgeWithoutDragFunc(data, callback);
+            }
           },
         },
         deleteEdge: (data, callback) => {
-          console.log('deleteEdge');
+          this.deleteSelectedEdge(data, callback);
         },
       },
     };
@@ -209,14 +230,11 @@ export class MainPage implements OnInit {
     let edgesDataSet = new vis.DataSet(this.edgesFromJson);
     this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
     this.setupNetwork();
-    console.log('graph');
-    console.table(this.graph);
   }
 
   setNodesAndEdges(): void {}
 
   addNode(data, callback): void {
-    console.log('dialog open');
     this.dialog
       .open(AddAndEditNodeDialog, {
         width: '250px',
@@ -225,7 +243,6 @@ export class MainPage implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        console.log('new node after closed result', result);
         if (result != undefined) {
           data.label = result;
           data.id = Number(result);
@@ -237,7 +254,6 @@ export class MainPage implements OnInit {
   }
 
   editNode(data, callback): void {
-    console.log('dialog open');
     this.dialog
       .open(AddAndEditNodeDialog, {
         width: '250px',
@@ -247,35 +263,36 @@ export class MainPage implements OnInit {
       .afterClosed()
       .subscribe((result) => {
         if (result != undefined) {
-          /*console.log('\n');
           data.label = result;
           data.id = Number(result);
           console.log('editNodeData data', data);
-          this.network.getConnectedEdges(prevNodeValue);
+          this.network.getConnectedEdges(this.prevNodeValue);
           console.log('savenode data.label', data.label);
-          console.log('prevnodevalue', prevNodeValue);
+          console.log('prevnodevalue', this.prevNodeValue);
 
-          var newEdges = [];
+          var newEdges: any[] = [];
 
-          var edgeIdsOfNode = network.getConnectedEdges(prevNodeValue);
+          var edgeIdsOfNode = this.network.getConnectedEdges(
+            this.prevNodeValue
+          );
 
-          var edgesOfNode = edgesDataSet.get(edgeIdsOfNode);
+          var edgesOfNode = this.baseData.edges.get(edgeIdsOfNode);
 
           console.log('ids', edgeIdsOfNode);
           console.log('edges', edgesOfNode);
           console.log('\n');
 
-          console.log('before edges', baseData.edges.get());
+          console.log('before edges', this.baseData.edges.get());
 
           edgesOfNode.map((edge) => {
-            if (edge.from == prevNodeValue) {
+            if (edge.from == this.prevNodeValue) {
               newEdges.push({
                 id: String(data.id) + String(edge.to),
                 from: data.id,
                 to: edge.to,
                 label: edge.label,
               });
-            } else if (edge.to == prevNodeValue) {
+            } else if (edge.to == this.prevNodeValue) {
               newEdges.push({
                 id: String(edge.from) + String(data.id),
                 from: edge.from,
@@ -288,18 +305,18 @@ export class MainPage implements OnInit {
           if (!this.graph.containsNode(data.id)) {
             this.graph.editNode(data.id);
             //callback(data);
-            nodesDataSet.remove(Number(prevNodeValue));
-            nodesDataSet.add({ id: data.id, label: data.label });
+            this.baseData.nodesDataSet.remove(Number(this.prevNodeValue));
+            this.baseData.nodesDataSet.add({ id: data.id, label: data.label });
 
             console.log('newEdges', newEdges);
 
-            edgesDataSet.remove(edgeIdsOfNode);
-            edgesDataSet.add(newEdges);
+            this.baseData.edgesDataSet.remove(edgeIdsOfNode);
+            this.baseData.edgesDataSet.add(newEdges);
 
             console.log('after edges', this.baseData.edges.get());
           } else {
             console.log('node not edited');
-          }*/
+          }
         }
       });
   }
@@ -350,7 +367,6 @@ export class MainPage implements OnInit {
   }
 
   editEdgeData(data, callback, edgeWeight): void {
-    console.log('edit edge data', data);
     data.label = edgeWeight;
     callback(data);
     this.graph.editEdge(data.from, data.to, Number(data.label));
@@ -365,8 +381,6 @@ export class MainPage implements OnInit {
   }
 
   saveEdgeData(data, callback, edgeWeigth?: number): void {
-    console.log('saveEdgeData newdata', data);
-
     if (typeof data.from === 'object') {
       data.from = data.from.id;
     }
@@ -384,9 +398,6 @@ export class MainPage implements OnInit {
 
     data.id = String(data.from) + String(data.to);
 
-    console.log('addedge data', data);
-    console.log('graph adj list before new edge', this.graph.getAdjList());
-
     var isEdgeAdded = false;
 
     if (this.weighted) {
@@ -395,86 +406,124 @@ export class MainPage implements OnInit {
       isEdgeAdded = this.graph.addEdge(data.from, data.to);
     }
 
-    console.log('graph adj list after new edge', this.graph.getAdjList());
-
     if (isEdgeAdded) {
       callback(data);
     }
   }
 
-  stepClicked(algoStepResult): void {
-    console.log('stepClicked algoStepResult', algoStepResult);
-
-    var edgeId;
-
-    if (algoStepResult.done) {
+  stepClicked(result): void {
+    if (result.algoStepResult.done) {
       //let button = document.getElementById('stepButton');
       //button.disabled = true;
       //list.innerHTML += "<li>done</li>";
       console.log('Done');
     } else {
-      console.log('basedata edges', this.baseData.edges.getIds());
-      if (algoStepResult.value.newInQueue != undefined) {
-        this.baseData.nodes.update([
-          { id: algoStepResult.value.newInQueue, color: { background: 'red' } },
-        ]);
-        edgeId =
-          String(algoStepResult.value.current) +
-          String(algoStepResult.value.newInQueue);
-        console.log('edgeId', edgeId);
-        let edgeItem = this.baseData.edges.get(edgeId);
-        if (edgeItem != undefined) {
-          this.baseData.edges.update([
-            { id: edgeId, color: { color: 'orange' } },
-          ]);
-        } else {
-          edgeId =
-            String(algoStepResult.value.newInQueue) +
-            String(algoStepResult.value.current);
-          this.baseData.edges.update([
-            { id: edgeId, color: { color: 'orange' } },
-          ]);
-        }
+      if (result.undo) {
+        this.stepBack(result.algoStepResult);
+      } else {
+        this.stepForward(result.algoStepResult);
       }
+    }
+  }
 
-      if (algoStepResult.value.next != undefined) {
-        this.baseData.nodes.update([
-          { id: algoStepResult.value.next, color: { background: 'red' } },
-        ]);
-
-        edgeId =
-          String(algoStepResult.value.current) +
-          String(algoStepResult.value.next);
-        let edgeItem = this.baseData.edges.get(edgeId);
-        if (edgeItem != undefined) {
-          this.baseData.edges.update([
-            { id: edgeId, color: { color: 'orange' } },
-          ]);
-        } else {
-          edgeId =
-            String(algoStepResult.value.next) +
-            String(algoStepResult.value.current);
-          this.baseData.edges.update([
-            { id: edgeId, color: { color: 'orange' } },
-          ]);
-        }
-      }
-
+  stepForward(algoStepResult): void {
+    var edgeId;
+    //console.log('basedata edges', this.baseData.edges.getIds());
+    if (algoStepResult.value.newInQueue != undefined) {
       this.baseData.nodes.update([
-        {
-          id: algoStepResult.value.current,
-          color: { background: 'green', border: 'pink' },
-        },
+        { id: algoStepResult.value.newInQueue, color: { background: 'red' } },
+      ]);
+      edgeId =
+        String(algoStepResult.value.current) +
+        String(algoStepResult.value.newInQueue);
+      //console.log('edgeId', edgeId);
+      let edgeItem = this.baseData.edges.get(edgeId);
+      if (edgeItem != undefined) {
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
+      } else {
+        edgeId =
+          String(algoStepResult.value.newInQueue) +
+          String(algoStepResult.value.current);
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
+      }
+    }
+
+    if (algoStepResult.value.next != undefined) {
+      this.baseData.nodes.update([
+        { id: algoStepResult.value.next, color: { background: 'red' } },
       ]);
 
-      //if (prevSelectedEdgeId != undefined) {
-      //baseData.edges.update([
-      //  { id: prevSelectedEdgeId, color: { color: "#2b7ce9" } },
-      //]);
-      //}
-
-      //prevSelectedEdgeId = edgeId;
+      edgeId =
+        String(algoStepResult.value.current) +
+        String(algoStepResult.value.next);
+      let edgeItem = this.baseData.edges.get(edgeId);
+      if (edgeItem != undefined) {
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
+      } else {
+        edgeId =
+          String(algoStepResult.value.next) +
+          String(algoStepResult.value.current);
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
+      }
     }
+
+    this.baseData.nodes.update([
+      {
+        id: algoStepResult.value.current,
+        color: { background: 'green', border: 'pink' },
+      },
+    ]);
+
+    //if (prevSelectedEdgeId != undefined) {
+    //baseData.edges.update([
+    //  { id: prevSelectedEdgeId, color: { color: "#2b7ce9" } },
+    //]);
+    //}
+
+    //prevSelectedEdgeId = edgeId;
+  }
+
+  stepBack(algoStepResult): void {
+    var edgeId;
+    if (algoStepResult.value.newInQueue != undefined) {
+      this.baseData.nodes.update([
+        {
+          id: algoStepResult.value.newInQueue,
+          color: { background: '#97c2fc', border: '#2b7ce9' },
+        },
+      ]);
+      edgeId =
+        String(algoStepResult.value.current) +
+        String(algoStepResult.value.newInQueue);
+      let edgeItem = this.baseData.edges.get(edgeId);
+      if (edgeItem != undefined) {
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: '#2b7ce9' } },
+        ]);
+      } else {
+        edgeId =
+          String(algoStepResult.value.newInQueue) +
+          String(algoStepResult.value.current);
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: '#2b7ce9' } },
+        ]);
+      }
+    }
+
+    this.baseData.nodes.update([
+      {
+        id: algoStepResult.value.current,
+        color: { background: 'green', border: 'pink' },
+      },
+    ]);
   }
 
   clearEdges(): void {

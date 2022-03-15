@@ -31,8 +31,8 @@ export function* dijkstra(start, graph) {
 
     sptSet.set(u, true);
 
-    console.log('u', u);
-    console.log('adj.get(u)', adj.get(u));
+    //console.log('u', u);
+    //console.log('adj.get(u)', adj.get(u));
     if (adj.get(u) != undefined) {
       for (let v = 0; v < adj.get(u).length; v++) {
         if (

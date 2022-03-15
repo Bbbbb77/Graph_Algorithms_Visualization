@@ -1,14 +1,12 @@
 <div class="container">
-  <mat-button-toggle-group [(ngModel)]="directed" (change)="change()">
+  <mat-button-toggle-group [(ngModel)]="directed">
     <mat-button-toggle [value]="true">Directed</mat-button-toggle>
     <mat-button-toggle [value]="false">Undericted</mat-button-toggle>
   </mat-button-toggle-group>
-  <mat-button-toggle-group [(ngModel)]="weighted" (change)="change()">
+  <mat-button-toggle-group [(ngModel)]="weighted">
     <mat-button-toggle [value]="true">Weighted</mat-button-toggle>
     <mat-button-toggle [value]="false">Unweighted</mat-button-toggle>
   </mat-button-toggle-group>
-
-  <!--TODO plus condition for after graph created-->
   <button
     mat-button
     (click)="createGraph()"

@@ -7,11 +7,40 @@
       [(ngModel)]="startNode"
       style="width: 30px; margin-left: 10px"
     />
-    <button mat-button (click)="bfs()" [disabled]="graph == undefined">
+    <button
+      mat-button
+      (click)="bfs()"
+      [disabled]="graph == undefined || generator != undefined"
+    >
       BFS
     </button>
-    <button mat-button (click)="dfs()" [disabled]="graph == undefined">
+    <button
+      mat-button
+      (click)="dfs()"
+      [disabled]="graph == undefined || generator != undefined"
+    >
       DFS
+    </button>
+    <button
+      mat-button
+      (click)="dijkstra()"
+      [disabled]="graph == undefined || generator != undefined"
+    >
+      DIJKSTRA
+    </button>
+    <button
+      mat-button
+      (click)="prim()"
+      [disabled]="graph == undefined || generator != undefined"
+    >
+      PRIM
+    </button>
+    <button
+      mat-button
+      (click)="kruskal()"
+      [disabled]="graph == undefined || generator != undefined"
+    >
+      KRUSKAL
     </button>
   </div>
   <div>
@@ -25,38 +54,67 @@
       min="1"
       max="5"
     ></mat-slider>
+
+    <button
+      mat-button
+      (click)="stepBackAlgo()"
+      [disabled]="
+        directed == undefined ||
+        weighted == undefined ||
+        generator == undefined ||
+        canUndo()
+      "
+    >
+      Prev
+    </button>
+
     <button
       mat-button
       (click)="stepAlgo()"
       [disabled]="
-        directed == undefined || weighted == undefined || generator == undefined
+        directed == undefined ||
+        weighted == undefined ||
+        generator == undefined ||
+        isAlgorithmEnded
       "
     >
       Step
     </button>
+
     <button
       mat-button
       (click)="startLoop()"
       [disabled]="
-        directed == undefined || weighted == undefined || generator == undefined
+        directed == undefined ||
+        weighted == undefined ||
+        generator == undefined ||
+        isAlgorithmEnded
       "
     >
       Start
     </button>
+
     <button
       mat-button
       (click)="pause()"
       [disabled]="
-        directed == undefined || weighted == undefined || generator == undefined
+        directed == undefined ||
+        weighted == undefined ||
+        generator == undefined ||
+        isAlgorithmEnded
       "
     >
       Pause
     </button>
+
     <button
       mat-button
       (click)="resume()"
       [disabled]="
-        directed == undefined || weighted == undefined || generator == undefined
+        directed == undefined ||
+        weighted == undefined ||
+        generator == undefined ||
+        isAlgorithmEnded
       "
     >
       Resume
