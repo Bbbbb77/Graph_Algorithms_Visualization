@@ -10,6 +10,10 @@ export class DirectedUnweightedGraph extends Graph {
       this.adjList.set(node_a, []);
     }
 
+    if (!this.adjList.has(node_b)) {
+      this.adjList.set(node_b, []);
+    }
+
     if (
       this.adjList.get(node_a) &&
       !this.adjList.get(node_a).includes(node_b)

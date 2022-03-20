@@ -6,6 +6,30 @@
     {"from" : 2, "to" : 4}
 ]      
 
+// BFS
+[
+    {"from" : 1, "to" : 2},
+    {"from" : 1, "to" : 4},
+    {"from" : 2, "to" : 3},
+    {"from" : 3, "to" : 4},
+    {"from" : 3, "to" : 5},
+    {"from" : 3, "to" : 6},
+    {"from" : 4, "to" : 5},
+    {"from" : 5, "to" : 6}
+]      
+
+// BFS direceted
+[
+    {"from" : 1, "to" : 2},
+    {"from" : 1, "to" : 4},
+    {"from" : 1, "to" : 3},
+    {"from" : 2, "to" : 3},
+    {"from" : 4, "to" : 5},
+    {"from" : 4, "to" : 6},
+    {"from" : 5, "to" : 3},
+    {"from" : 5, "to" : 1}
+]      
+
 [
     {"from" : 0, "to" : 1},
     {"from" : 0, "to" : 2},
@@ -25,7 +49,7 @@
     {"from" : 1, "to" : 2, "weight" : 3}
 ]  
 
-Dijkstra/prim testing
+Dijkstra/prim/kruskal testing
 [
     {"from" : 0, "to" : 1, "weight" : 4},
     {"from" : 0, "to" : 7, "weight" : 8},
@@ -126,4 +150,30 @@ Dijkstra/prim testing
     {"from" : 2, "to" : 3, "weight" : 4},
     {"from" : 2, "to" : 4, "weight" : 5},
     {"from" : 4, "to" : 3, "weight" : 1}
+]
+
+[
+    {"from" : 5, "to" : 0},
+    {"from" : 5, "to" : 2},
+    {"from" : 4, "to" : 1},
+    {"from" : 4, "to" : 0},
+    {"from" : 2, "to" : 3},
+    {"from" : 3, "to" : 1}
+]
+
+// A = 0
+// B = 1
+// C = 2
+// D = 3
+// E = 4
+
+[
+    {"from" : 0, "to" : 1, "weight" : -1},
+    {"from" : 0, "to" : 2, "weight" : 4},
+    {"from" : 1, "to" : 2, "weight" : 3},
+    {"from" : 1, "to" : 3, "weight" : 2},
+    {"from" : 1, "to" : 4, "weight" : 2},
+    {"from" : 3, "to" : 1, "weight" : 1},
+    {"from" : 3, "to" : 2, "weight" : 5},
+    {"from" : 4, "to" : 3, "weight" : -3}
 ]

@@ -1,29 +1,70 @@
-/*export function kruskal(graph) {
-  let adj = graph.getSingleEdges();
+var parent;
 
-  let edges = [];
+function find(i) {
+  while (parent.get(i) != i) {
+    i = parent.get(i);
+  }
+  return i;
+}
+
+function union(i, j) {
+  var a = find(i);
+  var b = find(j);
+
+  if (a == b) {
+    return;
+  }
+
+  if (a < b) {
+    if (parent.get(b) != b) {
+      union(parent.get(b), a);
+    }
+    parent.set(b, parent.get(a));
+  } else {
+    if (parent.get(a) != a) {
+      union(parent.get(a), b);
+    }
+    parent.set(a, parent.get(b));
+  }
+}
+
+export function* kruskal(graph) {
+  let adjList = graph.getSingleEdges();
+  parent = new Map();
+
+  graph.getNodes().forEach((node) => {
+    parent.set(node, node);
+  });
+  let edges: any[] = [];
 
   graph.getNodes().map((node) => {
-    if (adj.get(node) != undefined) {
-      adj.get(node).map((edge) => {
+    if (adjList.get(node) != undefined) {
+      adjList.get(node).map((edge) => {
         edges.push({ from: node, to: edge.node, weight: edge.weight });
       });
     }
   });
 
   edges.sort(function (a, b) {
-    return a.weight > b.weight;
+    return a.weight - b.weight;
   });
 
-  while (edges.ength != 0) {
-    let edge = edges.pop();
+  let ans = 0;
+
+  while (edges.length != 0) {
+    let edge = edges.shift();
+    let f1 = find(edge.from);
+    let f2 = find(edge.to);
+    if (find(edge.from) != find(edge.to)) {
+      union(edge.from, edge.to);
+      ans += edge.weight;
+      yield { current: edge.from, next: edge.to, weight: edge.weight };
+    }
   }
+  yield { ans: ans };
+}
 
-  console.log('edges', edges);
-  //yield {};
-}*/
-
-var parent;
+/*
 
 function find(i) {
   while (parent.get(i) != i) {
@@ -38,13 +79,16 @@ function union(i, j) {
   parent.set(a, b);
 }
 
-export function* kruskal(startNode, Graph) {
+export function kruskal(startNode, Graph) {
   var adjList = Graph.getAdjList();
   parent = new Map();
 
   adjList.forEach((nodePair) => {
     parent.set(nodePair.node, nodePair.node);
   });
+
+
+
 
   var minCost = 0;
   var edgeCount = 0;
@@ -65,3 +109,4 @@ export function* kruskal(startNode, Graph) {
     console.log('connection', a, ':', b, ' ', min);
   }
 }
+*/

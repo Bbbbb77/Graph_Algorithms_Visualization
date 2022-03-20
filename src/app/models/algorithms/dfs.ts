@@ -40,9 +40,9 @@ export function* dfs(node, graph) {
 
 function* dfsUtil(node, /*visited,*/ adjList) {
   //yield { current: node };
-  console.log('node', node);
+  //console.log('node', node);
   visited.set(node, true);
-  console.log('visited', visited);
+  //console.log('visited', visited);
 
   let visitedCounter = 0;
 

@@ -22,7 +22,14 @@ import { DirectedUnweightedGraph } from '../../models/graphs/directedunweighted.
 import { UndirectedUnweightedGraph } from '../../models/graphs/undirectedunweighted.graph';
 import { UndirectedWeightedGraph } from '../../models/graphs/undirectedweighted.graph';
 
+import { MatTable } from '@angular/material/table';
+
 declare var vis: any;
+
+export interface BellmanFordTableElement {
+  Node: string;
+  Distance: number;
+}
 
 @Component({
   selector: 'mainpage',
@@ -61,7 +68,35 @@ export class MainPage implements OnInit {
 
   prevNodeValue = null;
 
+  bellmanFordTable: BellmanFordTableElement[] = [];
+
+  columnHeaders: string[] = ['Node', 'Distance'];
+
   constructor(public dialog: MatDialog) {}
+
+  @ViewChild(MatTable)
+  table: MatTable<BellmanFordTableElement>;
+
+  newTable(): void {
+    this.bellmanFordTable = [];
+    this.graph.getNodes().forEach((node) => {
+      this.bellmanFordTable.push({
+        Node: String(node),
+        Distance: 0,
+      });
+    });
+
+    let index = this.bellmanFordTable.findIndex((b) => b.Node == String(0));
+    this.bellmanFordTable[index].Distance = 0;
+  }
+
+  updateTable(fromNode, toNode, distance): void {
+    let toIndex = this.bellmanFordTable.findIndex(
+      (b) => b.Node == String(toNode)
+    );
+    this.bellmanFordTable[toIndex].Distance = distance;
+    this.table.renderRows();
+  }
 
   ngOnInit(): void {}
 
@@ -230,6 +265,9 @@ export class MainPage implements OnInit {
     let edgesDataSet = new vis.DataSet(this.edgesFromJson);
     this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
     this.setupNetwork();
+    if (this.weighted) {
+      this.newTable();
+    }
   }
 
   setNodesAndEdges(): void {}
@@ -265,10 +303,7 @@ export class MainPage implements OnInit {
         if (result != undefined) {
           data.label = result;
           data.id = Number(result);
-          console.log('editNodeData data', data);
           this.network.getConnectedEdges(this.prevNodeValue);
-          console.log('savenode data.label', data.label);
-          console.log('prevnodevalue', this.prevNodeValue);
 
           var newEdges: any[] = [];
 
@@ -277,12 +312,6 @@ export class MainPage implements OnInit {
           );
 
           var edgesOfNode = this.baseData.edges.get(edgeIdsOfNode);
-
-          console.log('ids', edgeIdsOfNode);
-          console.log('edges', edgesOfNode);
-          console.log('\n');
-
-          console.log('before edges', this.baseData.edges.get());
 
           edgesOfNode.map((edge) => {
             if (edge.from == this.prevNodeValue) {
@@ -308,15 +337,11 @@ export class MainPage implements OnInit {
             this.baseData.nodesDataSet.remove(Number(this.prevNodeValue));
             this.baseData.nodesDataSet.add({ id: data.id, label: data.label });
 
-            console.log('newEdges', newEdges);
-
             this.baseData.edgesDataSet.remove(edgeIdsOfNode);
             this.baseData.edgesDataSet.add(newEdges);
-
-            console.log('after edges', this.baseData.edges.get());
-          } else {
+          } /*else {
             console.log('node not edited');
-          }
+          }*/
         }
       });
   }
@@ -418,6 +443,11 @@ export class MainPage implements OnInit {
       //list.innerHTML += "<li>done</li>";
       console.log('Done');
     } else {
+      /*this.updateTable(
+        result.algoStepResult.value.current,
+        result.algoStepResult.value.next,
+        result.algoStepResult.value.weight
+      );*/
       if (result.undo) {
         this.stepBack(result.algoStepResult);
       } else {
@@ -427,8 +457,40 @@ export class MainPage implements OnInit {
   }
 
   stepForward(algoStepResult): void {
+    if (algoStepResult.value.startNode) {
+      this.baseData.nodes.update([
+        { id: algoStepResult.value.startNode, color: { background: 'grey' } },
+      ]);
+    }
+
+    if (algoStepResult.value.current && algoStepResult.value.newInQueue) {
+      this.baseData.nodes.update([
+        { id: algoStepResult.value.current, color: { background: 'black' } },
+      ]);
+
+      algoStepResult.value.newInQueue.forEach((node) => {
+        this.baseData.nodes.update([
+          { id: node, color: { background: 'grey' } },
+        ]);
+        let edgeId = String(algoStepResult.value.current) + String(node);
+
+        let edgeItem = this.baseData.edges.get(edgeId);
+        if (edgeItem != undefined) {
+          this.baseData.edges.update([
+            { id: edgeId, color: { color: 'orange' } },
+          ]);
+        } else {
+          edgeId = String(node) + String(algoStepResult.value.current);
+          this.baseData.edges.update([
+            { id: edgeId, color: { color: 'orange' } },
+          ]);
+        }
+      });
+    }
+  }
+
+  stepForward2(algoStepResult): void {
     var edgeId;
-    //console.log('basedata edges', this.baseData.edges.getIds());
     if (algoStepResult.value.newInQueue != undefined) {
       this.baseData.nodes.update([
         { id: algoStepResult.value.newInQueue, color: { background: 'red' } },
@@ -436,7 +498,6 @@ export class MainPage implements OnInit {
       edgeId =
         String(algoStepResult.value.current) +
         String(algoStepResult.value.newInQueue);
-      //console.log('edgeId', edgeId);
       let edgeItem = this.baseData.edges.get(edgeId);
       if (edgeItem != undefined) {
         this.baseData.edges.update([
@@ -492,6 +553,42 @@ export class MainPage implements OnInit {
   }
 
   stepBack(algoStepResult): void {
+    if (algoStepResult.value.startNode) {
+      this.baseData.nodes.update([
+        {
+          id: algoStepResult.value.startNode,
+          color: { background: '#97c2fc' },
+        },
+      ]);
+    }
+
+    if (algoStepResult.value.current && algoStepResult.value.newInQueue) {
+      this.baseData.nodes.update([
+        { id: algoStepResult.value.current, color: { background: 'grey' } },
+      ]);
+
+      algoStepResult.value.newInQueue.forEach((node) => {
+        this.baseData.nodes.update([
+          { id: node, color: { background: '#97c2fc' } },
+        ]);
+        let edgeId = String(algoStepResult.value.current) + String(node);
+
+        let edgeItem = this.baseData.edges.get(edgeId);
+        if (edgeItem != undefined) {
+          this.baseData.edges.update([
+            { id: edgeId, color: { color: '#2b7ce9' } },
+          ]);
+        } else {
+          edgeId = String(node) + String(algoStepResult.value.current);
+          this.baseData.edges.update([
+            { id: edgeId, color: { color: '#2b7ce9' } },
+          ]);
+        }
+      });
+    }
+  }
+
+  stepBack2(algoStepResult): void {
     var edgeId;
     if (algoStepResult.value.newInQueue != undefined) {
       this.baseData.nodes.update([

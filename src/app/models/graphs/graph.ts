@@ -12,12 +12,29 @@ export class Graph {
   adjList = new Map();
   visited = new Map();
   hasNegativeWeight = false;
+  isNodesNumber: boolean;
 
   constructor() {}
 
+  isNodeInGraph(node): boolean {
+    if (this.isNodesNumber) {
+      return this.nodes.includes(Number(node));
+    } else {
+      return this.nodes.includes(node);
+    }
+  }
+
   addEdge(node_a: any, node_b: any, weight?: number) {
+    console.log('addEdge');
     if (!this.singleEdges.has(node_a)) {
       this.singleEdges.set(node_a, []);
+    }
+
+    if (this.isNodesNumber == undefined) {
+      console.log('addnode node', node_a);
+      console.log('addnode typeof', typeof node_a);
+      console.log('addnode isNaN(node)', isNaN(node_a));
+      this.isNodesNumber = !isNaN(node_a);
     }
 
     if (
@@ -62,12 +79,21 @@ export class Graph {
   }
 
   addNode(node: any) {
+    console.log('addnode');
     if (!this.singleEdges.has(node)) {
       this.singleEdges.set(node, []);
     }
 
     if (!this.nodes.includes(node)) {
       this.nodes.push(node);
+
+      if (this.isNodesNumber == undefined) {
+        console.log('addnode node', node);
+        console.log('addnode typeof', typeof node);
+        console.log('addnode isNaN(node)', isNaN(node));
+        this.isNodesNumber = !isNaN(node);
+      }
+
       return true;
     } else {
       return false;

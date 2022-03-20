@@ -9,6 +9,11 @@ export class DirectedWeightedGraph extends Graph {
     if (!this.adjList.has(node_a)) {
       this.adjList.set(node_a, []);
     }
+
+    if (!this.adjList.has(node_b)) {
+      this.adjList.set(node_b, []);
+    }
+
     if (
       this.adjList.get(node_a) &&
       this.adjList.get(node_a).findIndex((node) => {

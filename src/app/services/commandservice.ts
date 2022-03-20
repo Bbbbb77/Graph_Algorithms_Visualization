@@ -35,6 +35,7 @@ export class CommandService {
 
   do() {
     let result = this.generator.next();
+    console.log('algo result', result);
     this.executed.push(result);
     this.history.push(result);
     return result;

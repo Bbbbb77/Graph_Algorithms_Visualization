@@ -54,6 +54,30 @@
   </button>
   <div style="display: flex">
     <div id="mynetwork" #siteConfigNetwork></div>
+    <div
+      #infoArea
+      style="
+        width: 125px;
+        border-color: black;
+        border-style: solid;
+        border-width: 1px;
+        margin-right: 15px;
+      "
+    >
+      <table mat-table [dataSource]="bellmanFordTable">
+        <ng-container matColumnDef="Node">
+          <th mat-header-cell *matHeaderCellDef>Node</th>
+          <td mat-cell *matCellDef="let element">{{ element.Node }}</td>
+        </ng-container>
+        <ng-container matColumnDef="Distance">
+          <th mat-header-cell *matHeaderCellDef>Distance</th>
+          <td mat-cell *matCellDef="let element">{{ element.Distance }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnHeaders"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnHeaders"></tr>
+      </table>
+    </div>
     <div>
       <textarea matInput [(ngModel)]="graphText" rows="13" cols="20"></textarea>
       <br />
