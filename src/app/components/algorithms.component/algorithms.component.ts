@@ -27,6 +27,7 @@ export class Algorithms implements OnInit {
   startTimeMs: number = 0;
   isAlgorithmEnded: boolean = false;
   startNode: String = '';
+  selectedAlgo: string = '';
   generator;
 
   @Input()
@@ -54,6 +55,7 @@ export class Algorithms implements OnInit {
   resetAlgo(): void {
     this.generator = undefined;
     this.isAlgorithmEnded = false;
+    this.selectedAlgo = '';
     this.commandService.clear();
     this.resetAlgoEmitter.emit();
   }
@@ -64,8 +66,6 @@ export class Algorithms implements OnInit {
 
   isStartNodeCorrect(): boolean {
     let error = '';
-    console.log('node', this.startNode);
-    console.log('type', typeof this.startNode);
     if (this.startNode === '') {
       error = 'Start node is not provided!';
     } else if (!this.graph.isNodeInGraph(this.startNode)) {
@@ -88,6 +88,7 @@ export class Algorithms implements OnInit {
     if (!this.isStartNodeCorrect()) {
       return;
     }
+    this.selectedAlgo = 'bfs';
     this.generator = bfs(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -99,6 +100,7 @@ export class Algorithms implements OnInit {
     if (!this.isStartNodeCorrect()) {
       return;
     }
+    this.selectedAlgo = 'dfs';
     this.generator = dfs(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -110,6 +112,7 @@ export class Algorithms implements OnInit {
     if (!this.isStartNodeCorrect()) {
       return;
     }
+    this.selectedAlgo = 'dijkstra';
     this.generator = dijkstra(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -121,6 +124,7 @@ export class Algorithms implements OnInit {
     if (!this.isStartNodeCorrect()) {
       return;
     }
+    this.selectedAlgo = 'prim';
     this.generator = primMST(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -129,13 +133,8 @@ export class Algorithms implements OnInit {
   }
 
   kruskal(): void {
-    if (!this.isStartNodeCorrect()) {
-      return;
-    }
-    this.generator = kruskal(
-      //this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
-      this.graph
-    );
+    this.selectedAlgo = 'kruskal';
+    this.generator = kruskal(this.graph);
     this.commandService.setAlgoGenerator(this.generator);
   }
 
@@ -143,6 +142,7 @@ export class Algorithms implements OnInit {
     if (!this.isStartNodeCorrect()) {
       return;
     }
+    this.selectedAlgo = 'bellmanford';
     this.generator = bellmanFord(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -151,11 +151,9 @@ export class Algorithms implements OnInit {
   }
 
   floydWarshall(): void {
-    // this.generator = floydWarshall(
-    //this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
-    //   this.graph
-    // );
-    // this.commandService.setAlgoGenerator(this.generator);
+    this.selectedAlgo = 'floydWarshall';
+    this.generator = floydWarshall(this.graph);
+    this.commandService.setAlgoGenerator(this.generator);
   }
 
   topSort(): void {

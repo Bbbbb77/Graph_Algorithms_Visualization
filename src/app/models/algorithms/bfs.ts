@@ -33,10 +33,7 @@ export function* bfs2(start, graph) {
   yield { startNode: start };
 
   while (queue.length != 0) {
-    //console.log("queue", queue);
     let s = queue.shift();
-    //console.log("s", s);
-    //console.log("adj.get(s)", adj.get(s));
 
     if (adj.get(s) != undefined) {
       var notVisited = adj.get(s).filter((node) => !visited.get(node));

@@ -27,29 +27,25 @@
 var visited = new Map();
 
 export function* dfs(node, graph) {
-  //console.log("adj list", graph.getAdjList());
-
   graph.getNodes().map((node) => {
     visited.set(node, false);
   });
 
   let adjList = graph.getAdjList();
 
+  yield { startNode: node };
   yield* dfsUtil(node, /*visited,*/ adjList);
 }
 
 function* dfsUtil(node, /*visited,*/ adjList) {
   //yield { current: node };
-  //console.log('node', node);
   visited.set(node, true);
-  //console.log('visited', visited);
-
   let visitedCounter = 0;
 
-  if (adjList.get(node) == undefined) {
+  /*if (adjList.get(node) == undefined) {
     yield { current: node };
     return;
-  }
+  }*/
 
   for (let i = 0; i < adjList.get(node).length; i++) {
     if (!visited.get(adjList.get(node)[i])) {

@@ -15,6 +15,7 @@ export function* bellmanFord(startNode, Graph) {
   });
 
   dist.set(startNode, 0);
+  yield { startNode: startNode };
 
   for (let i = 1; i <= nodes.length - 1; i++) {
     for (let j = 0; j < edges.length; j++) {

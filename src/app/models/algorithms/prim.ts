@@ -41,9 +41,6 @@ export function* primMST(startNode, Graph) {
 
     for (let v = 0; v < Graph.getNodes().length; v++) {
       console.group();
-      console.log('u', u);
-      console.log('v', v);
-      console.log('adjList.get(u)[v]', adjList.get(u)[v]);
       console.groupEnd();
       if (
         adjList.get(u)[v] &&
@@ -84,13 +81,18 @@ export function* primMST(startNode, Graph) {
       let weight = neighbours[i].weight;
       let vertex = neighbours[i].node;
       if (!visited.get(vertex) && value.get(vertex) > weight) {
+        let newNext = value.get(vertex) != Number.MAX_VALUE;
         value.set(vertex, weight);
         connection.set(vertex, nodePair.node);
         queue.push({ node: vertex, weight: weight });
         queue.sort(function (a, b) {
           return a.weight - b.weight;
         });
-        yield { current: nodePair.node, next: vertex, weight: weight };
+        if (newNext) {
+          yield { current: nodePair.node, newNext: vertex, weight: weight };
+        } else {
+          yield { current: nodePair.node, next: vertex, weight: weight };
+        }
       }
     }
   }

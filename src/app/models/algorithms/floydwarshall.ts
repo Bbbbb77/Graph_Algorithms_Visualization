@@ -1,13 +1,14 @@
-export function floydWarshall(Graph) {
+export function* floydWarshall(Graph) {
   let adjList = Graph.getAdjList();
   let nodes = Graph.getNodes().sort();
 
   let dist = new Map();
 
-  adjList.forEach((node1) => {
+  nodes.forEach((node1) => {
     dist.set(node1, []);
-    adjList.forEach((node2) => {
+    nodes.forEach((node2) => {
       if (node1 == node2) {
+        console.log('node 1 2', node1, node2);
         dist.get(node1).push({ node: node2, weight: 0 });
       } else {
         let edge = adjList.get(node1).find((f) => f.node == node2);
@@ -20,18 +21,22 @@ export function floydWarshall(Graph) {
     });
   });
 
-  nodes.forEach((k) => {
-    nodes.forEach((i) => {
-      nodes.forEach((j) => {
-        let weight1 = dist.get(i).find((f) => f.node == j).weight;
-        let weight2 = dist.get(i).find((f) => f.node == k).weight;
-        let weight3 = dist.get(k).find((f) => f.node == j).weight;
+  console.log('dist');
+  console.table(dist);
+  yield {};
+
+  for (let k = 0; k < nodes.length; k++) {
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = 0; j < nodes.length; j++) {
+        let weight1 = dist.get(nodes[i]).find((f) => f.node == nodes[j]).weight;
+        let weight2 = dist.get(nodes[i]).find((f) => f.node == nodes[k]).weight;
+        let weight3 = dist.get(nodes[k]).find((f) => f.node == nodes[j]).weight;
         if (weight1 > weight2 + weight3) {
-          dist.get(i).find((f) => f.node == j).weight = weight2 + weight3;
-          //TODO yield cant be in object function
-          //yield{nodeA:i nodeB:j};
+          dist.get(nodes[i]).find((f) => f.node == nodes[j]).weight =
+            weight2 + weight3;
+          yield { nodeA: nodes[i], nodeB: nodes[j] };
         }
-      });
-    });
-  });
+      }
+    }
+  }
 }

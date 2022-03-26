@@ -8,10 +8,14 @@
       [(ngModel)]="startNode"
       style="width: 30px; margin-left: 10px"
     />
+    <!--style="border-color: red; border-width: 10px"-->
     <button
       mat-button
       (click)="bfs()"
-      [disabled]="graph == undefined || generator != undefined || !weighted"
+      [ngStyle]="{
+        border: selectedAlgo == 'bfs' ? '2px solid black' : '0'
+      }"
+      [disabled]="graph == undefined || generator != undefined || weighted"
     >
       BFS
     </button>
@@ -19,7 +23,10 @@
     <button
       mat-button
       (click)="dfs()"
-      [disabled]="graph == undefined || generator != undefined || !weighted"
+      [ngStyle]="{
+        border: selectedAlgo == 'dfs' ? '2px solid black' : '0'
+      }"
+      [disabled]="graph == undefined || generator != undefined || weighted"
     >
       DFS
     </button>
@@ -27,7 +34,10 @@
     <button
       mat-button
       (click)="dijkstra()"
-      [disabled]="graph == undefined || generator != undefined || weighted"
+      [ngStyle]="{
+        border: selectedAlgo == 'dijkstra' ? '2px solid black' : '0'
+      }"
+      [disabled]="graph == undefined || generator != undefined || !weighted"
     >
       DIJKSTRA
     </button>
@@ -35,7 +45,12 @@
     <button
       mat-button
       (click)="prim()"
-      [disabled]="graph == undefined || generator != undefined || !directed"
+      [ngStyle]="{
+        border: selectedAlgo == 'prim' ? '2px solid black' : '0'
+      }"
+      [disabled]="
+        graph == undefined || generator != undefined || (directed && !weighted)
+      "
     >
       PRIM
     </button>
@@ -43,7 +58,12 @@
     <button
       mat-button
       (click)="kruskal()"
-      [disabled]="graph == undefined || generator != undefined || !directed"
+      [ngStyle]="{
+        border: selectedAlgo == 'kruskal' ? '2px solid black' : '0'
+      }"
+      [disabled]="
+        graph == undefined || generator != undefined || (directed && !weighted)
+      "
     >
       KRUSKAL
     </button>
@@ -51,19 +71,25 @@
     <button
       mat-button
       (click)="bellmanford()"
+      [ngStyle]="{
+        border: selectedAlgo == 'bellmanford' ? '2px solid black' : '0'
+      }"
       [disabled]="graph == undefined || generator != undefined || directed"
     >
       BELLMANFORD
     </button>
-    <!--
+
     <button
       mat-button
       (click)="floydWarshall()"
-      [disabled]="graph == undefined || generator != undefined || weighted"
+      [ngStyle]="{
+        border: selectedAlgo == 'floydWarshall' ? '2px solid black' : '0'
+      }"
+      [disabled]="graph == undefined || generator != undefined || !weighted"
     >
       FLOYDWARSHALL
     </button>
--->
+
     <button
       mat-button
       (click)="topSort()"

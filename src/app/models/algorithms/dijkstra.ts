@@ -15,7 +15,6 @@ export function* dijkstra(start, graph) {
   let adj = graph.getAdjList();
   let distances = new Map();
   let sptSet = new Map();
-  let prevNode = start;
 
   graph.getNodes().map((node) => {
     distances.set(node, Number.MAX_VALUE);
@@ -24,31 +23,37 @@ export function* dijkstra(start, graph) {
 
   distances.set(start, 0);
 
+  yield { startNode: start, weight: 0 };
+
   for (let j = 0; j < graph.getNodes().length; j++) {
     let u = minDistance(distances, sptSet, graph);
-
-    //yield { current: prevNode, next: u, weight: distances.get(u) };
-
+    let from, to, w;
     sptSet.set(u, true);
 
-    //console.log('u', u);
-    //console.log('adj.get(u)', adj.get(u));
-    if (adj.get(u) != undefined) {
-      for (let v = 0; v < adj.get(u).length; v++) {
-        if (
-          !sptSet.get(adj.get(u)[v].node) &&
-          distances.get(u) != Number.MAX_VALUE &&
-          distances.get(u) + adj.get(u)[v].weight <
-            distances.get(adj.get(u)[v].node)
-        ) {
-          distances.set(
-            adj.get(u)[v].node,
-            distances.get(u) + adj.get(u)[v].weight
-          );
+    for (let v = 0; v < adj.get(u).length; v++) {
+      if (
+        !sptSet.get(adj.get(u)[v].node) &&
+        distances.get(u) != Number.MAX_VALUE &&
+        distances.get(u) + adj.get(u)[v].weight <
+          distances.get(adj.get(u)[v].node)
+      ) {
+        let newNext = distances.get(adj.get(u)[v].node) != Number.MAX_VALUE;
+
+        distances.set(
+          adj.get(u)[v].node,
+          distances.get(u) + adj.get(u)[v].weight
+        );
+
+        from = u;
+        to = adj.get(u)[v].node;
+        w = adj.get(u)[v].weight;
+
+        if (newNext) {
+          yield { current: from, newNext: to, weight: distances.get(to) };
+        } else {
+          yield { current: from, next: to, weight: distances.get(to) };
         }
       }
     }
-    prevNode = u;
-    yield { current: u, weight: distances.get(u) };
   }
 }

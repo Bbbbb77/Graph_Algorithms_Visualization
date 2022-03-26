@@ -28,7 +28,7 @@ declare var vis: any;
 
 export interface BellmanFordTableElement {
   Node: string;
-  Distance: number;
+  Distance: string;
 }
 
 @Component({
@@ -79,22 +79,31 @@ export class MainPage implements OnInit {
 
   newTable(): void {
     this.bellmanFordTable = [];
-    this.graph.getNodes().forEach((node) => {
+    let nodes = this.graph.getNodes().sort();
+    nodes.forEach((node) => {
       this.bellmanFordTable.push({
         Node: String(node),
-        Distance: 0,
+        Distance: 'INF',
       });
     });
 
-    let index = this.bellmanFordTable.findIndex((b) => b.Node == String(0));
-    this.bellmanFordTable[index].Distance = 0;
+    //let index = this.bellmanFordTable.findIndex((b) => b.Node == String(0));
+    //this.bellmanFordTable[index].Distance = '0';
+  }
+
+  setStartNodeInTable(startNode): void {
+    let toIndex = this.bellmanFordTable.findIndex(
+      (b) => b.Node == String(startNode)
+    );
+    this.bellmanFordTable[toIndex].Distance = String(0);
+    this.table.renderRows();
   }
 
   updateTable(fromNode, toNode, distance): void {
     let toIndex = this.bellmanFordTable.findIndex(
       (b) => b.Node == String(toNode)
     );
-    this.bellmanFordTable[toIndex].Distance = distance;
+    this.bellmanFordTable[toIndex].Distance = String(distance);
     this.table.renderRows();
   }
 
@@ -443,11 +452,22 @@ export class MainPage implements OnInit {
       //list.innerHTML += "<li>done</li>";
       console.log('Done');
     } else {
-      /*this.updateTable(
-        result.algoStepResult.value.current,
-        result.algoStepResult.value.next,
-        result.algoStepResult.value.weight
-      );*/
+      let value = result.algoStepResult.value;
+      if (this.weighted) {
+        if (value.startNode != undefined) {
+          this.setStartNodeInTable(value.startNode);
+        } else if (
+          value.current != undefined &&
+          value.next != undefined &&
+          value.weight != undefined
+        ) {
+          this.updateTable(
+            result.algoStepResult.value.current,
+            result.algoStepResult.value.next,
+            result.algoStepResult.value.weight
+          );
+        }
+      }
       if (result.undo) {
         this.stepBack(result.algoStepResult);
       } else {
@@ -457,13 +477,16 @@ export class MainPage implements OnInit {
   }
 
   stepForward(algoStepResult): void {
-    if (algoStepResult.value.startNode) {
+    if (algoStepResult.value.startNode != undefined) {
       this.baseData.nodes.update([
         { id: algoStepResult.value.startNode, color: { background: 'grey' } },
       ]);
     }
 
-    if (algoStepResult.value.current && algoStepResult.value.newInQueue) {
+    if (
+      algoStepResult.value.current != undefined &&
+      algoStepResult.value.newInQueue != undefined
+    ) {
       this.baseData.nodes.update([
         { id: algoStepResult.value.current, color: { background: 'black' } },
       ]);
@@ -486,6 +509,69 @@ export class MainPage implements OnInit {
           ]);
         }
       });
+    }
+
+    if (algoStepResult.value.current != undefined) {
+      this.baseData.nodes.update([
+        { id: algoStepResult.value.current, color: { background: 'black' } },
+      ]);
+    }
+
+    if (algoStepResult.value.next != undefined) {
+      this.baseData.nodes.update([
+        { id: algoStepResult.value.next, color: { background: 'grey' } },
+      ]);
+      let edgeId =
+        String(algoStepResult.value.current) +
+        String(algoStepResult.value.next);
+
+      let edgeItem = this.baseData.edges.get(edgeId);
+      if (edgeItem != undefined) {
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
+      } else {
+        edgeId =
+          String(algoStepResult.value.next) +
+          String(algoStepResult.value.current);
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
+      }
+    }
+
+    if (algoStepResult.value.newNext != undefined) {
+      this.baseData.nodes.update([
+        { id: algoStepResult.value.newNext, color: { background: 'grey' } },
+      ]);
+
+      var edgeIdsOfNode = this.network.getConnectedEdges(
+        algoStepResult.value.newNext
+      );
+      var edgesOfNode = this.baseData.edges.get(edgeIdsOfNode);
+      console.log('edgesOfNode', edgesOfNode);
+      edgesOfNode.map((edge) => {
+        this.baseData.edges.update([
+          { id: edge.id, color: { color: '#2b7ce9' } },
+        ]);
+      });
+
+      let edgeId =
+        String(algoStepResult.value.current) +
+        String(algoStepResult.value.newNext);
+      let edgeItem = this.baseData.edges.get(edgeId);
+      if (edgeItem != undefined) {
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
+      } else {
+        edgeId =
+          String(algoStepResult.value.newNext) +
+          String(algoStepResult.value.current);
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
+      }
     }
   }
 
@@ -653,5 +739,6 @@ export class MainPage implements OnInit {
     this.baseData.edges.getIds().forEach((id) => {
       this.baseData.edges.update([{ id: id, color: { color: '#2b7ce9' } }]);
     });
+    this.newTable();
   }
 }

@@ -25,15 +25,15 @@ export class Graph {
   }
 
   addEdge(node_a: any, node_b: any, weight?: number) {
-    console.log('addEdge');
+    //console.log('addEdge');
     if (!this.singleEdges.has(node_a)) {
       this.singleEdges.set(node_a, []);
     }
 
     if (this.isNodesNumber == undefined) {
-      console.log('addnode node', node_a);
-      console.log('addnode typeof', typeof node_a);
-      console.log('addnode isNaN(node)', isNaN(node_a));
+      //console.log('addnode node', node_a);
+      //console.log('addnode typeof', typeof node_a);
+      //console.log('addnode isNaN(node)', isNaN(node_a));
       this.isNodesNumber = !isNaN(node_a);
     }
 
@@ -79,7 +79,7 @@ export class Graph {
   }
 
   addNode(node: any) {
-    console.log('addnode');
+    //console.log('addnode');
     if (!this.singleEdges.has(node)) {
       this.singleEdges.set(node, []);
     }
@@ -88,9 +88,9 @@ export class Graph {
       this.nodes.push(node);
 
       if (this.isNodesNumber == undefined) {
-        console.log('addnode node', node);
-        console.log('addnode typeof', typeof node);
-        console.log('addnode isNaN(node)', isNaN(node));
+        //console.log('addnode node', node);
+        //console.log('addnode typeof', typeof node);
+        //console.log('addnode isNaN(node)', isNaN(node));
         this.isNodesNumber = !isNaN(node);
       }
 

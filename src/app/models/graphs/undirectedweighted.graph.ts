@@ -50,9 +50,6 @@ export class UndirectedWeightedGraph extends Graph {
   }
 
   removeEdge(node_a, node_b) {
-    console.log('node_a: ', node_a);
-    console.log('node_b: ', node_b);
-
     if (this.adjList.get(node_a) != undefined) {
       var index1 = this.adjList.get(node_a).findIndex((node) => {
         return node.node == node_b;

@@ -29,8 +29,8 @@ export class DirectedUnweightedGraph extends Graph {
   }
 
   removeEdge(node_a: any, node_b: any) {
-    console.log('node_a: ', node_a);
-    console.log('node_b: ', node_b);
+    //console.log('node_a: ', node_a);
+    //console.log('node_b: ', node_b);
 
     if (this.adjList.get(node_a) != undefined) {
       var index1 = this.adjList.get(node_a).indexOf(node_b);
