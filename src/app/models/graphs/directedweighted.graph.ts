@@ -3,6 +3,7 @@ import { Graph, compareWeightedNodes } from './graph';
 export class DirectedWeightedGraph extends Graph {
   constructor() {
     super();
+    this.weighted = true;
   }
 
   override addEdge(node_a: any, node_b: any, weight: number) {

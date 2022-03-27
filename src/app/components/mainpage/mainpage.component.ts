@@ -47,6 +47,9 @@ export class MainPage implements OnInit {
   weighted: boolean;
 
   @Output()
+  graphIsConnected: boolean = false;
+
+  @Output()
   graph: any;
 
   graphText: string;
@@ -86,9 +89,6 @@ export class MainPage implements OnInit {
         Distance: 'INF',
       });
     });
-
-    //let index = this.bellmanFordTable.findIndex((b) => b.Node == String(0));
-    //this.bellmanFordTable[index].Distance = '0';
   }
 
   setStartNodeInTable(startNode): void {
@@ -277,6 +277,7 @@ export class MainPage implements OnInit {
     if (this.weighted) {
       this.newTable();
     }
+    this.graphIsConnected = this.graph.isConnected();
   }
 
   setNodesAndEdges(): void {}
@@ -294,6 +295,7 @@ export class MainPage implements OnInit {
           data.label = result;
           data.id = Number(result);
           if (this.graph.addNode(data.id)) {
+            this.graphIsConnected = this.graph.isConnected();
             callback(data);
           }
         }
@@ -368,12 +370,14 @@ export class MainPage implements OnInit {
         let edgesDataSet = new vis.DataSet(result.edgesFromJson);
         this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
         this.setupNetwork();
+        this.graphIsConnected = this.graph.isConnected();
       });
   }
 
   deleteSelectedNode(data, callback): void {
     this.graph.removeNode(data.nodes[0]);
     callback(data);
+    this.graphIsConnected = this.graph.isConnected();
   }
 
   addEdgeWithoutDrag(data, callback): void {
@@ -397,7 +401,9 @@ export class MainPage implements OnInit {
         data: { label: 'Edit weighted edge', editMode: true },
       })
       .afterClosed()
-      .subscribe((result) => {});
+      .subscribe((result) => {
+        this.editEdgeData(data, callback, result);
+      });
   }
 
   editEdgeData(data, callback, edgeWeight): void {
@@ -412,6 +418,7 @@ export class MainPage implements OnInit {
       Number(data.edges[0].charAt(1))
     );
     callback(data);
+    this.graphIsConnected = this.graph.isConnected();
   }
 
   saveEdgeData(data, callback, edgeWeigth?: number): void {
@@ -441,6 +448,7 @@ export class MainPage implements OnInit {
     }
 
     if (isEdgeAdded) {
+      this.graphIsConnected = this.graph.isConnected();
       callback(data);
     }
   }

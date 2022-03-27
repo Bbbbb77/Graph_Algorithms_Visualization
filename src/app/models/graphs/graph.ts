@@ -10,9 +10,10 @@ export class Graph {
   nodes: any[] = [];
   singleEdges = new Map();
   adjList = new Map();
-  visited = new Map();
   hasNegativeWeight = false;
   isNodesNumber: boolean;
+  weighted: boolean;
+  visited;
 
   constructor() {}
 
@@ -56,7 +57,7 @@ export class Graph {
     if (!this.nodes.includes(node_b)) {
       this.nodes.push(node_b);
     }
-
+    /*
     if (!this.visited.has(node_a)) {
       this.visited.set(node_a, false);
     }
@@ -64,7 +65,7 @@ export class Graph {
     if (!this.visited.has(node_b)) {
       this.visited.set(node_b, false);
     }
-
+*/
     if (weight && weight < 0) {
       this.hasNegativeWeight = true;
     }
@@ -82,6 +83,10 @@ export class Graph {
     //console.log('addnode');
     if (!this.singleEdges.has(node)) {
       this.singleEdges.set(node, []);
+    }
+
+    if (!this.adjList.has(node)) {
+      this.adjList.set(node, []);
     }
 
     if (!this.nodes.includes(node)) {
@@ -145,11 +150,43 @@ export class Graph {
     this.adjList.clear();
     this.visited.clear();
   }
-
+  /*
   resetVisited() {
     this.visited.forEach((value, key) => {
       this.visited.set(key, false);
     });
+  }
+*/
+  dfs(node) {
+    this.visited.set(node, true);
+    for (let i = 0; i < this.adjList.get(node).length; i++) {
+      if (this.weighted) {
+        if (!this.visited.get(this.adjList.get(node)[i].node)) {
+          this.dfs(this.adjList.get(node)[i].node);
+        }
+      } else {
+        if (!this.visited.get(this.adjList.get(node)[i])) {
+          this.dfs(this.adjList.get(node)[i]);
+        }
+      }
+    }
+  }
+
+  isConnected(): boolean {
+    this.visited = new Map();
+    this.nodes.map((node) => {
+      this.visited.set(node, false);
+    });
+
+    this.dfs(this.nodes[0]);
+
+    for (let i = 0; i < this.nodes.length; i++) {
+      let node = this.nodes[i];
+      if (!this.visited.get(node)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   print() {

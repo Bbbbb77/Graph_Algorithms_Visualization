@@ -3,6 +3,7 @@ import { Graph, compareNodes } from './graph';
 export class DirectedUnweightedGraph extends Graph {
   constructor() {
     super();
+    this.weighted = false;
   }
 
   override addEdge(node_a: any, node_b: any) {

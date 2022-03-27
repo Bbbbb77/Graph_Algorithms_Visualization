@@ -39,6 +39,9 @@ export class Algorithms implements OnInit {
   @Input()
   weighted: boolean;
 
+  @Input()
+  graphIsConnected: boolean;
+
   @Output()
   generatorResultEmitter: EventEmitter<any> = new EventEmitter();
 
