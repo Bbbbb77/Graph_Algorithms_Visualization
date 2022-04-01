@@ -48,6 +48,9 @@ export class Algorithms implements OnInit {
   @Output()
   resetAlgoEmitter = new EventEmitter();
 
+  @Output()
+  algoNameEmitter = new EventEmitter();
+
   constructor(
     private commandService: CommandService,
     public dialog: MatDialog
@@ -59,6 +62,7 @@ export class Algorithms implements OnInit {
     this.generator = undefined;
     this.isAlgorithmEnded = false;
     this.selectedAlgo = '';
+    this.algoNameEmitter.emit(this.selectedAlgo);
     this.commandService.clear();
     this.resetAlgoEmitter.emit();
   }
@@ -92,6 +96,7 @@ export class Algorithms implements OnInit {
       return;
     }
     this.selectedAlgo = 'bfs';
+    this.algoNameEmitter.emit(this.selectedAlgo);
     this.generator = bfs(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -104,6 +109,7 @@ export class Algorithms implements OnInit {
       return;
     }
     this.selectedAlgo = 'dfs';
+    this.algoNameEmitter.emit(this.selectedAlgo);
     this.generator = dfs(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -116,6 +122,7 @@ export class Algorithms implements OnInit {
       return;
     }
     this.selectedAlgo = 'dijkstra';
+    this.algoNameEmitter.emit(this.selectedAlgo);
     this.generator = dijkstra(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -128,6 +135,7 @@ export class Algorithms implements OnInit {
       return;
     }
     this.selectedAlgo = 'prim';
+    this.algoNameEmitter.emit(this.selectedAlgo);
     this.generator = primMST(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -137,6 +145,7 @@ export class Algorithms implements OnInit {
 
   kruskal(): void {
     this.selectedAlgo = 'kruskal';
+    this.algoNameEmitter.emit(this.selectedAlgo);
     this.generator = kruskal(this.graph);
     this.commandService.setAlgoGenerator(this.generator);
   }
@@ -146,6 +155,7 @@ export class Algorithms implements OnInit {
       return;
     }
     this.selectedAlgo = 'bellmanford';
+    this.algoNameEmitter.emit(this.selectedAlgo);
     this.generator = bellmanFord(
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
@@ -155,6 +165,7 @@ export class Algorithms implements OnInit {
 
   floydWarshall(): void {
     this.selectedAlgo = 'floydWarshall';
+    this.algoNameEmitter.emit(this.selectedAlgo);
     this.generator = floydWarshall(this.graph);
     this.commandService.setAlgoGenerator(this.generator);
   }

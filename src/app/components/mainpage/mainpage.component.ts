@@ -31,6 +31,11 @@ export interface BellmanFordTableElement {
   Distance: string;
 }
 
+export interface DfsNode {
+  startCounter: number;
+  endCounter: number;
+}
+
 @Component({
   selector: 'mainpage',
   templateUrl: './mainpage.component.html',
@@ -72,13 +77,36 @@ export class MainPage implements OnInit {
   prevNodeValue = null;
 
   bellmanFordTable: BellmanFordTableElement[] = [];
+  dfsCounterMap = new Map();
+  bfsQueue: string[] = [];
 
-  columnHeaders: string[] = ['Node', 'Distance'];
+  distaceColumnHeaders: string[] = ['Node', 'Distance'];
+  queueColumnHeaders: string[] = ['Node queue'];
+
+  selectedAlgorithmName: string = '';
+  selectedAlgorithm(algorithmName) {
+    console.log('selectedalgorithm', algorithmName);
+    if (algorithmName == 'bfs') {
+      this.selectedAlgorithmName = 'bfs';
+      console.log('bfs');
+    } else if (algorithmName == 'bellmanford') {
+      this.selectedAlgorithmName = 'bellmanford';
+      console.log('bellmanford');
+      if (this.weighted) {
+        this.newTable();
+      }
+    } else {
+      this.selectedAlgorithmName = '';
+    }
+  }
 
   constructor(public dialog: MatDialog) {}
 
-  @ViewChild(MatTable)
-  table: MatTable<BellmanFordTableElement>;
+  @ViewChild('bellmanfordtable')
+  bellmanfordtable: MatTable<BellmanFordTableElement>;
+
+  @ViewChild('bfsqueuetable')
+  bfsqueuetable: MatTable<string>;
 
   newTable(): void {
     this.bellmanFordTable = [];
@@ -96,7 +124,7 @@ export class MainPage implements OnInit {
       (b) => b.Node == String(startNode)
     );
     this.bellmanFordTable[toIndex].Distance = String(0);
-    this.table.renderRows();
+    this.bellmanfordtable.renderRows();
   }
 
   updateTable(fromNode, toNode, distance): void {
@@ -104,7 +132,7 @@ export class MainPage implements OnInit {
       (b) => b.Node == String(toNode)
     );
     this.bellmanFordTable[toIndex].Distance = String(distance);
-    this.table.renderRows();
+    this.bellmanfordtable.renderRows();
   }
 
   ngOnInit(): void {}
@@ -274,9 +302,6 @@ export class MainPage implements OnInit {
     let edgesDataSet = new vis.DataSet(this.edgesFromJson);
     this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
     this.setupNetwork();
-    if (this.weighted) {
-      this.newTable();
-    }
     this.graphIsConnected = this.graph.isConnected();
   }
 
@@ -580,6 +605,21 @@ export class MainPage implements OnInit {
           { id: edgeId, color: { color: 'orange' } },
         ]);
       }
+    }
+
+    if (this.selectedAlgorithmName == 'bfs') {
+      if (this.bfsQueue.length != 0) {
+        this.bfsQueue.shift();
+      }
+      if (algoStepResult.value.startNode != undefined) {
+        this.bfsQueue.push(String(algoStepResult.value.startNode));
+      }
+      if (algoStepResult.value.newInQueue != undefined) {
+        algoStepResult.value.newInQueue.forEach((node) => {
+          this.bfsQueue.push(String(node));
+        });
+      }
+      this.bfsqueuetable.renderRows();
     }
   }
 

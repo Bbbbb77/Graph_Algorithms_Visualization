@@ -19,7 +19,7 @@ export function* bfs(start, graph) {
     yield { current: s, newInQueue: notVisited };
   }
 }
-
+/*
 export function* bfs2(start, graph) {
   let visited = new Map();
   graph.getNodes().map((node) => {
@@ -46,18 +46,19 @@ export function* bfs2(start, graph) {
       } else {
         yield { current: s };
       }
-      /*
-      for (let i = 0; i < adj.get(s).length; i++) {
-        console.log("is " + adj.get(s)[i] + " visited ", visited.get(adj.get(s)[i]))
-        if (!visited.get(adj.get(s)[i])) {
-          visited.set(adj.get(s)[i], true);
-          queue.push(adj.get(s)[i]);
-          yield { current: s, newInQueue: adj.get(s)[i] };
-        }
-      }*/
+      
+      //for (let i = 0; i < adj.get(s).length; i++) {
+      //  console.log("is " + adj.get(s)[i] + " visited ", visited.get(adj.get(s)[i]))
+      //  if (!visited.get(adj.get(s)[i])) {
+      //    visited.set(adj.get(s)[i], true);
+      //    queue.push(adj.get(s)[i]);
+      //    yield { current: s, newInQueue: adj.get(s)[i] };
+      //  }
+      //}
     } else {
       yield { current: s };
     }
     //yield { current: s, queue: queue };
   }
 }
+*/
