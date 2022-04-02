@@ -25,19 +25,36 @@
 }*/
 
 var visited = new Map();
+var counter = 0;
 
 export function* dfs(node, graph) {
-  graph.getNodes().map((node) => {
+  let nodes = graph.getNodes();
+  nodes.map((node) => {
     visited.set(node, false);
   });
 
   let adjList = graph.getAdjList();
 
-  yield { startNode: node };
-  yield* dfsUtil(node, /*visited,*/ adjList);
+  counter = 1;
+
+  console.log('startnode', node);
+  yield { startNode: node, startCounter: counter };
+  yield* dfsUtil(node, adjList);
+
+  for (let i = 0; i < nodes.length; i++) {
+    if (visited.get(nodes[i])) {
+      continue;
+    }
+
+    console.log('startnode', nodes[i]);
+    counter++;
+    yield { startNode: nodes[i], startCounter: counter };
+    yield* dfsUtil(nodes[i], adjList);
+  }
 }
 
-function* dfsUtil(node, /*visited,*/ adjList) {
+function* dfsUtil(node, adjList) {
+  console.log('util node', node);
   //yield { current: node };
   visited.set(node, true);
   let visitedCounter = 0;
@@ -48,20 +65,30 @@ function* dfsUtil(node, /*visited,*/ adjList) {
   }*/
 
   for (let i = 0; i < adjList.get(node).length; i++) {
+    visitedCounter += 1;
     if (!visited.get(adjList.get(node)[i])) {
-      yield { current: node, next: adjList.get(node)[i] };
+      console.log('not visited neighbour', adjList.get(node)[i]);
+      counter++;
+      yield {
+        current: node,
+        next: adjList.get(node)[i],
+        startCounter: counter,
+      };
       yield* dfsUtil(adjList.get(node)[i], adjList);
-    } else {
-      visitedCounter += 1;
-      //yield { current: node };
-    }
+    } // else {
+    //visitedCounter += 1;
+    //yield { current: node };
+    //}
   }
 
   if (adjList.get(node).length == visitedCounter) {
-    yield { current: node };
+    counter++;
+    console.log('finished node', node);
+    yield { current: node, endCounter: counter };
   }
+}
 
-  /*var notVisited = adjList.get(node).filter((node) => !visited.get(node));
+/*var notVisited = adjList.get(node).filter((node) => !visited.get(node));
   if (notVisited.length != 0) {
     for (let i = 0; i < notVisited.length; i++) {
       yield { current: node, next: notVisited[i] };
@@ -70,7 +97,6 @@ function* dfsUtil(node, /*visited,*/ adjList) {
   } else {
     yield { current: node };
   }*/
-}
 
 /*
   for (let i = 0; i < adjList.get(node).length; i++) {

@@ -34,13 +34,16 @@ export class Algorithms implements OnInit {
   graph;
 
   @Input()
-  directed: boolean;
+  directed?: boolean;
 
   @Input()
-  weighted: boolean;
+  weighted?: boolean;
 
   @Input()
   graphIsConnected: boolean;
+
+  @Input()
+  graphHasNegativeEdge: boolean;
 
   @Output()
   generatorResultEmitter: EventEmitter<any> = new EventEmitter();

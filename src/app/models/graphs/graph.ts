@@ -141,7 +141,20 @@ export class Graph {
   }
 
   getHasNegativeWeight() {
-    return this.hasNegativeWeight;
+    if (!this.weighted) {
+      return false;
+    }
+
+    let hasNegativeWeight = false;
+    for (let i = 0; i < this.nodes.length; i++) {
+      let edges = this.adjList.get(this.nodes[i]);
+      for (let j = 0; j < edges.length; j++) {
+        if (edges[j].weight < 0) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   clear() {

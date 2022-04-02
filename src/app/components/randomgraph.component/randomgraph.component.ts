@@ -12,10 +12,10 @@ export class RandomGraph implements OnInit {
   edgeChance: number = 1;
 
   @Input()
-  directed: boolean;
+  directed?: boolean;
 
   @Input()
-  weighted: boolean;
+  weighted?: boolean;
 
   @Input()
   graph;

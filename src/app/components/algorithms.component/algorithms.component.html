@@ -37,7 +37,12 @@
       [ngStyle]="{
         border: selectedAlgo == 'dijkstra' ? '2px solid black' : '0'
       }"
-      [disabled]="graph == undefined || generator != undefined || !weighted"
+      [disabled]="
+        graph == undefined ||
+        generator != undefined ||
+        !weighted ||
+        graphHasNegativeEdge
+      "
     >
       DIJKSTRA
     </button>

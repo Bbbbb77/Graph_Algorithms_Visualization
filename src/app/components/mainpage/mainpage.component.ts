@@ -33,7 +33,7 @@ export interface BellmanFordTableElement {
 
 export interface DfsNode {
   startCounter: number;
-  endCounter: number;
+  endCounter?: number;
 }
 
 @Component({
@@ -46,10 +46,13 @@ export class MainPage implements OnInit {
   networkContainer: ElementRef;
 
   @Output()
-  directed: boolean;
+  directed?: boolean;
 
   @Output()
-  weighted: boolean;
+  weighted?: boolean;
+
+  @Output()
+  graphHasNegativeEdge: boolean = false;
 
   @Output()
   graphIsConnected: boolean = false;
@@ -78,10 +81,12 @@ export class MainPage implements OnInit {
 
   bellmanFordTable: BellmanFordTableElement[] = [];
   dfsCounterMap = new Map();
+  dfsStack: string[] = [];
   bfsQueue: string[] = [];
 
   distaceColumnHeaders: string[] = ['Node', 'Distance'];
   queueColumnHeaders: string[] = ['Node queue'];
+  stackColumnHeaders: string[] = ['Node stack'];
 
   selectedAlgorithmName: string = '';
   selectedAlgorithm(algorithmName) {
@@ -95,6 +100,8 @@ export class MainPage implements OnInit {
       if (this.weighted) {
         this.newTable();
       }
+    } else if (algorithmName == 'dfs') {
+      this.selectedAlgorithmName = 'dfs';
     } else {
       this.selectedAlgorithmName = '';
     }
@@ -107,6 +114,9 @@ export class MainPage implements OnInit {
 
   @ViewChild('bfsqueuetable')
   bfsqueuetable: MatTable<string>;
+
+  @ViewChild('dfsstacktable')
+  dfsstacktable: MatTable<string>;
 
   newTable(): void {
     this.bellmanFordTable = [];
@@ -158,7 +168,7 @@ export class MainPage implements OnInit {
   setupNetwork(): void {
     var options = {
       layout: { randomSeed: this.seed },
-      nodes: { borderWidth: 4 },
+      nodes: { borderWidth: 4, size: 100 },
       edges: { color: { color: '#2b7ce9', inherit: false } },
       manipulation: {
         addNode: (data, callback) => {
@@ -214,6 +224,7 @@ export class MainPage implements OnInit {
         },
       },
     };
+
     var container = this.networkContainer.nativeElement;
     this.network = new vis.Network(container, this.baseData, options);
   }
@@ -303,6 +314,7 @@ export class MainPage implements OnInit {
     this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
     this.setupNetwork();
     this.graphIsConnected = this.graph.isConnected();
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
 
   setNodesAndEdges(): void {}
@@ -396,6 +408,7 @@ export class MainPage implements OnInit {
         this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
         this.setupNetwork();
         this.graphIsConnected = this.graph.isConnected();
+        this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
       });
   }
 
@@ -403,6 +416,7 @@ export class MainPage implements OnInit {
     this.graph.removeNode(data.nodes[0]);
     callback(data);
     this.graphIsConnected = this.graph.isConnected();
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
 
   addEdgeWithoutDrag(data, callback): void {
@@ -433,8 +447,9 @@ export class MainPage implements OnInit {
 
   editEdgeData(data, callback, edgeWeight): void {
     data.label = edgeWeight;
-    callback(data);
     this.graph.editEdge(data.from, data.to, Number(data.label));
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    callback(data);
   }
 
   deleteSelectedEdge(data, callback): void {
@@ -444,6 +459,7 @@ export class MainPage implements OnInit {
     );
     callback(data);
     this.graphIsConnected = this.graph.isConnected();
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
 
   saveEdgeData(data, callback, edgeWeigth?: number): void {
@@ -474,33 +490,15 @@ export class MainPage implements OnInit {
 
     if (isEdgeAdded) {
       this.graphIsConnected = this.graph.isConnected();
+      this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
       callback(data);
     }
   }
 
   stepClicked(result): void {
     if (result.algoStepResult.done) {
-      //let button = document.getElementById('stepButton');
-      //button.disabled = true;
-      //list.innerHTML += "<li>done</li>";
       console.log('Done');
     } else {
-      let value = result.algoStepResult.value;
-      if (this.weighted) {
-        if (value.startNode != undefined) {
-          this.setStartNodeInTable(value.startNode);
-        } else if (
-          value.current != undefined &&
-          value.next != undefined &&
-          value.weight != undefined
-        ) {
-          this.updateTable(
-            result.algoStepResult.value.current,
-            result.algoStepResult.value.next,
-            result.algoStepResult.value.weight
-          );
-        }
-      }
       if (result.undo) {
         this.stepBack(result.algoStepResult);
       } else {
@@ -510,6 +508,11 @@ export class MainPage implements OnInit {
   }
 
   stepForward(algoStepResult): void {
+    if (this.selectedAlgorithmName == 'dfs') {
+      this.dfsStep(algoStepResult.value);
+      return;
+    }
+
     if (algoStepResult.value.startNode != undefined) {
       this.baseData.nodes.update([
         { id: algoStepResult.value.startNode, color: { background: 'grey' } },
@@ -544,7 +547,7 @@ export class MainPage implements OnInit {
       });
     }
 
-    if (algoStepResult.value.current != undefined) {
+    /*if (algoStepResult.value.current != undefined) {
       this.baseData.nodes.update([
         { id: algoStepResult.value.current, color: { background: 'black' } },
       ]);
@@ -571,7 +574,7 @@ export class MainPage implements OnInit {
           { id: edgeId, color: { color: 'orange' } },
         ]);
       }
-    }
+    }*/
 
     if (algoStepResult.value.newNext != undefined) {
       this.baseData.nodes.update([
@@ -607,19 +610,91 @@ export class MainPage implements OnInit {
       }
     }
 
+    if (this.selectedAlgorithmName == 'bellmanford') {
+      let value = algoStepResult.value;
+      if (this.weighted) {
+        if (value.startNode != undefined) {
+          this.setStartNodeInTable(value.startNode);
+        } else if (
+          value.current != undefined &&
+          value.next != undefined &&
+          value.weight != undefined
+        ) {
+          this.updateTable(value.current, value.next, value.weight);
+        }
+      }
+    }
+
     if (this.selectedAlgorithmName == 'bfs') {
-      if (this.bfsQueue.length != 0) {
-        this.bfsQueue.shift();
+      this.bfsStep(algoStepResult.value);
+    }
+  }
+
+  bfsStep(value): void {
+    if (this.bfsQueue.length != 0) {
+      this.bfsQueue.shift();
+    }
+    if (value.startNode != undefined) {
+      this.bfsQueue.push(String(value.startNode));
+    }
+    if (value.newInQueue != undefined) {
+      value.newInQueue.forEach((node) => {
+        this.bfsQueue.push(String(node));
+      });
+    }
+    this.bfsqueuetable.renderRows();
+  }
+
+  dfsStep(value): void {
+    if (value.startNode != undefined) {
+      let node = value.startNode;
+      let counter = value.startCounter;
+      let newLabel = String(node) + ' (' + String(counter) + ')';
+      this.baseData.nodes.update([
+        { id: node, label: newLabel, color: { background: 'grey' } },
+      ]);
+      this.dfsCounterMap.set(node, counter);
+    }
+
+    if (value.next != undefined) {
+      let node = value.next;
+      let counter = value.startCounter;
+      let newLabel = String(node) + ' (' + String(counter) + ')';
+      this.baseData.nodes.update([
+        { id: node, label: newLabel, color: { background: 'grey' } },
+      ]);
+      this.dfsCounterMap.set(node, counter);
+
+      let edgeId = String(value.current) + String(value.next);
+
+      let edgeItem = this.baseData.edges.get(edgeId);
+      if (edgeItem != undefined) {
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
+      } else {
+        edgeId = String(value.next) + String(value.current);
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: 'orange' } },
+        ]);
       }
-      if (algoStepResult.value.startNode != undefined) {
-        this.bfsQueue.push(String(algoStepResult.value.startNode));
-      }
-      if (algoStepResult.value.newInQueue != undefined) {
-        algoStepResult.value.newInQueue.forEach((node) => {
-          this.bfsQueue.push(String(node));
-        });
-      }
-      this.bfsqueuetable.renderRows();
+    }
+
+    if (value.current != undefined && value.next == undefined) {
+      let node = value.current;
+      let endCounter = value.endCounter;
+      let counter = this.dfsCounterMap.get(node);
+      let newLabel =
+        String(node) + ' (' + String(counter) + '/' + String(endCounter) + ')';
+      this.baseData.nodes.update([
+        {
+          id: node,
+          label: newLabel,
+          color: { background: 'black' },
+        },
+      ]);
+      this.dfsStack.unshift(String(node));
+      this.dfsstacktable.renderRows();
     }
   }
 
@@ -770,11 +845,8 @@ export class MainPage implements OnInit {
 
   reset(): void {
     this.destroy();
-    //this.directed = undefined;
-    //this.weighted = undefined;
-    //this.nodesDataSet = null;
-    //this.edgesDataSet = null;
-    this.baseData = null;
+    this.directed = undefined;
+    this.weighted = undefined;
     this.graph = null;
   }
 
@@ -787,6 +859,6 @@ export class MainPage implements OnInit {
     this.baseData.edges.getIds().forEach((id) => {
       this.baseData.edges.update([{ id: id, color: { color: '#2b7ce9' } }]);
     });
-    this.newTable();
+    //this.newTable();
   }
 }
