@@ -188,3 +188,25 @@ Dijkstra/prim/kruskal testing
     {"from" : 3, "to" : 7},
     {"from" : 7, "to" : 3}
 ]
+
+// A = 0
+// B = 1
+// C = 2
+// D = 3
+// E = 4
+// F = 5
+
+[
+    {"from" : 1, "to" : 2, "weight" : 0},
+    {"from" : 1, "to" : 4, "weight" : 6},
+
+    {"from" : 2, "to" : 3, "weight" : 3},
+    {"from" : 2, "to" : 5, "weight" : 4},
+    {"from" : 2, "to" : 6, "weight" : -1},
+    {"from" : 2, "to" : 4, "weight" : 1},
+
+    {"from" : 3, "to" : 5, "weight" : 3},
+
+    {"from" : 4, "to" : 6, "weight" : 9},
+    {"from" : 5, "to" : 6, "weight" : 5}
+]

@@ -202,6 +202,47 @@ export class Graph {
     return true;
   }
 
+  hasNegativeCycle(sourceNode) {
+    let edges: any[] = [];
+    let distances = new Map();
+    this.nodes.map((node) => {
+      distances.set(node, false);
+
+      let edgeTmp = this.adjList.get(node);
+      if (edgeTmp) {
+        edgeTmp.forEach((e) => {
+          edges.push({ from: node, to: e.node, weight: e.weight });
+        });
+      }
+    });
+
+    distances.set(sourceNode, 0);
+
+    for (let i = 1; i <= this.nodes.length - 1; i++) {
+      for (let j = 0; j < edges.length; j++) {
+        let edge = edges[j];
+        if (distances.get(edge.from) + edge.weight < distances.get(edge.to)) {
+          distances.set(edge.to, distances.get(edge.from) + edge.weight);
+        }
+      }
+    }
+
+    for (let i = 0; i < edges.length; i++) {
+      let from = edges[i].from;
+      let to = edges[i].to;
+      let weight = edges[i].weight;
+
+      if (
+        distances[from] != Number.MAX_VALUE &&
+        distances[from] + weight < distances[to]
+      ) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   print() {
     console.log('\n\n');
     console.log('nodes', this.nodes);

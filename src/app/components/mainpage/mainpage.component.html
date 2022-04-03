@@ -101,6 +101,7 @@
 
       <table
         mat-table
+        class="infoTable"
         #bellmanfordtable
         [dataSource]="bellmanFordTable"
         *ngIf="selectedAlgorithmName == 'bellmanford'"
@@ -119,7 +120,7 @@
       </table>
     </div>
     <div>
-      <textarea matInput [(ngModel)]="graphText" rows="13" cols="20"></textarea>
+      <textarea matInput [(ngModel)]="graphText" rows="13" cols="30"></textarea>
       <br />
       <button
         mat-button
@@ -138,6 +139,7 @@
     [graph]="graph"
   ></randomgraph>
   <algorithms
+    #algorithmsComponent
     [directed]="directed"
     [weighted]="weighted"
     [graph]="graph"

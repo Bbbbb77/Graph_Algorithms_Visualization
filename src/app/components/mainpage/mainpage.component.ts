@@ -109,6 +109,9 @@ export class MainPage implements OnInit {
 
   constructor(public dialog: MatDialog) {}
 
+  @ViewChild('algorithmsComponent')
+  algorithmsComponent: Algorithms;
+
   @ViewChild('bellmanfordtable')
   bellmanfordtable: MatTable<BellmanFordTableElement>;
 
@@ -547,7 +550,7 @@ export class MainPage implements OnInit {
       });
     }
 
-    /*if (algoStepResult.value.current != undefined) {
+    if (algoStepResult.value.current != undefined) {
       this.baseData.nodes.update([
         { id: algoStepResult.value.current, color: { background: 'black' } },
       ]);
@@ -574,7 +577,7 @@ export class MainPage implements OnInit {
           { id: edgeId, color: { color: 'orange' } },
         ]);
       }
-    }*/
+    }
 
     if (algoStepResult.value.newNext != undefined) {
       this.baseData.nodes.update([
@@ -761,7 +764,84 @@ export class MainPage implements OnInit {
     //prevSelectedEdgeId = edgeId;
   }
 
+  stepBackDfs(value): void {
+    console.log('stepBackDfs value', value);
+    if (value.startNode != undefined) {
+      let node = value.startNode;
+      let counter = value.startCounter;
+      let newLabel = String(node); //+ ' (' + String(counter) + ')';
+      this.baseData.nodes.update([
+        { id: node, label: newLabel, color: { background: '#97c2fc' } },
+      ]);
+      //this.dfsCounterMap.set(node, counter);
+    }
+
+    if (value.next != undefined) {
+      let node = value.next;
+      let counter = value.startCounter;
+      let newLabel = String(node); // + ' (' + String(counter) + ')';
+      this.baseData.nodes.update([
+        { id: node, label: newLabel, color: { background: '#97c2fc' } },
+      ]);
+      this.dfsCounterMap.set(node, counter);
+
+      let edgeId = String(value.current) + String(value.next);
+
+      let edgeItem = this.baseData.edges.get(edgeId);
+      if (edgeItem != undefined) {
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: '#2b7ce9' } },
+        ]);
+      } else {
+        edgeId = String(value.next) + String(value.current);
+        this.baseData.edges.update([
+          { id: edgeId, color: { color: '#2b7ce9' } },
+        ]);
+      }
+    }
+
+    if (value.current != undefined && value.next == undefined) {
+      let node = value.current;
+      let endCounter = value.endCounter;
+      let counter = this.dfsCounterMap.get(node);
+      let newLabel =
+        String(node) +
+        ' (' +
+        String(counter) /*+ '/' + String(endCounter)*/ +
+        ')';
+      this.baseData.nodes.update([
+        {
+          id: node,
+          label: newLabel,
+          color: { background: 'grey' },
+        },
+      ]);
+      this.dfsStack.shift(); //.unshift(String(node));
+      this.dfsstacktable.renderRows();
+    }
+  }
+
   stepBack(algoStepResult): void {
+    if (this.selectedAlgorithmName == 'bfs') {
+      if (algoStepResult.value.startNode) {
+        this.bfsQueue.pop();
+      }
+      if (algoStepResult.value.current != undefined) {
+        this.bfsQueue.unshift(algoStepResult.value.current);
+      }
+      if (algoStepResult.value.newInQueue != undefined) {
+        for (let i = 0; i < algoStepResult.value.newInQueue.length; i++) {
+          this.bfsQueue.pop();
+        }
+      }
+      this.bfsqueuetable.renderRows();
+    }
+
+    if (this.selectedAlgorithmName == 'dfs') {
+      this.stepBackDfs(algoStepResult.value);
+      return;
+    }
+
     if (algoStepResult.value.startNode) {
       this.baseData.nodes.update([
         {
@@ -848,6 +928,11 @@ export class MainPage implements OnInit {
     this.directed = undefined;
     this.weighted = undefined;
     this.graph = null;
+    this.algorithmsComponent.resetAlgo();
+    this.bellmanFordTable = [];
+    this.dfsCounterMap = new Map();
+    this.dfsStack = [];
+    this.bfsQueue = [];
   }
 
   resetAlgo(): void {
