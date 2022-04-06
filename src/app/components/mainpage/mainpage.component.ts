@@ -132,6 +132,21 @@ export class MainPage implements OnInit {
   @ViewChild('dfsstacktable')
   dfsstacktable: MatTable<string>;
 
+  downloaGraph(): void {
+    var graphJson = this.graph.save();
+    var file = new Blob([graphJson], { type: '.txt' });
+    var a = document.createElement('a');
+    var url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = 'graph';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 0);
+  }
+
   onFileSelected(event): void {
     let file = event.target.files[0];
     let fileReader: FileReader = new FileReader();

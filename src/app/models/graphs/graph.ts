@@ -252,19 +252,17 @@ export class Graph {
   }
 
   save() {
-    let saveStr = '[';
-    this.adjList.forEach((value, key) => {
-      console.log('value', value);
+    let saveStr = '[\n';
+    this.singleEdges.forEach((value, key) => {
       value.map((node) => {
-        console.log('node', node);
         if (typeof node === 'object') {
-          saveStr += `{"from": ${key}, "to": ${node.node}, "weight": ${node.weight}},`;
+          saveStr += `{"from": ${key}, "to": ${node.node}, "weight": ${node.weight}},\n`;
         } else {
-          saveStr += `{"from": ${key}, "to": ${node}},`;
+          saveStr += `{"from": ${key}, "to": ${node}},\n`;
         }
       });
     });
-    saveStr = saveStr.slice(0, -1) + ']';
-    console.log('save string', saveStr);
+    saveStr = saveStr.slice(0, -2) + '\n]';
+    return saveStr;
   }
 }

@@ -41,6 +41,15 @@
   <br />
   <button
     mat-button
+    (click)="downloaGraph()"
+    [disabled]="
+      directed == undefined || weighted == undefined || graph == undefined
+    "
+  >
+    Download
+  </button>
+  <button
+    mat-button
     (click)="clearEdges()"
     [disabled]="
       directed == undefined || weighted == undefined || graph == undefined
