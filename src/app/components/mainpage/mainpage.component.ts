@@ -22,6 +22,8 @@ import { DirectedUnweightedGraph } from '../../models/graphs/directedunweighted.
 import { UndirectedUnweightedGraph } from '../../models/graphs/undirectedunweighted.graph';
 import { UndirectedWeightedGraph } from '../../models/graphs/undirectedweighted.graph';
 
+import { GraphParserService } from '../../services/graphparserservice';
+
 import { MatTable } from '@angular/material/table';
 
 declare var vis: any;
@@ -40,6 +42,7 @@ export interface DfsNode {
   selector: 'mainpage',
   templateUrl: './mainpage.component.html',
   styleUrls: ['./mainpage.component.css'],
+  providers: [GraphParserService],
 })
 export class MainPage implements OnInit {
   @ViewChild('siteConfigNetwork')
@@ -65,8 +68,6 @@ export class MainPage implements OnInit {
   edgeHighlightColor: string = 'orange';
   nodeVisitedColor: string = 'grey';
   nodeFinishedColor: string = 'balck';
-
-  graphText: string;
 
   network: any = null;
   seed: number = 2;
@@ -114,7 +115,10 @@ export class MainPage implements OnInit {
     }
   }
 
-  constructor(public dialog: MatDialog) {}
+  constructor(
+    public dialog: MatDialog,
+    private graphParserService: GraphParserService
+  ) {}
 
   @ViewChild('algorithmsComponent')
   algorithmsComponent: Algorithms;
@@ -127,6 +131,38 @@ export class MainPage implements OnInit {
 
   @ViewChild('dfsstacktable')
   dfsstacktable: MatTable<string>;
+
+  onFileSelected(event): void {
+    let file = event.target.files[0];
+    let fileReader: FileReader = new FileReader();
+    fileReader.onloadend = () => {
+      console.log('onloadend', fileReader.result);
+      if (
+        this.directed != undefined &&
+        this.weighted != undefined &&
+        fileReader.result != undefined
+      ) {
+        let nodesAndEdges = this.graphParserService.parseGraph(
+          this.graph,
+          this.directed,
+          this.weighted,
+          String(fileReader.result)
+        );
+
+        let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
+        let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
+        this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+        this.setupNetwork();
+
+        this.graph.print();
+
+        this.graphIsConnected = this.graph.isConnected();
+        this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+      }
+    };
+
+    fileReader.readAsText(file);
+  }
 
   newTable(): void {
     this.bellmanFordTable = [];
@@ -250,81 +286,22 @@ export class MainPage implements OnInit {
     }
   }
 
-  drawGraph(): void {
-    let rawJson = this.graphText.replace(/\n/g, '').replace(' ', '');
-    let valuesJson = JSON.parse(rawJson);
+  drawGraph(graphText): void {
+    if (this.directed != undefined && this.weighted != undefined) {
+      let nodesAndEdges = this.graphParserService.parseGraph(
+        this.graph,
+        this.directed,
+        this.weighted,
+        graphText
+      );
 
-    this.nodesFromJson = [];
-    this.edgesFromJson = [];
-
-    for (let v in valuesJson) {
-      if (!this.weighted) {
-        this.graph.addEdge(valuesJson[v].from, valuesJson[v].to);
-        if (this.directed) {
-          this.edgesFromJson.push({
-            id: String(valuesJson[v].from) + String(valuesJson[v].to),
-            from: valuesJson[v].from,
-            to: valuesJson[v].to,
-            arrows: 'to',
-          });
-        } else {
-          this.edgesFromJson.push({
-            id: String(valuesJson[v].from) + String(valuesJson[v].to),
-            from: valuesJson[v].from,
-            to: valuesJson[v].to,
-          });
-        }
-      } else {
-        this.graph.addEdge(
-          valuesJson[v].from,
-          valuesJson[v].to,
-          valuesJson[v].weight
-        );
-        if (this.directed) {
-          this.edgesFromJson.push({
-            id: String(valuesJson[v].from) + String(valuesJson[v].to),
-            from: valuesJson[v].from,
-            to: valuesJson[v].to,
-            arrows: 'to',
-            label: String(valuesJson[v].weight),
-          });
-        } else {
-          this.edgesFromJson.push({
-            id: String(valuesJson[v].from) + String(valuesJson[v].to),
-            from: valuesJson[v].from,
-            to: valuesJson[v].to,
-            label: String(valuesJson[v].weight),
-          });
-        }
-      }
-
-      if (
-        this.nodesFromJson.find((obj) => obj.id == valuesJson[v].from) ==
-        undefined
-      ) {
-        this.nodesFromJson.push({
-          id: valuesJson[v].from,
-          label: String(valuesJson[v].from),
-        });
-      }
-
-      if (
-        this.nodesFromJson.find((obj) => obj.id == valuesJson[v].to) ==
-        undefined
-      ) {
-        this.nodesFromJson.push({
-          id: valuesJson[v].to,
-          label: String(valuesJson[v].to),
-        });
-      }
+      let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
+      let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
+      this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+      this.setupNetwork();
+      this.graphIsConnected = this.graph.isConnected();
+      this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
     }
-
-    let nodesDataSet = new vis.DataSet(this.nodesFromJson);
-    let edgesDataSet = new vis.DataSet(this.edgesFromJson);
-    this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
-    this.setupNetwork();
-    this.graphIsConnected = this.graph.isConnected();
-    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
 
   setNodesAndEdges(): void {}
@@ -409,14 +386,22 @@ export class MainPage implements OnInit {
       .open(AddGraphDialog, {
         width: '300px',
         height: '350px',
-        data: {},
+        data: {
+          directed: this.directed,
+          weighted: this.weighted,
+          graph: this.graph,
+        },
       })
       .afterClosed()
       .subscribe((result) => {
-        let nodesDataSet = new vis.DataSet(result.nodesFromJson);
-        let edgesDataSet = new vis.DataSet(result.edgesFromJson);
+        console.log('result', result);
+        let nodesDataSet = new vis.DataSet(result.nodes);
+        let edgesDataSet = new vis.DataSet(result.edges);
         this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
         this.setupNetwork();
+
+        this.graph.print();
+
         this.graphIsConnected = this.graph.isConnected();
         this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
       });

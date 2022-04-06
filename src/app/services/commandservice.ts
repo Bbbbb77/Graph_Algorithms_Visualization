@@ -35,7 +35,7 @@ export class CommandService {
 
   do() {
     let result = this.generator.next();
-    console.log('algo result', result);
+    console.log('do command', result);
     this.executed.push(result);
     this.history.push(result);
     return result;
@@ -43,12 +43,14 @@ export class CommandService {
 
   undo() {
     let command = this.executed.pop();
+    console.log('undo command', command);
     this.unexecuted.push(command);
     return command;
   }
 
   redo() {
     let command = this.unexecuted.pop();
+    console.log('redo command', command);
     this.executed.push(command);
     return command;
   }

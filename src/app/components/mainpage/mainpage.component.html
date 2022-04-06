@@ -31,6 +31,14 @@
   >
     Add graph
   </button>
+  <input
+    type="file"
+    [disabled]="
+      directed == undefined || weighted == undefined || graph == undefined
+    "
+    (change)="onFileSelected($event)"
+  />
+  <br />
   <button
     mat-button
     (click)="clearEdges()"
@@ -120,11 +128,11 @@
       </table>
     </div>
     <div>
-      <textarea matInput [(ngModel)]="graphText" rows="13" cols="30"></textarea>
+      <textarea matInput #graphInput rows="13" cols="30"></textarea>
       <br />
       <button
         mat-button
-        (click)="drawGraph()"
+        (click)="drawGraph(graphInput.value)"
         [disabled]="
           directed == undefined || weighted == undefined || graph == undefined
         "

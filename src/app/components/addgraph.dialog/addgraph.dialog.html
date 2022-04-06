@@ -2,10 +2,10 @@
   <h2>Graph from text</h2>
   <mat-form-field class="textInput">
     <mat-label> add graph </mat-label>
-    <textarea matInput [ngModel]="graphText" rows="10" cols="50"></textarea>
+    <textarea matInput #graphInput rows="10" cols="30"></textarea>
   </mat-form-field>
   <mat-dialog-actions class="buttons">
-    <button mat-button (click)="draw()">Draw</button>
+    <button mat-button (click)="draw(graphInput.value)">Draw</button>
     <button mat-button (click)="cancel()">Cancel</button>
   </mat-dialog-actions>
 </div>
