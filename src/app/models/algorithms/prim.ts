@@ -60,6 +60,7 @@ export function* primMST(startNode, Graph) {
   let visited = new Map();
   let value = new Map();
   let connection = new Map();
+  let pervDestNodes = new Map();
 
   Graph.getNodes().map((node) => {
     value.set(node, Number.MAX_VALUE);
@@ -70,6 +71,8 @@ export function* primMST(startNode, Graph) {
   let queue: any[] = [];
   queue.push({ node: startNode, weight: 0 });
   value.set(startNode, 0);
+
+  yield { startNode: startNode };
 
   while (queue.length != 0) {
     let nodePair = queue.shift(); //queue[0].node;
@@ -89,8 +92,16 @@ export function* primMST(startNode, Graph) {
           return a.weight - b.weight;
         });
         if (newNext) {
-          yield { current: nodePair.node, newNext: vertex, weight: weight };
+          let prev = pervDestNodes.get(vertex);
+          pervDestNodes.set(vertex, nodePair.node);
+          yield {
+            current: nodePair.node,
+            newNext: vertex,
+            weight: weight,
+            prevCurrent: prev,
+          };
         } else {
+          pervDestNodes.set(vertex, nodePair.node);
           yield { current: nodePair.node, next: vertex, weight: weight };
         }
       }

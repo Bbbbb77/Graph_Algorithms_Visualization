@@ -15,6 +15,7 @@ export function* dijkstra(start, graph) {
   let adj = graph.getAdjList();
   let distances = new Map();
   let sptSet = new Map();
+  let pervDestNodes = new Map();
 
   graph.getNodes().map((node) => {
     distances.set(node, Number.MAX_VALUE);
@@ -49,8 +50,16 @@ export function* dijkstra(start, graph) {
         w = adj.get(u)[v].weight;
 
         if (newNext) {
-          yield { current: from, newNext: to, weight: distances.get(to) };
+          let prev = pervDestNodes.get(from);
+          pervDestNodes.set(from, to);
+          yield {
+            current: from,
+            newNext: to,
+            weight: distances.get(to),
+            prevNext: prev,
+          };
         } else {
+          pervDestNodes.set(from, to);
           yield { current: from, next: to, weight: distances.get(to) };
         }
       }
