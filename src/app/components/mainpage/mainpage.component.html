@@ -1,80 +1,89 @@
 <div class="container">
-  <mat-button-toggle-group
-    [(ngModel)]="directed"
-    [disabled]="graph != undefined"
-  >
-    <mat-button-toggle [value]="true">Directed</mat-button-toggle>
-    <mat-button-toggle [value]="false">Undericted</mat-button-toggle>
-  </mat-button-toggle-group>
-  <mat-button-toggle-group
-    [(ngModel)]="weighted"
-    [disabled]="graph != undefined"
-  >
-    <mat-button-toggle [value]="true">Weighted</mat-button-toggle>
-    <mat-button-toggle [value]="false">Unweighted</mat-button-toggle>
-  </mat-button-toggle-group>
-  <button
-    mat-button
-    (click)="createGraph()"
-    [disabled]="
-      directed == undefined || weighted == undefined || graph != undefined
-    "
-  >
-    Create
-  </button>
-  <button
-    mat-button
-    (click)="addGraph()"
-    [disabled]="
-      directed == undefined || weighted == undefined || graph == undefined
-    "
-  >
-    Add graph
-  </button>
-  <input
-    type="file"
-    [disabled]="
-      directed == undefined || weighted == undefined || graph == undefined
-    "
-    (change)="onFileSelected($event)"
-  />
-  <br />
-  <button
-    mat-button
-    (click)="downloaGraph()"
-    [disabled]="
-      directed == undefined || weighted == undefined || graph == undefined
-    "
-  >
-    Download
-  </button>
-  <button
-    mat-button
-    (click)="clearEdges()"
-    [disabled]="
-      directed == undefined || weighted == undefined || graph == undefined
-    "
-  >
-    Clear edges
-  </button>
-  <button
-    mat-button
-    (click)="clearAll()"
-    [disabled]="
-      directed == undefined || weighted == undefined || graph == undefined
-    "
-  >
-    Clear all
-  </button>
-  <button
-    mat-button
-    (click)="reset()"
-    [disabled]="
-      directed == undefined || weighted == undefined || graph == undefined
-    "
-  >
-    Reset
-  </button>
+  <div style="margin: 5px">
+    <button mat-button (click)="petersenGraph()">Petersen</button>
+    <button mat-button (click)="housesWells()">3 Houses 3 Wells</button>
+    <button mat-button (click)="butterfly()">Butterfly</button>
+    <button mat-button (click)="positions()">Positions</button>
+  </div>
+  <div style="margin: 5px">
+    <mat-button-toggle-group
+      [(ngModel)]="directed"
+      [disabled]="graph != undefined"
+    >
+      <mat-button-toggle [value]="true">Directed</mat-button-toggle>
+      <mat-button-toggle [value]="false">Undericted</mat-button-toggle>
+    </mat-button-toggle-group>
+    <mat-button-toggle-group
+      [(ngModel)]="weighted"
+      [disabled]="graph != undefined"
+    >
+      <mat-button-toggle [value]="true">Weighted</mat-button-toggle>
+      <mat-button-toggle [value]="false">Unweighted</mat-button-toggle>
+    </mat-button-toggle-group>
+    <button
+      mat-button
+      (click)="createGraph()"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph != undefined
+      "
+    >
+      Create
+    </button>
+    <button
+      mat-button
+      (click)="addGraph()"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
+    >
+      Add graph
+    </button>
+    <input
+      type="file"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
+      (change)="onFileSelected($event)"
+    />
+  </div>
+  <div style="margin: 5px">
+    <button
+      mat-button
+      (click)="downloaGraph()"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
+    >
+      Download
+    </button>
+    <button
+      mat-button
+      (click)="clearEdges()"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
+    >
+      Clear edges
+    </button>
+    <button
+      mat-button
+      (click)="clearAll()"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
+    >
+      Clear all
+    </button>
+    <button
+      mat-button
+      (click)="reset()"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
+    >
+      Reset
+    </button>
+  </div>
   <div style="display: flex">
     <div id="mynetwork" #siteConfigNetwork></div>
     <div

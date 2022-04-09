@@ -70,7 +70,10 @@ export class MainPage implements OnInit {
   nodeFinishedColor: string = 'balck';
 
   network: any = null;
-  seed: number = 2;
+  seed: number = 1;
+  smoothEnabled: boolean = false;
+  physicsEnabled: boolean = true;
+
   nodes: any[];
   edges: any[];
   baseData;
@@ -113,6 +116,147 @@ export class MainPage implements OnInit {
     } else {
       this.selectedAlgorithmName = '';
     }
+  }
+
+  positions(): void {
+    console.log('positions', this.network.getPositions());
+  }
+
+  butterfly(): void {
+    let g = `[
+      {"from" : 1, "to" : 3}, 
+      {"from" : 1, "to" : 4}, 
+      {"from" : 2, "to" : 3},
+      {"from" : 2, "to" : 5},
+      {"from" : 3, "to" : 4},
+      {"from" : 3, "to" : 5}
+      ]`;
+
+    this.smoothEnabled = true;
+    this.physicsEnabled = false;
+    this.directed = false;
+    this.weighted = false;
+    this.graph = new UndirectedUnweightedGraph();
+
+    let nodesAndEdges = this.graphParserService.parseGraph(
+      this.graph,
+      this.directed,
+      this.weighted,
+      g
+    );
+
+    let nodes = [
+      { id: 1, label: '1', x: 100, y: 75 },
+      { id: 2, label: '2', x: 200, y: 75 },
+      { id: 3, label: '3', x: 150, y: 125 },
+      { id: 4, label: '4', x: 100, y: 175 },
+      { id: 5, label: '5', x: 200, y: 175 },
+    ];
+
+    let nodesDataSet = new vis.DataSet(nodes);
+    let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
+    this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+    this.setupNetwork();
+    this.graphIsConnected = this.graph.isConnected();
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+  }
+
+  housesWells(): void {
+    let g = `[
+      {"from" : 1, "to" : 4}, 
+      {"from" : 1, "to" : 5}, 
+      {"from" : 1, "to" : 6},
+      {"from" : 2, "to" : 4},
+      {"from" : 2, "to" : 5},
+      {"from" : 2, "to" : 6},
+      {"from" : 3, "to" : 4},
+      {"from" : 3, "to" : 5},
+      {"from" : 3, "to" : 6}
+      ]`;
+
+    this.smoothEnabled = true;
+    this.physicsEnabled = false;
+    this.directed = false;
+    this.weighted = false;
+    this.graph = new UndirectedUnweightedGraph();
+
+    let nodesAndEdges = this.graphParserService.parseGraph(
+      this.graph,
+      this.directed,
+      this.weighted,
+      g
+    );
+
+    let nodes = [
+      { id: 1, label: '1', x: 160, y: 75 },
+      { id: 2, label: '2', x: 260, y: 75 },
+      { id: 3, label: '3', x: 360, y: 75 },
+      { id: 4, label: '4', x: 160, y: 225 },
+      { id: 5, label: '5', x: 260, y: 225 },
+      { id: 6, label: '6', x: 360, y: 225 },
+    ];
+
+    let nodesDataSet = new vis.DataSet(nodes);
+    let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
+    this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+    this.setupNetwork();
+    this.graphIsConnected = this.graph.isConnected();
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+  }
+
+  petersenGraph(): void {
+    let g = `[
+      {"from" : 1, "to" : 3}, 
+      {"from" : 1, "to" : 2}, 
+      {"from" : 1, "to" : 6},
+      {"from" : 2, "to" : 7},
+      {"from" : 2, "to" : 8},
+      {"from" : 3, "to" : 4},
+      {"from" : 3, "to" : 9},
+      {"from" : 4, "to" : 5},
+      {"from" : 4, "to" : 8},
+      {"from" : 5, "to" : 6},
+      {"from" : 5, "to" : 7},
+      {"from" : 6, "to" : 10},
+      {"from" : 7, "to" : 9},
+      {"from" : 8, "to" : 10},
+      {"from" : 9, "to" : 10}   
+      ]`;
+
+    this.smoothEnabled = true;
+    this.physicsEnabled = false;
+    this.directed = false;
+    this.weighted = false;
+    this.graph = new UndirectedUnweightedGraph();
+
+    let nodesAndEdges = this.graphParserService.parseGraph(
+      this.graph,
+      this.directed,
+      this.weighted,
+      g
+    );
+
+    console.log('nodes', nodesAndEdges.nodes);
+
+    let nodes = [
+      { id: 1, label: '1', x: 260, y: 20 },
+      { id: 2, label: '2', x: 260, y: 80 },
+      { id: 3, label: '3', x: 50, y: 100 },
+      { id: 4, label: '4', x: 160, y: 130 },
+      { id: 5, label: '5', x: 360, y: 130 },
+      { id: 6, label: '6', x: 460, y: 100 },
+      { id: 7, label: '7', x: 200, y: 200 },
+      { id: 8, label: '8', x: 330, y: 200 },
+      { id: 9, label: '9', x: 80, y: 260 },
+      { id: 10, label: '10', x: 400, y: 260 },
+    ];
+
+    let nodesDataSet = new vis.DataSet(nodes);
+    let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
+    this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+    this.setupNetwork();
+    this.graphIsConnected = this.graph.isConnected();
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
 
   constructor(
@@ -228,9 +372,13 @@ export class MainPage implements OnInit {
 
   setupNetwork(): void {
     var options = {
+      physics: { enabled: this.physicsEnabled },
       layout: { randomSeed: this.seed },
       nodes: { borderWidth: 4, size: 100 },
-      edges: { color: { color: this.baseEdgeColor, inherit: false } },
+      edges: {
+        smooth: { enabled: this.smoothEnabled, type: 'continuous' },
+        color: { color: this.baseEdgeColor, inherit: false },
+      },
       manipulation: {
         addNode: (data, callback) => {
           this.addNode(data, callback);
@@ -288,6 +436,7 @@ export class MainPage implements OnInit {
 
     var container = this.networkContainer.nativeElement;
     this.network = new vis.Network(container, this.baseData, options);
+    console.log('network', this.network);
   }
 
   destroy(): void {
@@ -776,6 +925,8 @@ export class MainPage implements OnInit {
     this.dfsCounterMap = new Map();
     this.dfsStack = [];
     this.bfsQueue = [];
+    this.smoothEnabled = false;
+    this.physicsEnabled = true;
   }
 
   resetAlgo(): void {

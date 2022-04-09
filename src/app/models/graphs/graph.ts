@@ -1,9 +1,23 @@
-export function compareNodes(a: any, b: any) {
+export function compareNodes(a: number, b: number) {
   return a - b;
 }
 
-export function compareWeightedNodes(a: any, b: any) {
+export function compareWeightedNodes(
+  a: { node: number; weight: number },
+  b: { node: number; weight: number }
+) {
   return a.node - b.node;
+}
+
+export function compareCharacters(a: string, b: string) {
+  return a.toLowerCase().localeCompare(b.toLowerCase());
+}
+
+export function compareWeightedCharacters(
+  a: { node: string; weight: number },
+  b: { node: string; weight: number }
+) {
+  return a.node.toLowerCase().localeCompare(b.node.toLowerCase());
 }
 
 export class Graph {
