@@ -1,0 +1,142 @@
+import { Injectable } from '@angular/core';
+
+@Injectable()
+export class StorageSaveService {
+  keysHelper: string[] = ['first', 'second', 'third', 'fourth', 'fifth'];
+
+  constructor() {}
+
+  save(
+    directed: boolean,
+    weighted: boolean,
+    graphJson: string,
+    img: string
+  ): void {
+    let newValue = JSON.stringify({
+      directed: directed,
+      weighted: weighted,
+      graphJson: graphJson,
+      img: img,
+    });
+
+    if (localStorage.getItem('first') == undefined) {
+      localStorage.setItem('first', newValue);
+      return;
+    }
+
+    if (localStorage.getItem('second') == undefined) {
+      localStorage.setItem('second', newValue);
+      return;
+    }
+
+    if (localStorage.getItem('third') == undefined) {
+      localStorage.setItem('third', newValue);
+      return;
+    }
+
+    if (localStorage.getItem('fourth') == undefined) {
+      localStorage.setItem('fourth', newValue);
+      return;
+    }
+
+    if (localStorage.getItem('fifth') == undefined) {
+      localStorage.setItem('fifth', newValue);
+      return;
+    }
+
+    //this.shiftValues.shiftValues(value);
+
+    let prevKey = 'first';
+    localStorage.removeItem(prevKey);
+    for (let index = 0; index < this.keysHelper.length; index++) {
+      let key = this.keysHelper[index];
+      let value = localStorage.getItem(key);
+      if (value != undefined) {
+        localStorage.setItem(prevKey, value);
+      }
+      prevKey = key;
+      localStorage.removeItem(key);
+    }
+    localStorage.setItem('fifth', newValue);
+  }
+
+  deleteKeys(keys: string[]): void {}
+
+  delete(deleteKey: string) {
+    localStorage.removeItem(deleteKey);
+    let index = this.keysHelper.findIndex((k) => k == deleteKey);
+
+    let prevKey = deleteKey;
+    for (; index < this.keysHelper.length; index++) {
+      let key = this.keysHelper[index];
+      let value = localStorage.getItem(key);
+      if (value != undefined) {
+        localStorage.setItem(prevKey, value);
+      }
+      prevKey = key;
+      localStorage.removeItem(key);
+    }
+  }
+
+  load(): {
+    key: string;
+    graph: {
+      directed: boolean;
+      weighted: boolean;
+      graphJson: string;
+      img: string;
+    };
+  }[] {
+    let graphList: {
+      key: string;
+      graph: {
+        directed: boolean;
+        weighted: boolean;
+        graphJson: string;
+        img: string;
+      };
+    }[] = [];
+
+    let first = localStorage.getItem('first');
+    if (first != undefined) {
+      graphList.push({ key: 'first', graph: JSON.parse(first) });
+    }
+
+    let second = localStorage.getItem('second');
+    if (second != undefined) {
+      graphList.push({ key: 'second', graph: JSON.parse(second) });
+    }
+
+    let third = localStorage.getItem('third');
+    if (third != undefined) {
+      graphList.push({ key: 'third', graph: JSON.parse(third) });
+    }
+
+    let fourth = localStorage.getItem('fourth');
+    if (fourth != undefined) {
+      graphList.push({ key: 'fourth', graph: JSON.parse(fourth) });
+    }
+
+    let fifth = localStorage.getItem('fifth');
+    if (fifth != undefined) {
+      graphList.push({ key: 'fifth', graph: JSON.parse(fifth) });
+    }
+
+    return graphList;
+  }
+
+  private shiftValues(startKey): void {
+    /*let index = this.keysHelper.findIndex((k) => k == deleteKey);
+
+    let prevKey = deleteKey;
+    for (; index < this.keysHelper.length; index++) {
+      let key = this.keysHelper[index];
+      let value = localStorage.getItem(key);
+      if (value != undefined) {
+        localStorage.setItem(prevKey, value);
+      }
+      prevKey = key;
+      localStorage.removeItem(key);
+    }*/
+  }
+}

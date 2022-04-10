@@ -4,6 +4,7 @@
     <button mat-button (click)="housesWells()">3 Houses 3 Wells</button>
     <button mat-button (click)="butterfly()">Butterfly</button>
     <button mat-button (click)="positions()">Positions</button>
+    <button mat-button (click)="graphStr()">Graph str</button>
   </div>
   <div style="margin: 5px">
     <mat-button-toggle-group
@@ -38,6 +39,7 @@
     >
       Add graph
     </button>
+    <button mat-button (click)="loadGraph()">Load</button>
     <input
       type="file"
       [disabled]="
@@ -55,6 +57,15 @@
       "
     >
       Download
+    </button>
+    <button
+      mat-button
+      (click)="saveGraph()"
+      [disabled]="
+        directed == undefined || weighted == undefined || graph == undefined
+      "
+    >
+      Save
     </button>
     <button
       mat-button
@@ -157,6 +168,16 @@
       >
         Draw
       </button>
+      <br />
+      <button
+        mat-button
+        (click)="saveGraphToPNG()"
+        [disabled]="graph == undefined"
+      >
+        Capture
+      </button>
+      <br />
+      <img #imgCanvas style="width: 200px; height: 200px" />
     </div>
   </div>
   <randomgraph

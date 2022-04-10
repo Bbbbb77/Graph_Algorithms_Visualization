@@ -40,15 +40,11 @@ export class Graph {
   }
 
   addEdge(node_a: any, node_b: any, weight?: number) {
-    //console.log('addEdge');
     if (!this.singleEdges.has(node_a)) {
       this.singleEdges.set(node_a, []);
     }
 
     if (this.isNodesNumber == undefined) {
-      //console.log('addnode node', node_a);
-      //console.log('addnode typeof', typeof node_a);
-      //console.log('addnode isNaN(node)', isNaN(node_a));
       this.isNodesNumber = !isNaN(node_a);
     }
 
@@ -94,7 +90,6 @@ export class Graph {
   }
 
   addNode(node: any) {
-    //console.log('addnode');
     if (!this.singleEdges.has(node)) {
       this.singleEdges.set(node, []);
     }
@@ -107,20 +102,12 @@ export class Graph {
       this.nodes.push(node);
 
       if (this.isNodesNumber == undefined) {
-        //console.log('addnode node', node);
-        //console.log('addnode typeof', typeof node);
-        //console.log('addnode isNaN(node)', isNaN(node));
         this.isNodesNumber = !isNaN(node);
       }
-
       return true;
     } else {
       return false;
     }
-
-    /*if (!this.adjList.has(node)) {
-      this.adjList.set(node, []);
-    }*/
   }
 
   removeNode(node: any) {
@@ -261,22 +248,48 @@ export class Graph {
     console.log('\n\n');
     console.log('nodes', this.nodes);
     console.log('adjList', this.adjList);
-    //console.log("singleEdges", this.singleEdges);
+    console.log('singleEdges', this.singleEdges);
     console.log('\n\n');
+  }
+
+  hasEdge(node) {
+    let foundEdge = false;
+    this.singleEdges.forEach((value, key) => {
+      if (this.weighted) {
+        let index = value.findIndex((v) => (v.node = node));
+        if (index != -1) {
+          foundEdge = true;
+          return;
+        }
+      } else {
+        if (value.includes(node)) {
+          foundEdge = true;
+          return;
+        }
+      }
+    });
+    return foundEdge;
   }
 
   save() {
     let saveStr = '[\n';
     this.singleEdges.forEach((value, key) => {
-      value.map((node) => {
-        if (typeof node === 'object') {
-          saveStr += `{"from": ${key}, "to": ${node.node}, "weight": ${node.weight}},\n`;
-        } else {
-          saveStr += `{"from": ${key}, "to": ${node}},\n`;
+      if (value.length == 0) {
+        if (!this.hasEdge(key)) {
+          saveStr += `{"from":${key}},\n`;
         }
-      });
+      } else {
+        value.map((node) => {
+          if (typeof node === 'object') {
+            saveStr += `{"from": ${key}, "to": ${node.node}, "weight": ${node.weight}},\n`;
+          } else {
+            saveStr += `{"from": ${key}, "to": ${node}},\n`;
+          }
+        });
+      }
     });
     saveStr = saveStr.slice(0, -2) + '\n]';
+    console.log('saveStr', saveStr);
     return saveStr;
   }
 }

@@ -8,6 +8,8 @@ export class GraphParserService {
     let rawJson = graphJson.replace(/\n/g, '').replace(' ', '');
     let valuesJson = JSON.parse(rawJson);
 
+    console.log('valuejson', valuesJson);
+
     let nodesFromJson: { id: number; label: string }[] = [];
     let edgesFromJson: {
       id: string;
@@ -18,6 +20,19 @@ export class GraphParserService {
     }[] = [];
 
     for (let v in valuesJson) {
+      if (valuesJson[v].from != undefined && valuesJson[v].to == undefined) {
+        graph.addNode(valuesJson[v].from);
+        if (
+          nodesFromJson.find((obj) => obj.id == valuesJson[v].from) == undefined
+        ) {
+          nodesFromJson.push({
+            id: valuesJson[v].from,
+            label: String(valuesJson[v].from),
+          });
+        }
+        continue;
+      }
+
       if (!weighted) {
         graph.addEdge(valuesJson[v].from, valuesJson[v].to);
         if (directed) {

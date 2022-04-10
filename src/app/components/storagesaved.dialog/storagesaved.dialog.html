@@ -1,0 +1,22 @@
+<div>
+  <div style="display: flex; justify-content: space-between">
+    <h2>Saved graphs</h2>
+    <button mat-button (click)="closeDialog()">X</button>
+  </div>
+  <mat-list *ngFor="let g of savedGraphs">
+    <mat-list-item style="width: 500px; height: 450px">
+      <div>
+        <img src="{{g.graph.img}}" style="width: 500px; height: 400px" />
+        <div>
+          <button mat-button (click)="select(g.graph)">
+            <mat-icon>check</mat-icon>
+          </button>
+          <button mat-button (click)="delete(g.key)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </mat-list-item>
+    <mat-divider class="background-divider"></mat-divider>
+  </mat-list>
+</div>

@@ -16,6 +16,7 @@ import { RandomGraph } from './components/randomgraph.component/randomgraph.comp
 import { Algorithms } from './components/algorithms.component/algorithms.component';
 import { Player } from './components/player.component/player.component';
 import { ErrorMessageDialog } from './components/errormessage.dialog/errormessage.dialog';
+import { StorageSavedDialog } from './components/storagesaved.dialog/storagesaved.dialog';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { ErrorMessageDialog } from './components/errormessage.dialog/errormessag
     Algorithms,
     Player,
     ErrorMessageDialog,
+    StorageSavedDialog,
   ],
   imports: [
     BrowserModule,
@@ -47,6 +49,7 @@ import { ErrorMessageDialog } from './components/errormessage.dialog/errormessag
     Algorithms,
     Player,
     ErrorMessageDialog,
+    StorageSavedDialog,
   ],
 })
 export class AppModule {}

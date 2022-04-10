@@ -15,6 +15,7 @@ import { RandomGraph } from '../randomgraph.component/randomgraph.component';
 import { Algorithms } from '../algorithms.component/algorithms.component';
 import { Player } from '../player.component/player.component';
 import { ErrorMessageDialog } from '../errormessage.dialog/errormessage.dialog';
+import { StorageSavedDialog } from '../storagesaved.dialog/storagesaved.dialog';
 
 import { Graph } from '../../models/graphs/graph';
 import { DirectedWeightedGraph } from '../../models/graphs/directedweighted.graph';
@@ -23,6 +24,7 @@ import { UndirectedUnweightedGraph } from '../../models/graphs/undirectedunweigh
 import { UndirectedWeightedGraph } from '../../models/graphs/undirectedweighted.graph';
 
 import { GraphParserService } from '../../services/graphparserservice';
+import { StorageSaveService } from '../../services/storagesaveservice';
 
 import { MatTable } from '@angular/material/table';
 
@@ -42,7 +44,7 @@ export interface DfsNode {
   selector: 'mainpage',
   templateUrl: './mainpage.component.html',
   styleUrls: ['./mainpage.component.css'],
-  providers: [GraphParserService],
+  providers: [GraphParserService, StorageSaveService],
 })
 export class MainPage implements OnInit {
   @ViewChild('siteConfigNetwork')
@@ -73,6 +75,7 @@ export class MainPage implements OnInit {
   seed: number = 1;
   smoothEnabled: boolean = false;
   physicsEnabled: boolean = true;
+  canvasContext;
 
   nodes: any[];
   edges: any[];
@@ -99,15 +102,16 @@ export class MainPage implements OnInit {
   queueColumnHeaders: string[] = ['Node queue'];
   stackColumnHeaders: string[] = ['Node stack'];
 
+  graphStr(): void {
+    this.graph.save();
+  }
+
   selectedAlgorithmName: string = '';
   selectedAlgorithm(algorithmName) {
-    console.log('selectedalgorithm', algorithmName);
     if (algorithmName == 'bfs') {
       this.selectedAlgorithmName = 'bfs';
-      console.log('bfs');
     } else if (algorithmName == 'bellmanford') {
       this.selectedAlgorithmName = 'bellmanford';
-      console.log('bellmanford');
       if (this.weighted) {
         this.newTable();
       }
@@ -236,8 +240,6 @@ export class MainPage implements OnInit {
       g
     );
 
-    console.log('nodes', nodesAndEdges.nodes);
-
     let nodes = [
       { id: 1, label: '1', x: 260, y: 20 },
       { id: 2, label: '2', x: 260, y: 80 },
@@ -261,6 +263,7 @@ export class MainPage implements OnInit {
 
   constructor(
     public dialog: MatDialog,
+    private storageSaveService: StorageSaveService,
     private graphParserService: GraphParserService
   ) {}
 
@@ -291,11 +294,55 @@ export class MainPage implements OnInit {
     }, 0);
   }
 
+  loadGraph(): void {
+    this.dialog
+      .open(StorageSavedDialog, {
+        width: '600px',
+        height: '600px',
+        data: {},
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        console.log('graph closed result', result);
+        if (result.deleteKeys != undefined) {
+        }
+
+        if (result.graph != undefined) {
+          this.reset();
+          this.directed = Boolean(result.graph.directed);
+          this.weighted = Boolean(result.graph.weighted);
+          this.createGraph();
+          let nodesAndEdges = this.graphParserService.parseGraph(
+            this.graph,
+            this.directed,
+            this.weighted,
+            result.graph.graphJson
+          );
+          let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
+          let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
+          this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+          this.setupNetwork();
+          this.graphIsConnected = this.graph.isConnected();
+          this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+        }
+      });
+  }
+
+  saveGraph(): void {
+    if (this.directed != undefined && this.weighted != undefined) {
+      this.storageSaveService.save(
+        this.directed,
+        this.weighted,
+        this.graph.save(),
+        this.canvasContext.canvas.toDataURL()
+      );
+    }
+  }
+
   onFileSelected(event): void {
     let file = event.target.files[0];
     let fileReader: FileReader = new FileReader();
     fileReader.onloadend = () => {
-      console.log('onloadend', fileReader.result);
       if (
         this.directed != undefined &&
         this.weighted != undefined &&
@@ -370,6 +417,13 @@ export class MainPage implements OnInit {
     this.setupNetwork();
   }
 
+  @ViewChild('imgCanvas')
+  imgCanvas: ElementRef;
+
+  saveGraphToPNG(): void {
+    this.imgCanvas.nativeElement.src = this.canvasContext.canvas.toDataURL();
+  }
+
   setupNetwork(): void {
     var options = {
       physics: { enabled: this.physicsEnabled },
@@ -436,7 +490,9 @@ export class MainPage implements OnInit {
 
     var container = this.networkContainer.nativeElement;
     this.network = new vis.Network(container, this.baseData, options);
-    console.log('network', this.network);
+    this.network.on('afterDrawing', (ctx) => {
+      this.canvasContext = ctx;
+    });
   }
 
   destroy(): void {
@@ -558,7 +614,6 @@ export class MainPage implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        console.log('result', result);
         let nodesDataSet = new vis.DataSet(result.nodes);
         let edgesDataSet = new vis.DataSet(result.edges);
         this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
@@ -579,16 +634,20 @@ export class MainPage implements OnInit {
   }
 
   addEdgeWithoutDrag(data, callback): void {
-    this.dialog
-      .open(AddAndEditWeightedEdge, {
-        width: '300px',
-        height: '350px',
-        data: { label: 'Add weighted edge', editMode: false },
-      })
-      .afterClosed()
-      .subscribe((result) => {
-        this.saveEdgeData(data, callback, result);
-      });
+    if (this.weighted) {
+      this.dialog
+        .open(AddAndEditWeightedEdge, {
+          width: '300px',
+          height: '350px',
+          data: { label: 'Add weighted edge', editMode: false },
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          this.saveEdgeData(data, callback, result);
+        });
+    } else {
+      this.saveEdgeData(data, callback);
+    }
   }
 
   editEdgeWithoutDragFunc(data, callback): void {
@@ -795,7 +854,6 @@ export class MainPage implements OnInit {
   }
 
   stepBackDfs(value): void {
-    console.log('stepBackDfs value', value);
     if (value.startNode != undefined) {
       let node = value.startNode;
       let counter = value.startCounter;
@@ -930,19 +988,24 @@ export class MainPage implements OnInit {
   }
 
   resetAlgo(): void {
-    this.baseData.nodes.getIds().forEach((id) => {
-      this.baseData.nodes.update([
-        {
-          id: id,
-          color: { background: this.baseNodeColor, border: this.baseEdgeColor },
-        },
-      ]);
-    });
-    this.baseData.edges.getIds().forEach((id) => {
-      this.baseData.edges.update([
-        { id: id, color: { color: this.baseEdgeColor } },
-      ]);
-    });
+    if (this.baseData != undefined) {
+      this.baseData.nodes.getIds().forEach((id) => {
+        this.baseData.nodes.update([
+          {
+            id: id,
+            color: {
+              background: this.baseNodeColor,
+              border: this.baseEdgeColor,
+            },
+          },
+        ]);
+      });
+      this.baseData.edges.getIds().forEach((id) => {
+        this.baseData.edges.update([
+          { id: id, color: { color: this.baseEdgeColor } },
+        ]);
+      });
+    }
     //this.newTable();
   }
 
