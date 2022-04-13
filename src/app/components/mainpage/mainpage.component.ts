@@ -1040,4 +1040,13 @@ export class MainPage implements OnInit {
       this.baseData.edges.update([{ id: edgeId, color: { color: color } }]);
     }
   }
+
+  setGeneratedGraph(nodesAndEdges): void {
+    let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
+    let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
+    this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+    this.setupNetwork();
+    this.graphIsConnected = this.graph.isConnected();
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+  }
 }

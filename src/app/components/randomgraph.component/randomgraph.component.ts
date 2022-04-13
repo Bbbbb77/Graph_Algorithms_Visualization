@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'randomgraph',
@@ -20,6 +20,9 @@ export class RandomGraph implements OnInit {
   @Input()
   graph;
 
+  @Output()
+  graphFinished = new EventEmitter();
+
   constructor() {}
 
   ngOnInit(): void {}
@@ -31,6 +34,7 @@ export class RandomGraph implements OnInit {
   generateGraph(size: number) {
     this.nodes = [];
     this.edges = [];
+    this.graph.clear();
 
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
@@ -48,11 +52,11 @@ export class RandomGraph implements OnInit {
           let randomWeight = Math.floor(Math.random() * 20);
           if (randomWeight == 0) randomWeight += 1;
 
-          /* if (this.weighted) {
-            graph.addEdge(i, j, randomWeight);
+          if (this.weighted) {
+            this.graph.addEdge(i, j, randomWeight);
           } else {
-            graph.addEdge(i, j);
-          }*/
+            this.graph.addEdge(i, j);
+          }
 
           this.edges.push({
             id: String(i) + String(j),
@@ -78,5 +82,7 @@ export class RandomGraph implements OnInit {
         }
       }
     }
+    this.graph.print();
+    this.graphFinished.emit({ nodes: this.nodes, edges: this.edges });
   }
 }
