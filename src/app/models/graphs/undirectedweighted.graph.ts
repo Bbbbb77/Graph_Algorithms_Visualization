@@ -43,10 +43,19 @@ export class UndirectedWeightedGraph extends Graph {
     for (let i = 0; i < edgeList.length; i++) {
       if (edgeList[i].node == toNode) {
         edgeList[i].weight = newWeight;
+        this.singleEdges.get(fromNode)[i].weight = newWeight;
         break;
       }
     }
-    this.adjList.set(fromNode, edgeList);
+
+    var edgeList = this.adjList.get(toNode);
+    for (let i = 0; i < edgeList.length; i++) {
+      if (edgeList[i].node == fromNode) {
+        edgeList[i].weight = newWeight;
+        break;
+      }
+    }
+
     this.print();
   }
 

@@ -36,6 +36,7 @@ export class DirectedWeightedGraph extends Graph {
     for (let i = 0; i < edgeList.length; i++) {
       if (edgeList[i].node == toNode) {
         edgeList[i].weight = newWeight;
+        this.singleEdges.get(fromNode)[i].weight = newWeight;
         break;
       }
     }
