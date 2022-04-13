@@ -69,7 +69,8 @@ export class MainPage implements OnInit {
   baseEdgeColor: string = '#2b7ce9';
   edgeHighlightColor: string = 'orange';
   nodeVisitedColor: string = 'grey';
-  nodeFinishedColor: string = 'balck';
+  nodeFinishedColor: string = 'black';
+  nodeTextColor: string = 'white';
 
   network: any = null;
   seed: number = 1;
@@ -303,8 +304,8 @@ export class MainPage implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        console.log('graph closed result', result);
         if (result.deleteKeys != undefined) {
+          this.storageSaveService.deleteKeys(result.deleteKeys);
         }
 
         if (result.graph != undefined) {
@@ -348,6 +349,7 @@ export class MainPage implements OnInit {
         this.weighted != undefined &&
         fileReader.result != undefined
       ) {
+        console.log('result', fileReader.result);
         let nodesAndEdges = this.graphParserService.parseGraph(
           this.graph,
           this.directed,
@@ -355,6 +357,7 @@ export class MainPage implements OnInit {
           String(fileReader.result)
         );
 
+        console.log('nodesAndEges', nodesAndEdges);
         let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
         let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
         this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
@@ -542,6 +545,8 @@ export class MainPage implements OnInit {
             this.graphIsConnected = this.graph.isConnected();
             callback(data);
           }
+        } else {
+          callback(null);
         }
       });
   }
@@ -597,6 +602,8 @@ export class MainPage implements OnInit {
           } /*else {
             console.log('node not edited');
           }*/
+        } else {
+          callback(null);
         }
       });
   }
@@ -614,15 +621,17 @@ export class MainPage implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        let nodesDataSet = new vis.DataSet(result.nodes);
-        let edgesDataSet = new vis.DataSet(result.edges);
-        this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
-        this.setupNetwork();
+        if (result != undefined) {
+          let nodesDataSet = new vis.DataSet(result.nodes);
+          let edgesDataSet = new vis.DataSet(result.edges);
+          this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+          this.setupNetwork();
 
-        this.graph.print();
+          this.graph.print();
 
-        this.graphIsConnected = this.graph.isConnected();
-        this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+          this.graphIsConnected = this.graph.isConnected();
+          this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+        }
       });
   }
 
@@ -643,7 +652,11 @@ export class MainPage implements OnInit {
         })
         .afterClosed()
         .subscribe((result) => {
-          this.saveEdgeData(data, callback, result);
+          if (result != undefined) {
+            this.saveEdgeData(data, callback, result);
+          } else {
+            callback(null);
+          }
         });
     } else {
       this.saveEdgeData(data, callback);
@@ -659,7 +672,11 @@ export class MainPage implements OnInit {
       })
       .afterClosed()
       .subscribe((result) => {
-        this.editEdgeData(data, callback, result);
+        if (result != undefined) {
+          this.editEdgeData(data, callback, result);
+        } else {
+          callback(null);
+        }
       });
   }
 
@@ -736,7 +753,7 @@ export class MainPage implements OnInit {
     }
 
     if (value.current != undefined && value.newInQueue != undefined) {
-      this.colorNode(value.current, this.nodeFinishedColor);
+      this.colorNode(value.current, this.nodeFinishedColor, this.nodeTextColor);
       value.newInQueue.forEach((node) => {
         this.colorNode(node, this.nodeVisitedColor);
         this.colorEdge(value.current, node, this.edgeHighlightColor);
@@ -744,7 +761,7 @@ export class MainPage implements OnInit {
     }
 
     if (value.current != undefined) {
-      this.colorNode(value.current, this.nodeFinishedColor);
+      this.colorNode(value.current, this.nodeFinishedColor, this.nodeTextColor);
     }
 
     if (value.next != undefined) {
@@ -846,6 +863,7 @@ export class MainPage implements OnInit {
           id: node,
           label: newLabel,
           color: { background: this.nodeFinishedColor },
+          font: { color: this.nodeTextColor },
         },
       ]);
       this.dfsStack.unshift(String(node));
@@ -857,7 +875,7 @@ export class MainPage implements OnInit {
     if (value.startNode != undefined) {
       let node = value.startNode;
       let counter = value.startCounter;
-      let newLabel = String(node); //+ ' (' + String(counter) + ')';
+      let newLabel = String(node);
       this.baseData.nodes.update([
         {
           id: node,
@@ -871,7 +889,7 @@ export class MainPage implements OnInit {
     if (value.next != undefined) {
       let node = value.next;
       let counter = value.startCounter;
-      let newLabel = String(node); // + ' (' + String(counter) + ')';
+      let newLabel = String(node);
       this.baseData.nodes.update([
         {
           id: node,
@@ -900,11 +918,7 @@ export class MainPage implements OnInit {
       let node = value.current;
       let endCounter = value.endCounter;
       let counter = this.dfsCounterMap.get(node);
-      let newLabel =
-        String(node) +
-        ' (' +
-        String(counter) /*+ '/' + String(endCounter)*/ +
-        ')';
+      let newLabel = String(node) + ' (' + String(counter) + ')';
       this.baseData.nodes.update([
         {
           id: node,
@@ -912,7 +926,7 @@ export class MainPage implements OnInit {
           color: { background: this.nodeVisitedColor },
         },
       ]);
-      this.dfsStack.shift(); //.unshift(String(node));
+      this.dfsStack.shift();
       this.dfsstacktable.renderRows();
     }
   }
@@ -993,10 +1007,12 @@ export class MainPage implements OnInit {
         this.baseData.nodes.update([
           {
             id: id,
+            label: String(id),
             color: {
               background: this.baseNodeColor,
               border: this.baseEdgeColor,
             },
+            font: { color: 'black' },
           },
         ]);
       });
@@ -1006,11 +1022,12 @@ export class MainPage implements OnInit {
         ]);
       });
     }
-    //this.newTable();
   }
 
-  colorNode(nodeId, color): void {
-    this.baseData.nodes.update([{ id: nodeId, color: { background: color } }]);
+  colorNode(nodeId, color, textColor?: string): void {
+    this.baseData.nodes.update([
+      { id: nodeId, color: { background: color }, font: { color: textColor } },
+    ]);
   }
 
   colorEdge(from, to, color): void {

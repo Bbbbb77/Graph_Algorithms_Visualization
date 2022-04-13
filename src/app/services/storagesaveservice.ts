@@ -60,7 +60,24 @@ export class StorageSaveService {
     localStorage.setItem('fifth', newValue);
   }
 
-  deleteKeys(keys: string[]): void {}
+  deleteKeys(keys: string[]): void {
+    keys.map((key) => {
+      localStorage.removeItem(key);
+    });
+
+    let listObjects: string[] = [];
+    this.keysHelper.map((key) => {
+      let value = localStorage.getItem(key);
+      if (value != undefined) {
+        listObjects.push(value);
+        localStorage.removeItem(key);
+      }
+    });
+
+    for (let i = 0; i < listObjects.length; i++) {
+      localStorage.setItem(this.keysHelper[i], listObjects[i]);
+    }
+  }
 
   delete(deleteKey: string) {
     localStorage.removeItem(deleteKey);
