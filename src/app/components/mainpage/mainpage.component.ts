@@ -104,6 +104,7 @@ export class MainPage implements OnInit {
   stackColumnHeaders: string[] = ['Node stack'];
 
   graphStr(): void {
+    this.graph.print();
     this.graph.save();
   }
 
@@ -532,7 +533,7 @@ export class MainPage implements OnInit {
   addNode(data, callback): void {
     this.dialog
       .open(AddAndEditNodeDialog, {
-        width: '250px',
+        width: '230px',
         height: '250px',
         data: { label: 'Add new node', nodeValue: '5', editMode: false },
       })
@@ -554,7 +555,7 @@ export class MainPage implements OnInit {
   editNode(data, callback): void {
     this.dialog
       .open(AddAndEditNodeDialog, {
-        width: '250px',
+        width: '230px',
         height: '250px',
         data: { label: 'Edit node', nodeValue: data.label, editMode: true },
       })
@@ -646,8 +647,8 @@ export class MainPage implements OnInit {
     if (this.weighted) {
       this.dialog
         .open(AddAndEditWeightedEdge, {
-          width: '300px',
-          height: '350px',
+          width: '230px',
+          height: '250px',
           data: { label: 'Add weighted edge', editMode: false },
         })
         .afterClosed()
