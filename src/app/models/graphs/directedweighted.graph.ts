@@ -42,9 +42,6 @@ export class DirectedWeightedGraph extends Graph {
   }
 
   removeEdge(node_a: any, node_b: any) {
-    console.log('node_a: ', node_a);
-    console.log('node_b: ', node_b);
-
     if (this.adjList.get(node_a) != undefined) {
       var index1 = this.adjList.get(node_a).findIndex((node) => {
         node.node == node_b;

@@ -53,7 +53,7 @@ export class UndirectedWeightedGraph extends Graph {
   removeEdge(node_a, node_b) {
     if (this.adjList.get(node_a) != undefined) {
       var index1 = this.adjList.get(node_a).findIndex((node) => {
-        return node.node == node_b;
+        node.node == node_b;
       });
       if (index1 > -1) {
         this.adjList.get(node_a).splice(index1, 1);
@@ -62,14 +62,12 @@ export class UndirectedWeightedGraph extends Graph {
 
     if (this.adjList.get(node_b) != undefined) {
       var index2 = this.adjList.get(node_b).findIndex((node) => {
-        return node.node == node_a;
+        node.node == node_a;
       });
       if (index2 > -1) {
         this.adjList.get(node_b).splice(index2, 1);
       }
     }
-
-    super.clearAdjList();
     this.print();
   }
 
@@ -81,7 +79,6 @@ export class UndirectedWeightedGraph extends Graph {
     });
 
     super.removeNode(node);
-    super.clearAdjList();
     this.print();
   }
 

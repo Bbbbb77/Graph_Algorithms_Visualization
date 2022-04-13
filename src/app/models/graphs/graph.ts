@@ -24,9 +24,9 @@ export class Graph {
   nodes: any[] = [];
   singleEdges = new Map();
   adjList = new Map();
-  hasNegativeWeight = false;
-  isNodesNumber: boolean;
-  weighted: boolean;
+  hasNegativeWeight: boolean = false;
+  isNodesNumber: boolean = true;
+  weighted: boolean = false;
   visited;
 
   constructor() {}
@@ -157,7 +157,9 @@ export class Graph {
     this.nodes = [];
     this.singleEdges.clear();
     this.adjList.clear();
-    this.visited.clear();
+    this.hasNegativeWeight = false;
+    this.isNodesNumber = true;
+    this.weighted = false;
   }
   /*
   resetVisited() {
