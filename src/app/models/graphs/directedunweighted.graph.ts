@@ -40,7 +40,6 @@ export class DirectedUnweightedGraph extends Graph {
       }
     }
 
-    super.clearAdjList();
     this.print();
   }
 
@@ -52,7 +51,6 @@ export class DirectedUnweightedGraph extends Graph {
     });
 
     super.removeNode(node);
-    super.clearAdjList();
     this.print();
   }
 

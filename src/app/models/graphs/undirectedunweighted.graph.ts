@@ -49,7 +49,6 @@ export class UndirectedUnweightedGraph extends Graph {
       }
     }
 
-    super.clearAdjList();
     this.print();
   }
 
@@ -61,7 +60,6 @@ export class UndirectedUnweightedGraph extends Graph {
     });
 
     super.removeNode(node);
-    super.clearAdjList();
     this.print();
   }
 

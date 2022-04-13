@@ -47,14 +47,13 @@ export class DirectedWeightedGraph extends Graph {
 
     if (this.adjList.get(node_a) != undefined) {
       var index1 = this.adjList.get(node_a).findIndex((node) => {
-        return node.node == node_b;
+        node.node == node_b;
       });
       if (index1 > -1) {
         this.adjList.get(node_a).splice(index1, 1);
       }
     }
 
-    super.clearAdjList();
     this.print();
   }
 
@@ -66,7 +65,6 @@ export class DirectedWeightedGraph extends Graph {
     });
 
     super.removeNode(node);
-    super.clearAdjList();
     this.print();
   }
 

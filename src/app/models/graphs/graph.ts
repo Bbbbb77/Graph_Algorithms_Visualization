@@ -81,14 +81,6 @@ export class Graph {
     }
   }
 
-  clearAdjList() {
-    this.adjList.forEach((value, key, map) => {
-      if (value.length == 0) {
-        this.adjList.delete(key);
-      }
-    });
-  }
-
   addNode(node: any) {
     if (!this.singleEdges.has(node)) {
       this.singleEdges.set(node, []);
@@ -149,6 +141,9 @@ export class Graph {
     let hasNegativeWeight = false;
     for (let i = 0; i < this.nodes.length; i++) {
       let edges = this.adjList.get(this.nodes[i]);
+      if (edges.length == 0) {
+        continue;
+      }
       for (let j = 0; j < edges.length; j++) {
         if (edges[j].weight < 0) {
           return true;
