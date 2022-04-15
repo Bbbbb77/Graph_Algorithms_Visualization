@@ -10,7 +10,6 @@ import { dfs } from '../../models/algorithms/dfs';
 import { dijkstra } from '../../models/algorithms/dijkstra';
 import { primMST } from '../../models/algorithms/prim';
 import { kruskal } from '../../models/algorithms/kruskal';
-import { topologicalSorting } from '../../models/algorithms/topologicalsorting';
 import { bellmanFord } from '../../models/algorithms/bellmanford';
 import { floydWarshall } from '../../models/algorithms/floydWarshall';
 
@@ -171,13 +170,6 @@ export class Algorithms implements OnInit {
     this.algoNameEmitter.emit(this.selectedAlgo);
     this.generator = floydWarshall(this.graph);
     this.commandService.setAlgoGenerator(this.generator);
-  }
-
-  topSort(): void {
-    if (!this.isStartNodeCorrect()) {
-      return;
-    }
-    topologicalSorting(this.graph);
   }
 
   formatLabel(value: number) {

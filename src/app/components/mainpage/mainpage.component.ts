@@ -97,11 +97,13 @@ export class MainPage implements OnInit {
   bellmanFordTable: BellmanFordTableElement[] = [];
   dfsCounterMap = new Map();
   dfsStack: string[] = [];
+  topSort: string[] = [];
   bfsQueue: string[] = [];
 
   distaceColumnHeaders: string[] = ['Node', 'Distance'];
   queueColumnHeaders: string[] = ['Node queue'];
   stackColumnHeaders: string[] = ['Node stack'];
+  topSortColumnHeaders: string[] = ['Top sort'];
 
   graphStr(): void {
     this.graph.print();
@@ -283,6 +285,9 @@ export class MainPage implements OnInit {
 
   @ViewChild('dfsstacktable')
   dfsstacktable: MatTable<string>;
+
+  @ViewChild('topsorttable')
+  topsorttable: MatTable<string>;
 
   downloaGraph(): void {
     var graphJsonStr = this.graph.save();
@@ -793,6 +798,8 @@ export class MainPage implements OnInit {
         },
       ]);
       this.dfsCounterMap.set(node, counter);
+      this.dfsStack.unshift(String(node));
+      this.dfsstacktable.renderRows();
     }
 
     if (value.next != undefined) {
@@ -821,6 +828,8 @@ export class MainPage implements OnInit {
           { id: edgeId, color: { color: this.edgeHighlightColor } },
         ]);
       }
+      this.dfsStack.unshift(String(node));
+      this.dfsstacktable.renderRows();
     }
 
     if (value.current != undefined && value.next == undefined) {
@@ -837,7 +846,10 @@ export class MainPage implements OnInit {
           font: { color: this.nodeTextColor },
         },
       ]);
-      this.dfsStack.unshift(String(node));
+      this.topSort.unshift(String(node));
+      this.topsorttable.renderRows();
+
+      this.dfsStack.shift();
       this.dfsstacktable.renderRows();
     }
   }
@@ -967,9 +979,13 @@ export class MainPage implements OnInit {
     this.bellmanFordTable = [];
     this.dfsCounterMap = new Map();
     this.dfsStack = [];
+    this.topSort = [];
     this.bfsQueue = [];
     this.smoothEnabled = false;
     this.physicsEnabled = true;
+
+    this.dfsstacktable.renderRows();
+    this.topsorttable.renderRows();
   }
 
   resetAlgo(): void {
