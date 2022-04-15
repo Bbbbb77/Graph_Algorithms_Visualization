@@ -6,15 +6,8 @@ export class StorageSaveService {
 
   constructor() {}
 
-  save(
-    directed: boolean,
-    weighted: boolean,
-    graphJson: string,
-    img: string
-  ): void {
+  save(graphJson: string, img: string): void {
     let newValue = JSON.stringify({
-      directed: directed,
-      weighted: weighted,
       graphJson: graphJson,
       img: img,
     });
@@ -98,8 +91,6 @@ export class StorageSaveService {
   load(): {
     key: string;
     graph: {
-      directed: boolean;
-      weighted: boolean;
       graphJson: string;
       img: string;
     };
@@ -107,8 +98,6 @@ export class StorageSaveService {
     let graphList: {
       key: string;
       graph: {
-        directed: boolean;
-        weighted: boolean;
         graphJson: string;
         img: string;
       };

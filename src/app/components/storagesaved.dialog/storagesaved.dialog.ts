@@ -12,8 +12,6 @@ export class StorageSavedDialog implements OnInit {
   savedGraphs: {
     key: string;
     graph: {
-      directed: boolean;
-      weighted: boolean;
       graphJson: string;
       img: string;
     };
@@ -33,12 +31,7 @@ export class StorageSavedDialog implements OnInit {
     this.savedGraphs = this.storageSaveService.load();
   }
 
-  select(graph: {
-    directed: boolean;
-    weighted: boolean;
-    graphJson: string;
-    img: string;
-  }): void {
+  select(graph: { graphJson: string; img: string }): void {
     this.dialogRef.close({ deleteKeys: this.deleteKeys, graph: graph });
   }
 

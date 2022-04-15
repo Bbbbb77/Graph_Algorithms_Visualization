@@ -1,40 +1,56 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { GraphParserService } from '../../services/graphparserservice';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialog,
+} from '@angular/material/dialog';
+import { ErrorMessageDialog } from '../errormessage.dialog/errormessage.dialog';
 
 @Component({
   selector: 'addgraph.dialog',
   templateUrl: './addgraph.dialog.html',
   styleUrls: ['./addgraph.dialog.css'],
-  providers: [GraphParserService],
 })
 export class AddGraphDialog implements OnInit {
-  directed: boolean;
-  weighted: boolean;
-
-  graph: any;
-
   constructor(
-    private graphParserService: GraphParserService,
+    public dialog: MatDialog,
     private dialogRef: MatDialogRef<AddGraphDialog>,
     @Inject(MAT_DIALOG_DATA) data: any
-  ) {
-    this.directed = data.directed;
-    this.weighted = data.weighted;
-    this.graph = data.graph;
-  }
+  ) {}
 
   ngOnInit(): void {}
 
   draw(graphInput): void {
-    this.dialogRef.close(
-      this.graphParserService.parseGraph(
-        this.graph,
-        this.directed,
-        this.weighted,
-        graphInput
-      )
-    );
+    var graphObject = JSON.parse(graphInput);
+    console.log('graph obj', graphObject);
+
+    var errorMessage = '';
+
+    if (graphObject.directed == undefined) {
+      errorMessage = 'Graph direction is not provided';
+    } else if (typeof graphObject.directed != 'boolean') {
+      errorMessage = 'Graph direction value is not boolean type';
+    } else if (graphObject.weighted == undefined) {
+      errorMessage = 'Graph weightings is not provided';
+    } else if (typeof graphObject.weighted != 'boolean') {
+      errorMessage = 'Graph weightings value is not boolean';
+    } else if (graphObject.nodes == undefined) {
+      errorMessage = 'Graph nodes are not provided';
+    } else if (graphObject.edges == undefined) {
+      errorMessage = 'Graph edges are not provided';
+    } else if (graphObject.nodes.length == 0 && graphObject.edges.length != 0) {
+      errorMessage = 'Graph edges are provided but nodes not';
+    }
+
+    if (errorMessage != '') {
+      this.dialog.open(ErrorMessageDialog, {
+        width: '300px',
+        height: '200px',
+        data: { errorMessage: errorMessage },
+      });
+    } else {
+      this.dialogRef.close(graphObject);
+    }
   }
 
   cancel(): void {

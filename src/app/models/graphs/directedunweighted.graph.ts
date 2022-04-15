@@ -3,18 +3,11 @@ import { Graph, compareNodes } from './graph';
 export class DirectedUnweightedGraph extends Graph {
   constructor() {
     super();
+    this.directed = true;
     this.weighted = false;
   }
 
   override addEdge(node_a: any, node_b: any) {
-    if (!this.adjList.has(node_a)) {
-      this.adjList.set(node_a, []);
-    }
-
-    if (!this.adjList.has(node_b)) {
-      this.adjList.set(node_b, []);
-    }
-
     if (
       this.adjList.get(node_a) &&
       !this.adjList.get(node_a).includes(node_b)
@@ -30,9 +23,6 @@ export class DirectedUnweightedGraph extends Graph {
   }
 
   removeEdge(node_a: any, node_b: any) {
-    //console.log('node_a: ', node_a);
-    //console.log('node_b: ', node_b);
-
     if (this.adjList.get(node_a) != undefined) {
       var index1 = this.adjList.get(node_a).indexOf(node_b);
       if (index1 > -1) {

@@ -3,18 +3,11 @@ import { Graph, compareWeightedNodes } from './graph';
 export class UndirectedWeightedGraph extends Graph {
   constructor() {
     super();
+    this.directed = false;
     this.weighted = true;
   }
 
   override addEdge(node_a, node_b, weight) {
-    if (!this.adjList.has(node_a)) {
-      this.adjList.set(node_a, []);
-    }
-
-    if (!this.adjList.has(node_b)) {
-      this.adjList.set(node_b, []);
-    }
-
     if (
       this.adjList.get(node_a) &&
       this.adjList.get(node_a).findIndex((node) => {

@@ -27,9 +27,18 @@ export class Graph {
   hasNegativeWeight: boolean = false;
   isNodesNumber: boolean = true;
   weighted: boolean = false;
+  directed: boolean = false;
   visited;
 
   constructor() {}
+
+  isDirected(): boolean {
+    return this.directed;
+  }
+
+  isWeighted(): boolean {
+    return this.weighted;
+  }
 
   isNodeInGraph(node): boolean {
     if (this.isNodesNumber) {
@@ -40,10 +49,6 @@ export class Graph {
   }
 
   addEdge(node_a: any, node_b: any, weight?: number) {
-    if (!this.singleEdges.has(node_a)) {
-      this.singleEdges.set(node_a, []);
-    }
-
     if (this.isNodesNumber == undefined) {
       this.isNodesNumber = !isNaN(node_a);
     }
@@ -161,6 +166,7 @@ export class Graph {
     this.isNodesNumber = true;
     this.weighted = false;
   }
+
   /*
   resetVisited() {
     this.visited.forEach((value, key) => {
@@ -168,6 +174,7 @@ export class Graph {
     });
   }
 */
+
   dfs(node) {
     this.visited.set(node, true);
     for (let i = 0; i < this.adjList.get(node).length; i++) {
@@ -269,7 +276,15 @@ export class Graph {
   }
 
   save() {
-    let saveStr = '[\n';
+    let saveStr = '{\n';
+    saveStr += `"directed": ${this.directed},\n`;
+    saveStr += `"weighted": ${this.weighted},\n`;
+    saveStr += '"nodes": [';
+    this.nodes.map((node) => {
+      saveStr += `${node}, `;
+    });
+    saveStr = saveStr.slice(0, -2) + '],\n';
+    saveStr += '"edges": [\n';
     this.singleEdges.forEach((value, key) => {
       if (value.length == 0) {
         if (!this.hasEdge(key)) {
@@ -285,8 +300,10 @@ export class Graph {
         });
       }
     });
-    saveStr = saveStr.slice(0, -2) + '\n]';
+    saveStr = saveStr.slice(0, -2) + '\n]\n';
+    saveStr += '}';
     console.log('saveStr', saveStr);
+    console.log('json', JSON.parse(saveStr));
     return saveStr;
   }
 }

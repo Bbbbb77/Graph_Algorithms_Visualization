@@ -23,8 +23,8 @@ import { DirectedUnweightedGraph } from '../../models/graphs/directedunweighted.
 import { UndirectedUnweightedGraph } from '../../models/graphs/undirectedunweighted.graph';
 import { UndirectedWeightedGraph } from '../../models/graphs/undirectedweighted.graph';
 
-import { GraphParserService } from '../../services/graphparserservice';
 import { StorageSaveService } from '../../services/storagesaveservice';
+import { GraphBuilderService } from '../../services/graphbuilderservice';
 
 import { MatTable } from '@angular/material/table';
 
@@ -44,7 +44,7 @@ export interface DfsNode {
   selector: 'mainpage',
   templateUrl: './mainpage.component.html',
   styleUrls: ['./mainpage.component.css'],
-  providers: [GraphParserService, StorageSaveService],
+  providers: [StorageSaveService, GraphBuilderService],
 })
 export class MainPage implements OnInit {
   @ViewChild('siteConfigNetwork')
@@ -105,7 +105,8 @@ export class MainPage implements OnInit {
 
   graphStr(): void {
     this.graph.print();
-    this.graph.save();
+    let s = this.graph.save();
+    console.log('graph obj', JSON.parse(s));
   }
 
   selectedAlgorithmName: string = '';
@@ -129,14 +130,16 @@ export class MainPage implements OnInit {
   }
 
   butterfly(): void {
-    let g = `[
-      {"from" : 1, "to" : 3}, 
-      {"from" : 1, "to" : 4}, 
-      {"from" : 2, "to" : 3},
-      {"from" : 2, "to" : 5},
-      {"from" : 3, "to" : 4},
-      {"from" : 3, "to" : 5}
-      ]`;
+    let nodesRaw = [1, 2, 3, 4, 5];
+
+    let edges = [
+      { from: 1, to: 3 },
+      { from: 1, to: 4 },
+      { from: 2, to: 3 },
+      { from: 2, to: 5 },
+      { from: 3, to: 4 },
+      { from: 3, to: 5 },
+    ];
 
     this.smoothEnabled = true;
     this.physicsEnabled = false;
@@ -144,11 +147,10 @@ export class MainPage implements OnInit {
     this.weighted = false;
     this.graph = new UndirectedUnweightedGraph();
 
-    let nodesAndEdges = this.graphParserService.parseGraph(
+    let nodesAndEdges = this.graphBuilderService.buildGraph(
       this.graph,
-      this.directed,
-      this.weighted,
-      g
+      nodesRaw,
+      edges
     );
 
     let nodes = [
@@ -168,17 +170,18 @@ export class MainPage implements OnInit {
   }
 
   housesWells(): void {
-    let g = `[
-      {"from" : 1, "to" : 4}, 
-      {"from" : 1, "to" : 5}, 
-      {"from" : 1, "to" : 6},
-      {"from" : 2, "to" : 4},
-      {"from" : 2, "to" : 5},
-      {"from" : 2, "to" : 6},
-      {"from" : 3, "to" : 4},
-      {"from" : 3, "to" : 5},
-      {"from" : 3, "to" : 6}
-      ]`;
+    let nodesRaw = [1, 2, 3, 4, 5, 6];
+    let edges = [
+      { from: 1, to: 4 },
+      { from: 1, to: 5 },
+      { from: 1, to: 6 },
+      { from: 2, to: 4 },
+      { from: 2, to: 5 },
+      { from: 2, to: 6 },
+      { from: 3, to: 4 },
+      { from: 3, to: 5 },
+      { from: 3, to: 6 },
+    ];
 
     this.smoothEnabled = true;
     this.physicsEnabled = false;
@@ -186,11 +189,10 @@ export class MainPage implements OnInit {
     this.weighted = false;
     this.graph = new UndirectedUnweightedGraph();
 
-    let nodesAndEdges = this.graphParserService.parseGraph(
+    let nodesAndEdges = this.graphBuilderService.buildGraph(
       this.graph,
-      this.directed,
-      this.weighted,
-      g
+      nodesRaw,
+      edges
     );
 
     let nodes = [
@@ -211,23 +213,25 @@ export class MainPage implements OnInit {
   }
 
   petersenGraph(): void {
-    let g = `[
-      {"from" : 1, "to" : 3}, 
-      {"from" : 1, "to" : 2}, 
-      {"from" : 1, "to" : 6},
-      {"from" : 2, "to" : 7},
-      {"from" : 2, "to" : 8},
-      {"from" : 3, "to" : 4},
-      {"from" : 3, "to" : 9},
-      {"from" : 4, "to" : 5},
-      {"from" : 4, "to" : 8},
-      {"from" : 5, "to" : 6},
-      {"from" : 5, "to" : 7},
-      {"from" : 6, "to" : 10},
-      {"from" : 7, "to" : 9},
-      {"from" : 8, "to" : 10},
-      {"from" : 9, "to" : 10}   
-      ]`;
+    let nodesRaw = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    let edges = [
+      { from: 1, to: 3 },
+      { from: 1, to: 2 },
+      { from: 1, to: 6 },
+      { from: 2, to: 7 },
+      { from: 2, to: 8 },
+      { from: 3, to: 4 },
+      { from: 3, to: 9 },
+      { from: 4, to: 5 },
+      { from: 4, to: 8 },
+      { from: 5, to: 6 },
+      { from: 5, to: 7 },
+      { from: 6, to: 10 },
+      { from: 7, to: 9 },
+      { from: 8, to: 10 },
+      { from: 9, to: 10 },
+    ];
 
     this.smoothEnabled = true;
     this.physicsEnabled = false;
@@ -235,11 +239,10 @@ export class MainPage implements OnInit {
     this.weighted = false;
     this.graph = new UndirectedUnweightedGraph();
 
-    let nodesAndEdges = this.graphParserService.parseGraph(
+    let nodesAndEdges = this.graphBuilderService.buildGraph(
       this.graph,
-      this.directed,
-      this.weighted,
-      g
+      nodesRaw,
+      edges
     );
 
     let nodes = [
@@ -265,8 +268,8 @@ export class MainPage implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private storageSaveService: StorageSaveService,
-    private graphParserService: GraphParserService
+    private graphBuilderService: GraphBuilderService,
+    private storageSaveService: StorageSaveService
   ) {}
 
   @ViewChild('algorithmsComponent')
@@ -282,18 +285,20 @@ export class MainPage implements OnInit {
   dfsstacktable: MatTable<string>;
 
   downloaGraph(): void {
-    var graphJson = this.graph.save();
-    var file = new Blob([graphJson], { type: '.txt' });
-    var a = document.createElement('a');
-    var url = URL.createObjectURL(file);
-    a.href = url;
-    a.download = 'graph';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-    }, 0);
+    var graphJsonStr = this.graph.save();
+    let date = new Date();
+    let dateStr = `${date.getFullYear()}. ${
+      date.getMonth() + 1
+    }. ${date.getDate()}. `;
+
+    var dataStr =
+      'data:text/json;charset=utf-8,' + encodeURIComponent(graphJsonStr);
+    var download = document.createElement('a');
+    download.setAttribute('href', dataStr);
+    download.setAttribute('download', 'graph - ' + dateStr + '.json');
+    document.body.appendChild(download);
+    download.click();
+    download.remove();
   }
 
   loadGraph(): void {
@@ -311,21 +316,7 @@ export class MainPage implements OnInit {
 
         if (result.graph != undefined) {
           this.reset();
-          this.directed = Boolean(result.graph.directed);
-          this.weighted = Boolean(result.graph.weighted);
-          this.createGraph();
-          let nodesAndEdges = this.graphParserService.parseGraph(
-            this.graph,
-            this.directed,
-            this.weighted,
-            result.graph.graphJson
-          );
-          let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
-          let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
-          this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
-          this.setupNetwork();
-          this.graphIsConnected = this.graph.isConnected();
-          this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+          this.drawGraph(result.graph);
         }
       });
   }
@@ -333,8 +324,6 @@ export class MainPage implements OnInit {
   saveGraph(): void {
     if (this.directed != undefined && this.weighted != undefined) {
       this.storageSaveService.save(
-        this.directed,
-        this.weighted,
         this.graph.save(),
         this.canvasContext.canvas.toDataURL()
       );
@@ -345,30 +334,7 @@ export class MainPage implements OnInit {
     let file = event.target.files[0];
     let fileReader: FileReader = new FileReader();
     fileReader.onloadend = () => {
-      if (
-        this.directed != undefined &&
-        this.weighted != undefined &&
-        fileReader.result != undefined
-      ) {
-        console.log('result', fileReader.result);
-        let nodesAndEdges = this.graphParserService.parseGraph(
-          this.graph,
-          this.directed,
-          this.weighted,
-          String(fileReader.result)
-        );
-
-        console.log('nodesAndEges', nodesAndEdges);
-        let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
-        let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
-        this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
-        this.setupNetwork();
-
-        this.graph.print();
-
-        this.graphIsConnected = this.graph.isConnected();
-        this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
-      }
+      this.drawGraph(fileReader.result);
     };
 
     fileReader.readAsText(file);
@@ -511,21 +477,23 @@ export class MainPage implements OnInit {
   }
 
   drawGraph(graphText): void {
-    if (this.directed != undefined && this.weighted != undefined) {
-      let nodesAndEdges = this.graphParserService.parseGraph(
-        this.graph,
-        this.directed,
-        this.weighted,
-        graphText
-      );
+    var graphObject = JSON.parse(graphText);
 
-      let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
-      let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
-      this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
-      this.setupNetwork();
-      this.graphIsConnected = this.graph.isConnected();
-      this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
-    }
+    this.weighted = graphObject.weighted;
+    this.directed = graphObject.directed;
+    this.createGraph();
+    let nodesAndEdges = this.graphBuilderService.buildGraph(
+      this.graph,
+      graphObject.nodes,
+      graphObject.edges
+    );
+
+    let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
+    let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
+    this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+    this.setupNetwork();
+    this.graphIsConnected = this.graph.isConnected();
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
 
   setNodesAndEdges(): void {}
@@ -614,22 +582,24 @@ export class MainPage implements OnInit {
       .open(AddGraphDialog, {
         width: '300px',
         height: '350px',
-        data: {
-          directed: this.directed,
-          weighted: this.weighted,
-          graph: this.graph,
-        },
+        data: {},
       })
       .afterClosed()
       .subscribe((result) => {
         if (result != undefined) {
-          let nodesDataSet = new vis.DataSet(result.nodes);
-          let edgesDataSet = new vis.DataSet(result.edges);
+          this.weighted = result.weighted;
+          this.directed = result.directed;
+          this.createGraph();
+          let nodesAndEdges = this.graphBuilderService.buildGraph(
+            this.graph,
+            result.nodes,
+            result.edges
+          );
+
+          let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
+          let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
           this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
           this.setupNetwork();
-
-          this.graph.print();
-
           this.graphIsConnected = this.graph.isConnected();
           this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
         }

@@ -30,23 +30,9 @@
     >
       Create
     </button>
-    <button
-      mat-button
-      (click)="addGraph()"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph == undefined
-      "
-    >
-      Add graph
-    </button>
+    <button mat-button (click)="addGraph()">Add graph</button>
     <button mat-button (click)="loadGraph()">Load</button>
-    <input
-      type="file"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph == undefined
-      "
-      (change)="onFileSelected($event)"
-    />
+    <input type="file" (change)="onFileSelected($event)" />
   </div>
   <div style="margin: 5px">
     <button

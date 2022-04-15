@@ -13,6 +13,11 @@
 ]
 
 // BFS
+{
+    "directed" : false,
+    "weighted":false,
+    "nodes":[1,2,3,4,5,6],
+    "edges":
 [
     {"from" : 1, "to" : 2},
     {"from" : 1, "to" : 4},
@@ -23,6 +28,7 @@
     {"from" : 4, "to" : 5},
     {"from" : 5, "to" : 6}
 ]      
+}
 
 // BFS direceted
 [
@@ -184,6 +190,8 @@ Dijkstra/prim/kruskal testing
     {"from" : 4, "to" : 3, "weight" : -3}
 ]
 
+
+// Gyak DFS példa gráf
 [
     {"from" : 1, "to" : 5},
     {"from" : 1, "to" : 6},
@@ -192,7 +200,8 @@ Dijkstra/prim/kruskal testing
     {"from" : 2, "to" : 1},
     {"from" : 2, "to" : 3},
     {"from" : 3, "to" : 7},
-    {"from" : 7, "to" : 3}
+    {"from" : 7, "to" : 3},
+    {"from": 4}
 ]
 
 // A = 0

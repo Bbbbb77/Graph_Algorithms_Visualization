@@ -3,18 +3,11 @@ import { Graph, compareNodes } from './graph';
 export class UndirectedUnweightedGraph extends Graph {
   constructor() {
     super();
+    this.directed = false;
     this.weighted = false;
   }
 
   override addEdge(node_a: any, node_b: any) {
-    if (!this.adjList.has(node_a)) {
-      this.adjList.set(node_a, []);
-    }
-
-    if (!this.adjList.has(node_b)) {
-      this.adjList.set(node_b, []);
-    }
-
     if (
       this.adjList.get(node_a) &&
       !this.adjList.get(node_a).includes(node_b) &&
