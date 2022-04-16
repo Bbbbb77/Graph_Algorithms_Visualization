@@ -200,6 +200,7 @@
     (generatorResultEmitter)="stepClicked($event)"
     (resetAlgoEmitter)="resetAlgo()"
     (algoNameEmitter)="selectedAlgorithm($event)"
+    [events]="graphChangedEvent.asObservable()"
   ></algorithms>
   <!--
   <player [directed]="directed" [weighted]="weighted"></player>

@@ -1,7 +1,7 @@
 <div>
   <div style="display: flex; justify-content: space-between">
     <h2>Saved graphs</h2>
-    <button mat-button (click)="closeDialog()">X</button>
+    <button mat-icon-button (click)="closeDialog()">X</button>
   </div>
   <mat-list *ngFor="let g of savedGraphs">
     <mat-list-item style="width: 500px; height: 450px">

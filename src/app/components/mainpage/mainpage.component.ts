@@ -7,6 +7,7 @@ import {
   Output,
   Input,
 } from '@angular/core';
+import { Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { AddAndEditNodeDialog } from '../addandeditnode.dialog/addandeditnode.dialog';
 import { AddGraphDialog } from '../addgraph.dialog/addgraph.dialog';
@@ -64,6 +65,8 @@ export class MainPage implements OnInit {
 
   @Output()
   graph: any;
+
+  graphChangedEvent: Subject<void> = new Subject<void>();
 
   baseNodeColor: string = '#97c2fc';
   baseEdgeColor: string = '#2b7ce9';
@@ -518,6 +521,7 @@ export class MainPage implements OnInit {
           if (this.graph.addNode(data.id)) {
             this.graphIsConnected = this.graph.isConnected();
             callback(data);
+            this.graphChangedEvent.next();
           }
         } else {
           callback(null);
@@ -573,6 +577,7 @@ export class MainPage implements OnInit {
 
             this.baseData.edgesDataSet.remove(edgeIdsOfNode);
             this.baseData.edgesDataSet.add(newEdges);
+            this.graphChangedEvent.next();
           } /*else {
             console.log('node not edited');
           }*/
@@ -614,6 +619,7 @@ export class MainPage implements OnInit {
   deleteSelectedNode(data, callback): void {
     this.graph.removeNode(data.nodes[0]);
     callback(data);
+    this.graphChangedEvent.next();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
@@ -661,6 +667,7 @@ export class MainPage implements OnInit {
     this.graph.editEdge(data.from, data.to, Number(data.label));
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
     callback(data);
+    this.graphChangedEvent.next();
   }
 
   deleteSelectedEdge(data, callback): void {
@@ -669,6 +676,7 @@ export class MainPage implements OnInit {
       Number(data.edges[0].charAt(1))
     );
     callback(data);
+    this.graphChangedEvent.next();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
@@ -703,6 +711,7 @@ export class MainPage implements OnInit {
       this.graphIsConnected = this.graph.isConnected();
       this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
       callback(data);
+      this.graphChangedEvent.next();
     }
   }
 

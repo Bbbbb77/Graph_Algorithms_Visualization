@@ -17,6 +17,7 @@ import { Algorithms } from './components/algorithms.component/algorithms.compone
 import { Player } from './components/player.component/player.component';
 import { ErrorMessageDialog } from './components/errormessage.dialog/errormessage.dialog';
 import { StorageSavedDialog } from './components/storagesaved.dialog/storagesaved.dialog';
+import { StepsCounterDialog } from './components/stepscounter.dialog/stepscounter.dialog';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { StorageSavedDialog } from './components/storagesaved.dialog/storagesave
     Player,
     ErrorMessageDialog,
     StorageSavedDialog,
+    StepsCounterDialog,
   ],
   imports: [
     BrowserModule,
@@ -50,6 +52,7 @@ import { StorageSavedDialog } from './components/storagesaved.dialog/storagesave
     Player,
     ErrorMessageDialog,
     StorageSavedDialog,
+    StepsCounterDialog,
   ],
 })
 export class AppModule {}
