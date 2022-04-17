@@ -66,16 +66,16 @@ export class DijkstraService {
           w = adj.get(u)[v].weight;
 
           if (newNext) {
-            let prev = pervDestNodes.get(from);
-            pervDestNodes.set(from, to);
+            let prev = pervDestNodes.get(to);
+            pervDestNodes.set(to, from);
             yield {
               current: from,
               newNext: to,
               weight: distances.get(to),
-              prevNext: prev,
+              prevCurrent: prev,
             };
           } else {
-            pervDestNodes.set(from, to);
+            pervDestNodes.set(to, from);
             yield { current: from, next: to, weight: distances.get(to) };
           }
         }

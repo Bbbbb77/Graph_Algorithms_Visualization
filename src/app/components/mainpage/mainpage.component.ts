@@ -77,7 +77,7 @@ export class MainPage implements OnInit {
 
   network: any = null;
   seed: number = 1;
-  smoothEnabled: boolean = false;
+  smoothType: string = 'dynamic';
   physicsEnabled: boolean = true;
   canvasContext;
 
@@ -146,7 +146,7 @@ export class MainPage implements OnInit {
       { from: 3, to: 5 },
     ];
 
-    this.smoothEnabled = true;
+    this.smoothType = 'continuous';
     this.physicsEnabled = false;
     this.directed = false;
     this.weighted = false;
@@ -188,7 +188,7 @@ export class MainPage implements OnInit {
       { from: 3, to: 6 },
     ];
 
-    this.smoothEnabled = true;
+    this.smoothType = 'continuous';
     this.physicsEnabled = false;
     this.directed = false;
     this.weighted = false;
@@ -238,7 +238,7 @@ export class MainPage implements OnInit {
       { from: 9, to: 10 },
     ];
 
-    this.smoothEnabled = true;
+    this.smoothType = 'continuous';
     this.physicsEnabled = false;
     this.directed = false;
     this.weighted = false;
@@ -408,7 +408,7 @@ export class MainPage implements OnInit {
       layout: { randomSeed: this.seed },
       nodes: { borderWidth: 4, size: 100 },
       edges: {
-        smooth: { enabled: this.smoothEnabled, type: 'continuous' },
+        smooth: { enabled: true, type: this.smoothType },
         color: { color: this.baseEdgeColor, inherit: false },
       },
       manipulation: {
@@ -764,12 +764,13 @@ export class MainPage implements OnInit {
       if (this.weighted) {
         if (value.startNode != undefined) {
           this.setStartNodeInTable(value.startNode);
-        } else if (
-          value.current != undefined &&
-          value.next != undefined &&
-          value.weight != undefined
-        ) {
-          this.updateTable(value.current, value.next, value.weight);
+        } else if (value.current != undefined && value.weight != undefined) {
+          let valueNext = value.next;
+          if (valueNext == undefined) {
+            valueNext = value.newNext;
+          }
+
+          this.updateTable(value.current, valueNext, value.weight);
         }
       }
     }
@@ -990,11 +991,8 @@ export class MainPage implements OnInit {
     this.dfsStack = [];
     this.topSort = [];
     this.bfsQueue = [];
-    this.smoothEnabled = false;
+    this.smoothType = 'dyanmic';
     this.physicsEnabled = true;
-
-    this.dfsstacktable.renderRows();
-    this.topsorttable.renderRows();
   }
 
   resetAlgo(): void {
@@ -1017,6 +1015,8 @@ export class MainPage implements OnInit {
           { id: id, color: { color: this.baseEdgeColor } },
         ]);
       });
+      this.dfsstacktable.renderRows();
+      this.topsorttable.renderRows();
     }
   }
 

@@ -19,6 +19,7 @@ export class BellmanFordService {
     let nodes = Graph.getNodes();
     let dist = new Map();
     let edges: any[] = [];
+    let pervDestNodes = new Map();
 
     nodes.forEach((node) => {
       dist.set(node, Number.MAX_VALUE);
@@ -39,13 +40,26 @@ export class BellmanFordService {
         let edge = edges[j];
         this.stepCounter++;
         if (dist.get(edge.from) + edge.weight < dist.get(edge.to)) {
+          let newNext = dist.get(edge.to) != Number.MAX_VALUE;
           dist.set(edge.to, dist.get(edge.from) + edge.weight);
-          console.table(dist);
-          yield {
-            current: edge.from,
-            next: edge.to,
-            weight: dist.get(edge.from) + edge.weight,
-          };
+
+          if (newNext) {
+            let prev = pervDestNodes.get(edge.to);
+            pervDestNodes.set(edge.to, edge.from);
+            yield {
+              current: edge.from,
+              newNext: edge.to,
+              weight: dist.get(edge.from) + edge.weight,
+              prevCurrent: prev,
+            };
+          } else {
+            pervDestNodes.set(edge.to, edge.from);
+            yield {
+              current: edge.from,
+              next: edge.to,
+              weight: dist.get(edge.from) + edge.weight,
+            };
+          }
         }
       }
     }
