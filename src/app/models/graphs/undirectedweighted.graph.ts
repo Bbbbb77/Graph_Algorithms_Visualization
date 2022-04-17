@@ -52,24 +52,25 @@ export class UndirectedWeightedGraph extends Graph {
     this.print();
   }
 
-  removeEdge(node_a, node_b) {
+  override removeEdge(node_a, node_b) {
     if (this.adjList.get(node_a) != undefined) {
-      var index1 = this.adjList.get(node_a).findIndex((node) => {
+      var index = this.adjList.get(node_a).findIndex((node) => {
         node.node == node_b;
       });
-      if (index1 > -1) {
-        this.adjList.get(node_a).splice(index1, 1);
+      if (index > -1) {
+        this.adjList.get(node_a).splice(index, 1);
       }
     }
 
     if (this.adjList.get(node_b) != undefined) {
-      var index2 = this.adjList.get(node_b).findIndex((node) => {
+      var index = this.adjList.get(node_b).findIndex((node) => {
         node.node == node_a;
       });
-      if (index2 > -1) {
-        this.adjList.get(node_b).splice(index2, 1);
+      if (index > -1) {
+        this.adjList.get(node_b).splice(index, 1);
       }
     }
+    super.removeEdge(node_a, node_b);
     this.print();
   }
 

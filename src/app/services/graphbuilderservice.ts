@@ -5,8 +5,8 @@ export class GraphBuilderService {
   constructor() {}
 
   buildGraph(graph, nodes, edges) {
-    let nodesFromJson: { id: number; label: string }[] = [];
-    let edgesFromJson: {
+    let networkNodes: { id: number; label: string }[] = [];
+    let networkEdges: {
       id: string;
       from: number;
       to: number;
@@ -16,20 +16,26 @@ export class GraphBuilderService {
 
     for (let i = 0; i < nodes.length; i++) {
       graph.addNode(nodes[i]);
+      if (networkNodes.find((obj) => obj.id == nodes[i]) == undefined) {
+        networkNodes.push({
+          id: nodes[i],
+          label: String(nodes[i]),
+        });
+      }
     }
 
     for (let i = 0; i < edges.length; i++) {
       if (!graph.isWeighted()) {
         graph.addEdge(edges[i].from, edges[i].to);
         if (graph.isDirected()) {
-          edgesFromJson.push({
+          networkEdges.push({
             id: String(edges[i].from) + String(edges[i].to),
             from: edges[i].from,
             to: edges[i].to,
             arrows: 'to',
           });
         } else {
-          edgesFromJson.push({
+          networkEdges.push({
             id: String(edges[i].from) + String(edges[i].to),
             from: edges[i].from,
             to: edges[i].to,
@@ -38,7 +44,7 @@ export class GraphBuilderService {
       } else {
         graph.addEdge(edges[i].from, edges[i].to, edges[i].weight);
         if (graph.isDirected()) {
-          edgesFromJson.push({
+          networkEdges.push({
             id: String(edges[i].from) + String(edges[i].to),
             from: edges[i].from,
             to: edges[i].to,
@@ -46,7 +52,7 @@ export class GraphBuilderService {
             label: String(edges[i].weight),
           });
         } else {
-          edgesFromJson.push({
+          networkEdges.push({
             id: String(edges[i].from) + String(edges[i].to),
             from: edges[i].from,
             to: edges[i].to,
@@ -54,25 +60,11 @@ export class GraphBuilderService {
           });
         }
       }
-
-      if (nodesFromJson.find((obj) => obj.id == edges[i].from) == undefined) {
-        nodesFromJson.push({
-          id: edges[i].from,
-          label: String(edges[i].from),
-        });
-      }
-
-      if (nodesFromJson.find((obj) => obj.id == edges[i].to) == undefined) {
-        nodesFromJson.push({
-          id: edges[i].to,
-          label: String(edges[i].to),
-        });
-      }
     }
 
     return {
-      nodes: nodesFromJson,
-      edges: edgesFromJson,
+      nodes: networkNodes,
+      edges: networkEdges,
     };
   }
 }

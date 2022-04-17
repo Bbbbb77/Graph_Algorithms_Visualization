@@ -58,7 +58,7 @@ export class Graph {
       (this.singleEdges.has(node_b) &&
         !this.singleEdges.get(node_b).includes(node_a))
     ) {
-      if (weight == undefined) {
+      if (!this.weighted) {
         this.singleEdges.get(node_a).push(node_b);
       } else {
         this.singleEdges.get(node_a).push({ node: node_b, weight });
@@ -83,6 +83,22 @@ export class Graph {
 */
     if (weight && weight < 0) {
       this.hasNegativeWeight = true;
+    }
+  }
+
+  removeEdge(node_a: any, node_b: any) {
+    if (this.singleEdges.get(node_a) != undefined) {
+      var index = -1;
+      if (!this.weighted) {
+        index = this.singleEdges.get(node_a).indexOf(node_b);
+      } else {
+        index = this.singleEdges.get(node_a).findIndex((node) => {
+          node.node == node_b;
+        });
+      }
+      if (index > -1) {
+        this.singleEdges.get(node_a).splice(index, 1);
+      }
     }
   }
 
@@ -256,26 +272,9 @@ export class Graph {
     console.log('\n\n');
   }
 
-  hasEdge(node) {
-    let foundEdge = false;
-    this.singleEdges.forEach((value, key) => {
-      if (this.weighted) {
-        let index = value.findIndex((v) => (v.node = node));
-        if (index != -1) {
-          foundEdge = true;
-          return;
-        }
-      } else {
-        if (value.includes(node)) {
-          foundEdge = true;
-          return;
-        }
-      }
-    });
-    return foundEdge;
-  }
-
   save() {
+    let thereIsEdge = false;
+
     let saveStr = '{\n';
     saveStr += `"directed": ${this.directed},\n`;
     saveStr += `"weighted": ${this.weighted},\n`;
@@ -286,11 +285,8 @@ export class Graph {
     saveStr = saveStr.slice(0, -2) + '],\n';
     saveStr += '"edges": [\n';
     this.singleEdges.forEach((value, key) => {
-      if (value.length == 0) {
-        if (!this.hasEdge(key)) {
-          saveStr += `{"from":${key}},\n`;
-        }
-      } else {
+      if (value.length != 0) {
+        thereIsEdge = true;
         value.map((node) => {
           if (typeof node === 'object') {
             saveStr += `{"from": ${key}, "to": ${node.node}, "weight": ${node.weight}},\n`;
@@ -300,8 +296,14 @@ export class Graph {
         });
       }
     });
-    saveStr = saveStr.slice(0, -2) + '\n]\n';
-    saveStr += '}';
+    console.log('singleEdges', this.singleEdges);
+
+    if (thereIsEdge) {
+      saveStr = saveStr.slice(0, -2) + '\n';
+    } else {
+      saveStr = saveStr.slice(0, -1);
+    }
+    saveStr += ']\n}';
     console.log('saveStr', saveStr);
     console.log('json', JSON.parse(saveStr));
     return saveStr;

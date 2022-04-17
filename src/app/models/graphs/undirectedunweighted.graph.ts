@@ -27,21 +27,21 @@ export class UndirectedUnweightedGraph extends Graph {
     }
   }
 
-  removeEdge(node_a: any, node_b: any) {
+  override removeEdge(node_a: any, node_b: any) {
     if (this.adjList.get(node_a) != undefined) {
-      var index1 = this.adjList.get(node_a).indexOf(node_b);
-      if (index1 > -1) {
-        this.adjList.get(node_a).splice(index1, 1);
+      var index = this.adjList.get(node_a).indexOf(node_b);
+      if (index > -1) {
+        this.adjList.get(node_a).splice(index, 1);
       }
     }
 
     if (this.adjList.get(node_b) != undefined) {
-      var index2 = this.adjList.get(node_b).indexOf(node_a);
-      if (index2 > -1) {
-        this.adjList.get(node_b).splice(index2, 1);
+      var index = this.adjList.get(node_b).indexOf(node_a);
+      if (index > -1) {
+        this.adjList.get(node_b).splice(index, 1);
       }
     }
-
+    super.removeEdge(node_a, node_b);
     this.print();
   }
 
