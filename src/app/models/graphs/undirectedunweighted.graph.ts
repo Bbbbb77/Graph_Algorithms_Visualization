@@ -57,7 +57,7 @@ export class UndirectedUnweightedGraph extends Graph {
   }
 
   override editNode(oldNode: any, newNode: any) {
-    //super.editNode(oldNode, newNode);
+    super.editNode(oldNode, newNode);
     var edgeList = this.adjList.get(oldNode);
     this.adjList.delete(oldNode);
     this.adjList.forEach((value, key, map) => {

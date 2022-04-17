@@ -94,7 +94,6 @@ export class MainPage implements OnInit {
   edgesOfNode = new Map();
   nodesOfEdge = new Map();
 
-  prevNodeValue = null;
   prevWasNewNext: boolean = false;
 
   bellmanFordTable: BellmanFordTableElement[] = [];
@@ -530,6 +529,7 @@ export class MainPage implements OnInit {
   }
 
   editNode(data, callback): void {
+    let prevNodeValue = data.id;
     this.dialog
       .open(AddAndEditNodeDialog, {
         width: '230px',
@@ -541,25 +541,20 @@ export class MainPage implements OnInit {
         if (result != undefined) {
           data.label = result;
           data.id = Number(result);
-          this.network.getConnectedEdges(this.prevNodeValue);
 
           var newEdges: any[] = [];
-
-          var edgeIdsOfNode = this.network.getConnectedEdges(
-            this.prevNodeValue
-          );
-
+          var edgeIdsOfNode = this.network.getConnectedEdges(prevNodeValue);
           var edgesOfNode = this.baseData.edges.get(edgeIdsOfNode);
 
           edgesOfNode.map((edge) => {
-            if (edge.from == this.prevNodeValue) {
+            if (edge.from == prevNodeValue) {
               newEdges.push({
                 id: String(data.id) + String(edge.to),
                 from: data.id,
                 to: edge.to,
                 label: edge.label,
               });
-            } else if (edge.to == this.prevNodeValue) {
+            } else if (edge.to == prevNodeValue) {
               newEdges.push({
                 id: String(edge.from) + String(data.id),
                 from: edge.from,
@@ -570,13 +565,13 @@ export class MainPage implements OnInit {
           });
 
           if (!this.graph.containsNode(data.id)) {
-            this.graph.editNode(data.id);
+            this.graph.editNode(prevNodeValue, data.id);
             //callback(data);
-            this.baseData.nodesDataSet.remove(Number(this.prevNodeValue));
-            this.baseData.nodesDataSet.add({ id: data.id, label: data.label });
+            this.baseData.nodes.remove(Number(prevNodeValue));
+            this.baseData.nodes.add({ id: data.id, label: data.label });
 
-            this.baseData.edgesDataSet.remove(edgeIdsOfNode);
-            this.baseData.edgesDataSet.add(newEdges);
+            this.baseData.edges.remove(edgeIdsOfNode);
+            this.baseData.edges.add(newEdges);
             this.graphChangedEvent.next();
           } /*else {
             console.log('node not edited');
@@ -971,7 +966,7 @@ export class MainPage implements OnInit {
 
   clearEdges(): void {
     this.baseData.edges.clear();
-    this.graph.getAdjList().clear();
+    this.graph.clearEdges();
   }
 
   clearAll(): void {

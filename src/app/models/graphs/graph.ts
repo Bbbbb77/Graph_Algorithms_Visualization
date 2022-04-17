@@ -128,14 +128,42 @@ export class Graph {
     if (index > -1) {
       this.nodes.splice(index, 1);
     }
+
+    this.singleEdges.delete(node);
+    this.singleEdges.forEach((value, key, map) => {
+      let filteredValue;
+      if (this.weighted) {
+        filteredValue = value.filter((toNode) => toNode.node != node);
+      } else {
+        filteredValue = value.filter((toNode) => toNode != node);
+      }
+      this.singleEdges.set(key, filteredValue);
+    });
   }
 
   editNode(oldNode: any, newNode: any) {
-    const index = this.nodes.indexOf(oldNode, 0);
+    const index = this.nodes.indexOf(oldNode);
     if (index > -1) {
       this.nodes.splice(index, 1);
     }
     this.nodes.push(newNode);
+
+    var edgeList = this.singleEdges.get(oldNode);
+    this.singleEdges.delete(oldNode);
+    this.singleEdges.forEach((value, key, map) => {
+      for (let i = 0; i < value.length; i++) {
+        if (this.weighted) {
+          if (value[i].node == oldNode) {
+            value[i].node = newNode;
+          }
+        } else {
+          if (value[i] == oldNode) {
+            value[i] = newNode;
+          }
+        }
+      }
+    });
+    this.singleEdges.set(newNode, edgeList);
   }
 
   containsNode(node: any) {
@@ -152,6 +180,13 @@ export class Graph {
 
   getSingleEdges() {
     return this.singleEdges;
+  }
+
+  clearEdges(): void {
+    this.nodes.map((node) => {
+      this.adjList.set(node, []);
+      this.singleEdges.set(node, []);
+    });
   }
 
   getHasNegativeWeight() {
