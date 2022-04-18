@@ -2,7 +2,7 @@ import { Component, OnInit, Output, Input, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription } from 'rxjs';
 
-import { CommandService } from '../../services/commandservice';
+import { CommandService } from '../../services/command.service';
 
 //import { AlgorithmsBaseService } from '../../services/algorithmservices/algorithmsbaseservice';
 import { BfsService } from '../../services/algorithmservices/bfs.service';
@@ -13,7 +13,7 @@ import { KruskalService } from '../../services/algorithmservices/kruskal.service
 import { FloydWarshallService } from '../../services/algorithmservices/floydwarshall.service';
 import { BellmanFordService } from '../../services/algorithmservices/bellmanford.service';
 
-import { ErrorMessageDialog } from '../errormessage.dialog/errormessage.dialog';
+import { MessageDialog } from '../message.dialog/message.dialog';
 import { StepsCounterDialog } from '../stepscounter.dialog/stepscounter.dialog';
 
 import { bfs } from '../../models/algorithms/bfs';
@@ -129,10 +129,10 @@ export class Algorithms implements OnInit {
     }
 
     if (error != '') {
-      this.dialog.open(ErrorMessageDialog, {
+      this.dialog.open(MessageDialog, {
         width: '300px',
         height: '200px',
-        data: { errorMessage: error },
+        data: { title: 'Error', errorMessage: error, error: true },
       });
       return false;
     } else {

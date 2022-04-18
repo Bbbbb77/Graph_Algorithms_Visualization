@@ -15,9 +15,10 @@ import { AddAndEditWeightedEdge } from './components/addandeditweightededge.dial
 import { RandomGraph } from './components/randomgraph.component/randomgraph.component';
 import { Algorithms } from './components/algorithms.component/algorithms.component';
 import { Player } from './components/player.component/player.component';
-import { ErrorMessageDialog } from './components/errormessage.dialog/errormessage.dialog';
+import { MessageDialog } from './components/message.dialog/message.dialog';
 import { StorageSavedDialog } from './components/storagesaved.dialog/storagesaved.dialog';
 import { StepsCounterDialog } from './components/stepscounter.dialog/stepscounter.dialog';
+import { ConfirmDialog } from './components/confirm.dialog/confirm.dialog';
 
 @NgModule({
   declarations: [
@@ -29,9 +30,10 @@ import { StepsCounterDialog } from './components/stepscounter.dialog/stepscounte
     RandomGraph,
     Algorithms,
     Player,
-    ErrorMessageDialog,
+    MessageDialog,
     StorageSavedDialog,
     StepsCounterDialog,
+    ConfirmDialog,
   ],
   imports: [
     BrowserModule,
@@ -50,9 +52,10 @@ import { StepsCounterDialog } from './components/stepscounter.dialog/stepscounte
     RandomGraph,
     Algorithms,
     Player,
-    ErrorMessageDialog,
+    MessageDialog,
     StorageSavedDialog,
     StepsCounterDialog,
+    ConfirmDialog,
   ],
 })
 export class AppModule {}

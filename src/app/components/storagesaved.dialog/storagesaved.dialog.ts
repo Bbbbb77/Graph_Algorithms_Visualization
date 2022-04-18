@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { StorageSaveService } from '../../services/storagesaveservice';
+import { StorageSaveService } from '../../services/storagesave.service';
 
 @Component({
   selector: 'storagesaved.dialog',

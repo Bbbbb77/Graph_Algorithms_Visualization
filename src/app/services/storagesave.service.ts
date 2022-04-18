@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialog } from '../components/confirm.dialog/confirm.dialog';
 
 @Injectable()
 export class StorageSaveService {
   keysHelper: string[] = ['first', 'second', 'third', 'fourth', 'fifth'];
 
-  constructor() {}
+  constructor(public dialog: MatDialog) {}
 
   save(graphJson: string, img: string): void {
     let newValue = JSON.stringify({
@@ -37,20 +39,32 @@ export class StorageSaveService {
       return;
     }
 
-    //this.shiftValues.shiftValues(value);
-
-    let prevKey = 'first';
-    localStorage.removeItem(prevKey);
-    for (let index = 0; index < this.keysHelper.length; index++) {
-      let key = this.keysHelper[index];
-      let value = localStorage.getItem(key);
-      if (value != undefined) {
-        localStorage.setItem(prevKey, value);
-      }
-      prevKey = key;
-      localStorage.removeItem(key);
-    }
-    localStorage.setItem('fifth', newValue);
+    this.dialog
+      .open(ConfirmDialog, {
+        width: '300px',
+        height: '225px',
+        data: {
+          message:
+            'You have already reached the maximum (5) to save graphs.\n If you save this one the first will be deleted!',
+        },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result != undefined && result) {
+          let prevKey = 'first';
+          localStorage.removeItem(prevKey);
+          for (let index = 0; index < this.keysHelper.length; index++) {
+            let key = this.keysHelper[index];
+            let value = localStorage.getItem(key);
+            if (value != undefined) {
+              localStorage.setItem(prevKey, value);
+            }
+            prevKey = key;
+            localStorage.removeItem(key);
+          }
+          localStorage.setItem('fifth', newValue);
+        }
+      });
   }
 
   deleteKeys(keys: string[]): void {
@@ -129,20 +143,5 @@ export class StorageSaveService {
     }
 
     return graphList;
-  }
-
-  private shiftValues(startKey): void {
-    /*let index = this.keysHelper.findIndex((k) => k == deleteKey);
-
-    let prevKey = deleteKey;
-    for (; index < this.keysHelper.length; index++) {
-      let key = this.keysHelper[index];
-      let value = localStorage.getItem(key);
-      if (value != undefined) {
-        localStorage.setItem(prevKey, value);
-      }
-      prevKey = key;
-      localStorage.removeItem(key);
-    }*/
   }
 }

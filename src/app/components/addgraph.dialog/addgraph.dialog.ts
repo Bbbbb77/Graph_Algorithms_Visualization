@@ -4,7 +4,7 @@ import {
   MatDialogRef,
   MatDialog,
 } from '@angular/material/dialog';
-import { ErrorMessageDialog } from '../errormessage.dialog/errormessage.dialog';
+import { MessageDialog } from '../message.dialog/message.dialog';
 
 @Component({
   selector: 'addgraph.dialog',
@@ -43,10 +43,10 @@ export class AddGraphDialog implements OnInit {
     }
 
     if (errorMessage != '') {
-      this.dialog.open(ErrorMessageDialog, {
+      this.dialog.open(MessageDialog, {
         width: '300px',
         height: '200px',
-        data: { errorMessage: errorMessage },
+        data: { title: 'Error', message: errorMessage, error: true },
       });
     } else {
       this.dialogRef.close(graphObject);

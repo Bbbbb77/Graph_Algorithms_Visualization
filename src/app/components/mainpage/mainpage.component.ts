@@ -15,7 +15,7 @@ import { AddAndEditWeightedEdge } from '../addandeditweightededge.dialog/addande
 import { RandomGraph } from '../randomgraph.component/randomgraph.component';
 import { Algorithms } from '../algorithms.component/algorithms.component';
 import { Player } from '../player.component/player.component';
-import { ErrorMessageDialog } from '../errormessage.dialog/errormessage.dialog';
+import { MessageDialog } from '../message.dialog/message.dialog';
 import { StorageSavedDialog } from '../storagesaved.dialog/storagesaved.dialog';
 
 import { Graph } from '../../models/graphs/graph';
@@ -24,8 +24,8 @@ import { DirectedUnweightedGraph } from '../../models/graphs/directedunweighted.
 import { UndirectedUnweightedGraph } from '../../models/graphs/undirectedunweighted.graph';
 import { UndirectedWeightedGraph } from '../../models/graphs/undirectedweighted.graph';
 
-import { StorageSaveService } from '../../services/storagesaveservice';
-import { GraphBuilderService } from '../../services/graphbuilderservice';
+import { StorageSaveService } from '../../services/storagesave.service';
+import { GraphBuilderService } from '../../services/graphbuilder.service';
 
 import { MatTable } from '@angular/material/table';
 
@@ -337,6 +337,13 @@ export class MainPage implements OnInit {
     }
   }
 
+  @ViewChild('inputFile')
+  inputFile: ElementRef;
+
+  openFileInput(): void {
+    this.inputFile.nativeElement.click();
+  }
+
   onFileSelected(event): void {
     let file = event.target.files[0];
     let fileReader: FileReader = new FileReader();
@@ -423,10 +430,14 @@ export class MainPage implements OnInit {
         addEdge: (data, callback) => {
           if (data.from == data.to) {
             this.dialog
-              .open(ErrorMessageDialog, {
+              .open(MessageDialog, {
                 width: '300px',
                 height: '200px',
-                data: { errorMessage: 'Node cannot be connected with itsel!' },
+                data: {
+                  title: 'Error',
+                  Message: 'Node cannot be connected with itsel!',
+                  error: true,
+                },
               })
               .afterClosed()
               .subscribe((result) => {
@@ -441,12 +452,14 @@ export class MainPage implements OnInit {
           editWithoutDrag: (data, callback) => {
             if (!this.weighted) {
               this.dialog
-                .open(ErrorMessageDialog, {
+                .open(MessageDialog, {
                   width: '300px',
                   height: '200px',
                   data: {
+                    title: 'Error',
                     errorMessage:
                       'Edge cannot be edited because the graph is not weighted!',
+                    error: true,
                   },
                 })
                 .afterClosed()

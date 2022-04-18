@@ -31,8 +31,14 @@
       Create
     </button>
     <button mat-button (click)="addGraph()">Add graph</button>
-    <button mat-button (click)="loadGraph()">Load</button>
-    <input type="file" (change)="onFileSelected($event)" />
+    <button mat-button (click)="loadGraph()">Load storage</button>
+    <button mat-button (click)="openFileInput()">Load file</button>
+    <input
+      #inputFile
+      type="file"
+      (change)="onFileSelected($event)"
+      style="display: none"
+    />
   </div>
   <div style="margin: 5px">
     <button
