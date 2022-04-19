@@ -882,9 +882,11 @@ export class MainPage implements OnInit {
           id: node,
           label: newLabel,
           color: { background: this.baseNodeColor },
+          font: { color: 'black' },
         },
       ]);
-      //this.dfsCounterMap.set(node, counter);
+      this.dfsStack.shift();
+      this.dfsstacktable.renderRows();
     }
 
     if (value.next != undefined) {
@@ -896,6 +898,7 @@ export class MainPage implements OnInit {
           id: node,
           label: newLabel,
           color: { background: this.baseNodeColor },
+          font: { color: 'black' },
         },
       ]);
       this.dfsCounterMap.set(node, counter);
@@ -913,6 +916,8 @@ export class MainPage implements OnInit {
           { id: edgeId, color: { color: this.baseEdgeColor } },
         ]);
       }
+      this.dfsStack.shift();
+      this.dfsstacktable.renderRows();
     }
 
     if (value.current != undefined && value.next == undefined) {
@@ -925,9 +930,13 @@ export class MainPage implements OnInit {
           id: node,
           label: newLabel,
           color: { background: this.nodeVisitedColor },
+          font: { color: 'black' },
         },
       ]);
-      this.dfsStack.shift();
+      this.topSort.shift();
+      this.topsorttable.renderRows();
+
+      this.dfsStack.unshift(String(node));
       this.dfsstacktable.renderRows();
     }
   }
@@ -1023,8 +1032,14 @@ export class MainPage implements OnInit {
           { id: id, color: { color: this.baseEdgeColor } },
         ]);
       });
-      this.dfsstacktable.renderRows();
-      this.topsorttable.renderRows();
+      if (this.dfsstacktable != undefined) {
+        this.dfsStack = [];
+        this.dfsstacktable.renderRows();
+      }
+      if (this.topsorttable != undefined) {
+        this.topSort = [];
+        this.topsorttable.renderRows();
+      }
     }
   }
 
