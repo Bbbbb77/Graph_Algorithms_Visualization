@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class DfsService {
   stepCounter: number = 0;
+  visited = new Map();
+  counter = 0;
 
   constructor() {}
 
@@ -13,9 +15,6 @@ export class DfsService {
   resetStepCounter(): void {
     this.stepCounter = 0;
   }
-
-  visited = new Map();
-  counter = 0;
 
   *dfs(node, graph) {
     let nodes = graph.getNodes();
@@ -49,24 +48,23 @@ export class DfsService {
     console.log('util node', node);
     this.visited.set(node, true);
     let visitedCounter = 0;
+    let neighbours = adjList.get(node);
 
-    for (let i = 0; i < adjList.get(node).length; i++) {
-      visitedCounter += 1;
+    for (let i = 0; i < neighbours.length; i++) {
+      visitedCounter++;
       if (!this.visited.get(adjList.get(node)[i])) {
-        console.log('not visited neighbour', adjList.get(node)[i]);
         this.counter++;
         yield {
           current: node,
-          next: adjList.get(node)[i],
+          next: neighbours[i],
           startCounter: this.counter,
         };
-        yield* this.dfsUtil(adjList.get(node)[i], adjList);
+        yield* this.dfsUtil(neighbours[i], adjList);
       }
     }
 
-    if (adjList.get(node).length == visitedCounter) {
+    if (neighbours.length == visitedCounter) {
       this.counter++;
-      console.log('finished node', node);
       yield { current: node, endCounter: this.counter };
     }
   }

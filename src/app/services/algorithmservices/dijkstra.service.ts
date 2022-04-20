@@ -40,6 +40,7 @@ export class DijkstraService {
 
     distances.set(start, 0);
 
+    this.stepCounter++;
     yield { startNode: start, weight: 0 };
 
     for (let j = 0; j < graph.getNodes().length; j++) {
@@ -48,6 +49,7 @@ export class DijkstraService {
       sptSet.set(u, true);
 
       for (let v = 0; v < adj.get(u).length; v++) {
+        this.stepCounter++;
         if (
           !sptSet.get(adj.get(u)[v].node) &&
           distances.get(u) != Number.MAX_VALUE &&

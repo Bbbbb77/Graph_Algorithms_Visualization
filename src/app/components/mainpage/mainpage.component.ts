@@ -66,6 +66,8 @@ export class MainPage implements OnInit {
   @Output()
   graph: any;
 
+  kruskalMinimumCost?: number;
+
   graphChangedEvent: Subject<void> = new Subject<void>();
 
   baseNodeColor: string = '#97c2fc';
@@ -101,6 +103,7 @@ export class MainPage implements OnInit {
   dfsStack: string[] = [];
   topSort: string[] = [];
   bfsQueue: string[] = [];
+  kruskalNodeHelper = new Map();
 
   distaceColumnHeaders: string[] = ['Node', 'Distance'];
   queueColumnHeaders: string[] = ['Node queue'];
@@ -124,6 +127,12 @@ export class MainPage implements OnInit {
       }
     } else if (algorithmName == 'dfs') {
       this.selectedAlgorithmName = 'dfs';
+    } else if (algorithmName == 'kruskal') {
+      this.selectedAlgorithmName = 'kruskal';
+      let nodes = this.graph.getNodes();
+      for (let i = 0; i < nodes.length; i++) {
+        this.kruskalNodeHelper.set(nodes[i], 0);
+      }
     } else {
       this.selectedAlgorithmName = '';
     }
@@ -758,7 +767,16 @@ export class MainPage implements OnInit {
     }
 
     if (value.next != undefined) {
-      this.colorNode(value.next, this.nodeVisitedColor);
+      if (this.selectedAlgorithmName == 'kruskal') {
+        this.colorNode(value.next, this.nodeFinishedColor, this.nodeTextColor);
+        let counter = this.kruskalNodeHelper.get(value.current);
+        this.kruskalNodeHelper.set(value.current, counter + 1);
+        counter = this.kruskalNodeHelper.get(value.next);
+        this.kruskalNodeHelper.set(value.next, counter + 1);
+      } else {
+        this.colorNode(value.next, this.nodeVisitedColor);
+      }
+
       this.colorEdge(value.current, value.next, this.edgeHighlightColor);
     }
 
@@ -966,6 +984,17 @@ export class MainPage implements OnInit {
       this.colorNode(value.startNode, this.baseNodeColor);
     }
 
+    if (this.selectedAlgorithmName == 'kruskal' && value.current != undefined) {
+      let counter = this.kruskalNodeHelper.get(value.current);
+      if (counter > 0) {
+        counter--;
+      }
+      if (counter == 0) {
+        this.colorNode(value.current, this.baseNodeColor);
+      }
+      this.kruskalNodeHelper.set(value.current, counter);
+    }
+
     if (value.current != undefined && value.newInQueue != undefined) {
       this.colorNode(value.current, this.nodeVisitedColor);
       value.newInQueue.forEach((node) => {
@@ -975,7 +1004,18 @@ export class MainPage implements OnInit {
     }
 
     if (value.next != undefined) {
-      this.colorNode(value.next, this.baseNodeColor);
+      if (this.selectedAlgorithmName == 'kruskal') {
+        let counter = this.kruskalNodeHelper.get(value.next);
+        if (counter > 0) {
+          counter--;
+        }
+        if (counter == 0) {
+          this.colorNode(value.next, this.baseNodeColor);
+        }
+        this.kruskalNodeHelper.set(value.next, counter);
+      } else {
+        this.colorNode(value.next, this.baseNodeColor);
+      }
       this.colorEdge(value.current, value.next, this.baseEdgeColor);
     }
 
@@ -1067,5 +1107,9 @@ export class MainPage implements OnInit {
     this.setupNetwork();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+  }
+
+  setKruskalCost(value): void {
+    this.kruskalMinimumCost = value;
   }
 }

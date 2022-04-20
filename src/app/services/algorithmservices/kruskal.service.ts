@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 export class KruskalService {
   parent;
   stepCounter: number = 0;
+  minimumCost: number = 0;
 
   constructor() {}
 
@@ -15,14 +16,20 @@ export class KruskalService {
     this.stepCounter = 0;
   }
 
+  getMinimumCost(): number {
+    return this.minimumCost;
+  }
+
   find(i) {
     while (this.parent.get(i) != i) {
+      this.stepCounter++;
       i = this.parent.get(i);
     }
     return i;
   }
 
   union(i, j) {
+    this.stepCounter++;
     var a = this.find(i);
     var b = this.find(j);
 
@@ -62,18 +69,18 @@ export class KruskalService {
       return a.weight - b.weight;
     });
 
-    let ans = 0;
+    this.minimumCost = 0;
 
     while (edges.length != 0) {
+      this.stepCounter++;
       let edge = edges.shift();
       let f1 = this.find(edge.from);
       let f2 = this.find(edge.to);
       if (this.find(edge.from) != this.find(edge.to)) {
         this.union(edge.from, edge.to);
-        ans += edge.weight;
+        this.minimumCost += edge.weight;
         yield { current: edge.from, next: edge.to, weight: edge.weight };
       }
     }
-    yield { ans: ans };
   }
 }

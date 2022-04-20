@@ -79,6 +79,9 @@ export class Algorithms implements OnInit {
   @Output()
   algoNameEmitter = new EventEmitter();
 
+  @Output()
+  kruskalCostEmitter = new EventEmitter();
+
   constructor(
     private bfsService: BfsService,
     private dfsService: DfsService,
@@ -303,6 +306,7 @@ export class Algorithms implements OnInit {
       } else if (this.selectedAlgo == 'kruskal') {
         this.algoStepsMap.set('kruskal', this.kruskalService.getStepCounter());
         this.kruskalService.resetStepCounter();
+        this.kruskalCostEmitter.emit(this.kruskalService.getMinimumCost());
       } else if (this.selectedAlgo == 'bellmanford') {
         this.algoStepsMap.set(
           'bellmanford',

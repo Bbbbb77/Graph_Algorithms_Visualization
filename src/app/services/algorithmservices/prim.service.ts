@@ -31,15 +31,18 @@ export class PrimService {
     queue.push({ node: startNode, weight: 0 });
     value.set(startNode, 0);
 
+    this.stepCounter++;
     yield { startNode: startNode };
 
     while (queue.length != 0) {
+      this.stepCounter++;
       let nodePair = queue.shift();
       visited.set(nodePair.node, true);
 
       let neighbours = adjList.get(nodePair.node);
 
       for (let i = 0; i < neighbours.length; i++) {
+        this.stepCounter++;
         let weight = neighbours[i].weight;
         let vertex = neighbours[i].node;
         if (!visited.get(vertex) && value.get(vertex) > weight) {

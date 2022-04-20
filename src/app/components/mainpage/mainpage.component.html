@@ -1,12 +1,12 @@
 <div class="container">
-  <div style="margin: 5px">
+  <div style="margin: 5px; background-color: #0096ff">
     <button mat-button (click)="petersenGraph()">Petersen</button>
     <button mat-button (click)="housesWells()">3 Houses 3 Wells</button>
     <button mat-button (click)="butterfly()">Butterfly</button>
     <button mat-button (click)="positions()">Positions</button>
     <button mat-button (click)="graphStr()">Graph str</button>
   </div>
-  <div style="margin: 5px">
+  <div style="margin: 5px; background-color: #0096ff">
     <mat-button-toggle-group
       [(ngModel)]="directed"
       [disabled]="graph != undefined"
@@ -101,6 +101,14 @@
         margin-right: 15px;
       "
     >
+      <label
+        *ngIf="
+          selectedAlgorithmName == 'kruskal' && kruskalMinimumCost != undefined
+        "
+      >
+        Minimum cost of spanning tree: {{ kruskalMinimumCost }}
+      </label>
+
       <table
         style="float: left"
         mat-table
@@ -206,6 +214,7 @@
     (generatorResultEmitter)="stepClicked($event)"
     (resetAlgoEmitter)="resetAlgo()"
     (algoNameEmitter)="selectedAlgorithm($event)"
+    (kruskalCostEmitter)="setKruskalCost($event)"
     [events]="graphChangedEvent.asObservable()"
   ></algorithms>
   <!--
