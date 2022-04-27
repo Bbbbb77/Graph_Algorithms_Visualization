@@ -49,14 +49,13 @@ export class DijkstraService {
       sptSet.set(u, true);
 
       for (let v = 0; v < adj.get(u).length; v++) {
-        this.stepCounter++;
         if (
           !sptSet.get(adj.get(u)[v].node) &&
           distances.get(u) != Number.MAX_VALUE &&
           distances.get(u) + adj.get(u)[v].weight <
             distances.get(adj.get(u)[v].node)
         ) {
-          let newNext = distances.get(adj.get(u)[v].node) != Number.MAX_VALUE;
+          let newTo = distances.get(adj.get(u)[v].node) != Number.MAX_VALUE;
 
           distances.set(
             adj.get(u)[v].node,
@@ -67,18 +66,18 @@ export class DijkstraService {
           to = adj.get(u)[v].node;
           w = adj.get(u)[v].weight;
 
-          if (newNext) {
-            let prev = pervDestNodes.get(to);
+          if (newTo) {
+            let prevFrom = pervDestNodes.get(to);
             pervDestNodes.set(to, from);
             yield {
-              current: from,
-              newNext: to,
+              from: from,
+              newTo: to,
               weight: distances.get(to),
-              prevCurrent: prev,
+              prevFrom: prevFrom,
             };
           } else {
             pervDestNodes.set(to, from);
-            yield { current: from, next: to, weight: distances.get(to) };
+            yield { from: from, to: to, weight: distances.get(to) };
           }
         }
       }

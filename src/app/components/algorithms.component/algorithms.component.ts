@@ -107,14 +107,18 @@ export class Algorithms implements OnInit {
       this.floydWarshallService.resetStepCounter();
       this.bellmanFordService.resetStepCounter();
       this.algoStepsMap.clear();
+      this.resetAlgo();
     });
   }
 
   resetAlgo(): void {
+    this.startNode = '';
     this.generator = undefined;
     this.isAlgorithmEnded = false;
     this.selectedAlgo = '';
     this.algoNameEmitter.emit(this.selectedAlgo);
+    this.remainingTime = 0;
+    this.startTimeMs = 0;
     this.commandService.clear();
     this.resetAlgoEmitter.emit();
   }

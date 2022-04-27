@@ -98,12 +98,14 @@ export class MainPage implements OnInit {
 
   prevWasNewNext: boolean = false;
 
+  selectedStartnode;
   bellmanFordTable: BellmanFordTableElement[] = [];
   dfsCounterMap = new Map();
   dfsStack: string[] = [];
   topSort: string[] = [];
   bfsQueue: string[] = [];
   kruskalNodeHelper = new Map();
+  nodeColoringHelper = new Map();
 
   distaceColumnHeaders: string[] = ['Node', 'Distance'];
   queueColumnHeaders: string[] = ['Node queue'];
@@ -118,6 +120,10 @@ export class MainPage implements OnInit {
 
   selectedAlgorithmName: string = '';
   selectedAlgorithm(algorithmName) {
+    let n = this.graph.getNodes();
+    for (let i = 0; i < n.length; i++) {
+      this.nodeColoringHelper.set(n[i], 0);
+    }
     if (algorithmName == 'bfs') {
       this.selectedAlgorithmName = 'bfs';
     } else if (algorithmName == 'bellmanford') {
@@ -465,6 +471,9 @@ export class MainPage implements OnInit {
       }
     }
     this.destroy();
+    //this.reset();
+    this.algorithmsComponent.resetAlgo();
+    this.graphChangedEvent.next();
     this.setupNetwork();
   }
 
@@ -814,6 +823,7 @@ export class MainPage implements OnInit {
     }
 
     if (value.startNode != undefined) {
+      this.selectedStartnode = value.startNode;
       this.colorNode(value.startNode, this.nodeVisitedColor);
     }
 
@@ -830,12 +840,27 @@ export class MainPage implements OnInit {
     }
 
     if (value.newTo != undefined) {
+      let counter = this.nodeColoringHelper.get(value.prevFrom);
+      this.nodeColoringHelper.set(value.prevFrom, counter - 1);
+
+      counter = this.nodeColoringHelper.get(value.from);
+      this.nodeColoringHelper.set(value.from, counter + 1);
+
+      counter = this.nodeColoringHelper.get(value.newTo);
+      this.nodeColoringHelper.set(value.newTo, counter + 1);
+
       this.colorNode(value.newTo, this.nodeFinishedColor, this.nodeTextColor);
       this.colorEdge(value.from, value.newTo, this.edgeHighlightColor);
       this.colorEdge(value.prevFrom, value.newTo, this.baseEdgeColor);
     }
 
     if (value.to != undefined) {
+      let counter = this.nodeColoringHelper.get(value.from);
+      this.nodeColoringHelper.set(value.from, counter + 1);
+
+      counter = this.nodeColoringHelper.get(value.to);
+      this.nodeColoringHelper.set(value.to, counter + 1);
+
       this.colorNode(value.to, this.nodeFinishedColor, this.nodeTextColor);
       this.colorEdge(value.from, value.to, this.edgeHighlightColor);
     }
@@ -1038,9 +1063,7 @@ export class MainPage implements OnInit {
   }
 
   stepBack(value): void {
-    console.log('stepBack value', value);
     if (this.selectedAlgorithmName == 'floydWarshall') {
-      console.log('stepBack floydWarshall');
       this.updateFloydWarshallTable(value.distances);
       return;
     }
@@ -1109,6 +1132,73 @@ export class MainPage implements OnInit {
       this.colorEdge(value.prevCurrent, value.newNext, this.edgeHighlightColor);
       this.colorEdge(value.current, value.newNext, this.baseEdgeColor);
     }
+
+    /*if (value.from != undefined) {
+      let counter = this.nodeColoringHelper.get(value.from);
+      if (counter > 0) {
+        counter--;
+      }
+      if (counter == 0) {
+        this.colorNode(value.from, this.baseNodeColor, 'black');
+      }
+      this.nodeColoringHelper.set(value.from, counter);
+    }*/
+
+    if (value.newTo != undefined) {
+      let counter = this.nodeColoringHelper.get(value.prevFrom);
+      this.nodeColoringHelper.set(value.prevFrom, counter + 1);
+
+      counter = this.nodeColoringHelper.get(value.from);
+      if (counter > 0) {
+        counter--;
+      }
+      if (counter == 0) {
+        if (this.selectedStartnode == value.from) {
+          this.colorNode(value.from, this.nodeVisitedColor, 'black');
+        } else {
+          this.colorNode(value.from, this.baseNodeColor, 'black');
+        }
+      }
+      this.nodeColoringHelper.set(value.from, counter);
+
+      counter = this.nodeColoringHelper.get(value.newTo);
+      if (counter > 0) {
+        counter--;
+      }
+      if (counter == 0) {
+        this.colorNode(value.newTo, this.baseNodeColor, 'black');
+      }
+      this.nodeColoringHelper.set(value.newTo, counter);
+
+      //this.colorNode(value.newTo, this.nodeFinishedColor, this.nodeTextColor);
+      this.colorEdge(value.from, value.newTo, this.baseEdgeColor);
+      this.colorEdge(value.prevFrom, value.newTo, this.edgeHighlightColor);
+    }
+
+    if (value.to != undefined) {
+      let counter = this.nodeColoringHelper.get(value.from);
+      if (counter > 0) {
+        counter--;
+      }
+      if (counter == 0) {
+        if (this.selectedStartnode == value.from) {
+          this.colorNode(value.from, this.nodeVisitedColor, 'black');
+        } else {
+          this.colorNode(value.from, this.baseNodeColor, 'black');
+        }
+      }
+      this.nodeColoringHelper.set(value.from, counter);
+
+      counter = this.nodeColoringHelper.get(value.to);
+      if (counter > 0) {
+        counter--;
+      }
+      if (counter == 0) {
+        this.colorNode(value.to, this.baseNodeColor, 'black');
+      }
+      this.nodeColoringHelper.set(value.to, counter);
+      this.colorEdge(value.from, value.to, this.baseEdgeColor);
+    }
   }
 
   clearEdges(): void {
@@ -1157,6 +1247,11 @@ export class MainPage implements OnInit {
           { id: id, color: { color: this.baseEdgeColor } },
         ]);
       });
+
+      if (this.bfsqueuetable != undefined) {
+        this.bfsQueue = [];
+        this.bfsqueuetable.renderRows();
+      }
       if (this.dfsstacktable != undefined) {
         this.dfsStack = [];
         this.dfsstacktable.renderRows();
@@ -1165,6 +1260,13 @@ export class MainPage implements OnInit {
         this.topSort = [];
         this.topsorttable.renderRows();
       }
+      if (this.bellmanfordtable != undefined) {
+        this.bellmanFordTable = [];
+        this.bellmanfordtable.renderRows();
+      }
+      this.kruskalMinimumCost = undefined;
+      this.fwTableHeaders = [];
+      this.fwData = [[]];
     }
   }
 
