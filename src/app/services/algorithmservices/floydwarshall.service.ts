@@ -39,11 +39,13 @@ export class FloydWarshallService {
 
     console.log('dist');
     console.table(dist);
-    yield {};
+
+    yield { distances: new Map(JSON.parse(JSON.stringify(Array.from(dist)))) };
 
     for (let k = 0; k < nodes.length; k++) {
       for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < nodes.length; j++) {
+          this.stepCounter++;
           let weight1 = dist
             .get(nodes[i])
             .find((f) => f.node == nodes[j]).weight;
@@ -56,10 +58,17 @@ export class FloydWarshallService {
           if (weight1 > weight2 + weight3) {
             dist.get(nodes[i]).find((f) => f.node == nodes[j]).weight =
               weight2 + weight3;
-            yield { nodeA: nodes[i], nodeB: nodes[j] };
+            console.table(dist);
+            yield {
+              /* current: nodes[i], next: nodes[j],*/ distances: new Map(
+                JSON.parse(JSON.stringify(Array.from(dist)))
+              ),
+            };
           }
         }
       }
     }
+
+    console.log('dist', dist);
   }
 }

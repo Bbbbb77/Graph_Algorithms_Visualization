@@ -1,91 +1,94 @@
 <div class="container">
-  <div style="margin: 5px; background-color: #0096ff">
-    <button mat-button (click)="petersenGraph()">Petersen</button>
-    <button mat-button (click)="housesWells()">3 Houses 3 Wells</button>
-    <button mat-button (click)="butterfly()">Butterfly</button>
-    <button mat-button (click)="positions()">Positions</button>
-    <button mat-button (click)="graphStr()">Graph str</button>
-  </div>
-  <div style="margin: 5px; background-color: #0096ff">
-    <mat-button-toggle-group
-      [(ngModel)]="directed"
-      [disabled]="graph != undefined"
-    >
-      <mat-button-toggle [value]="true">Directed</mat-button-toggle>
-      <mat-button-toggle [value]="false">Undericted</mat-button-toggle>
-    </mat-button-toggle-group>
-    <mat-button-toggle-group
-      [(ngModel)]="weighted"
-      [disabled]="graph != undefined"
-    >
-      <mat-button-toggle [value]="true">Weighted</mat-button-toggle>
-      <mat-button-toggle [value]="false">Unweighted</mat-button-toggle>
-    </mat-button-toggle-group>
-    <button
-      mat-button
-      (click)="createGraph()"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph != undefined
-      "
-    >
-      Create
-    </button>
-    <button mat-button (click)="addGraph()">Add graph</button>
-    <button mat-button (click)="loadGraph()">Load storage</button>
-    <button mat-button (click)="openFileInput()">Load file</button>
-    <input
-      #inputFile
-      type="file"
-      (change)="onFileSelected($event)"
-      style="display: none"
-    />
-  </div>
-  <div style="margin: 5px">
-    <button
-      mat-button
-      (click)="downloaGraph()"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph == undefined
-      "
-    >
-      Download
-    </button>
-    <button
-      mat-button
-      (click)="saveGraph()"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph == undefined
-      "
-    >
-      Save
-    </button>
-    <button
-      mat-button
-      (click)="clearEdges()"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph == undefined
-      "
-    >
-      Clear edges
-    </button>
-    <button
-      mat-button
-      (click)="clearAll()"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph == undefined
-      "
-    >
-      Clear all
-    </button>
-    <button
-      mat-button
-      (click)="reset()"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph == undefined
-      "
-    >
-      Reset
-    </button>
+  <div style="background-color: #0096ff">
+    <h1>Graph algorithms vizualization</h1>
+    <div style="margin: 5px">
+      <button mat-button (click)="petersenGraph()">Petersen</button>
+      <button mat-button (click)="housesWells()">3 Houses 3 Wells</button>
+      <button mat-button (click)="butterfly()">Butterfly</button>
+      <button mat-button (click)="positions()">Positions</button>
+      <button mat-button (click)="graphStr()">Graph str</button>
+    </div>
+    <div style="margin: 5px">
+      <mat-button-toggle-group
+        [(ngModel)]="directed"
+        [disabled]="graph != undefined"
+      >
+        <mat-button-toggle [value]="true">Directed</mat-button-toggle>
+        <mat-button-toggle [value]="false">Undericted</mat-button-toggle>
+      </mat-button-toggle-group>
+      <mat-button-toggle-group
+        [(ngModel)]="weighted"
+        [disabled]="graph != undefined"
+      >
+        <mat-button-toggle [value]="true">Weighted</mat-button-toggle>
+        <mat-button-toggle [value]="false">Unweighted</mat-button-toggle>
+      </mat-button-toggle-group>
+      <button
+        mat-button
+        (click)="createGraph()"
+        [disabled]="
+          directed == undefined || weighted == undefined || graph != undefined
+        "
+      >
+        Create
+      </button>
+      <button mat-button (click)="addGraph()">Add graph</button>
+      <button mat-button (click)="loadGraph()">Load storage</button>
+      <button mat-button (click)="openFileInput()">Load file</button>
+      <input
+        #inputFile
+        type="file"
+        (change)="onFileSelected($event)"
+        style="display: none"
+      />
+    </div>
+    <div style="margin: 5px">
+      <button
+        mat-button
+        (click)="downloaGraph()"
+        [disabled]="
+          directed == undefined || weighted == undefined || graph == undefined
+        "
+      >
+        Download
+      </button>
+      <button
+        mat-button
+        (click)="saveGraph()"
+        [disabled]="
+          directed == undefined || weighted == undefined || graph == undefined
+        "
+      >
+        Save
+      </button>
+      <button
+        mat-button
+        (click)="clearEdges()"
+        [disabled]="
+          directed == undefined || weighted == undefined || graph == undefined
+        "
+      >
+        Clear edges
+      </button>
+      <button
+        mat-button
+        (click)="clearAll()"
+        [disabled]="
+          directed == undefined || weighted == undefined || graph == undefined
+        "
+      >
+        Clear all
+      </button>
+      <button
+        mat-button
+        (click)="reset()"
+        [disabled]="
+          directed == undefined || weighted == undefined || graph == undefined
+        "
+      >
+        Reset
+      </button>
+    </div>
   </div>
   <div style="display: flex">
     <div id="mynetwork" #siteConfigNetwork></div>
@@ -94,7 +97,7 @@
       *ngIf="selectedAlgorithmName != ''"
       style="
         display: inline-block;
-        width: 250px;
+        width: auto;
         border-color: black;
         border-style: solid;
         border-width: 1px;
@@ -173,8 +176,20 @@
         <tr mat-header-row *matHeaderRowDef="distaceColumnHeaders"></tr>
         <tr mat-row *matRowDef="let row; columns: distaceColumnHeaders"></tr>
       </table>
+
+      <table *ngIf="selectedAlgorithmName == 'floydWarshall'">
+        <tr>
+          <th *ngFor="let col of fwTableHeaders">{{ col }}</th>
+        </tr>
+        <tr *ngFor="let row of fwData">
+          <td style="width: 30px; height: 25px" *ngFor="let col of row">
+            {{ col }}
+          </td>
+        </tr>
+      </table>
     </div>
     <div>
+      <!--
       <textarea matInput #graphInput rows="13" cols="30"></textarea>
       <br />
       <button
@@ -186,7 +201,9 @@
       >
         Draw
       </button>
-      <br />
+-->
+      <!--
+        <br />
       <button
         mat-button
         (click)="saveGraphToPNG()"
@@ -196,28 +213,53 @@
       </button>
       <br />
       <img #imgCanvas style="width: 200px; height: 200px" />
+
+
+      <table
+        class="my-table"
+        style="background-color: blueviolet"
+        *ngFor="let row of fwData; index as i"
+      >
+        <tr class="month-row" *ngFor="let col of row">
+          <td class="month-name">{{ col }}</td>
+        </tr>
+      </table>
+            <table mat-table #fwtable [dataSource]="fwData" style="width: 200px">
+        <ng-container [matColumnDef] *ngFor="let row of fwData">
+          <mat-header-cell *matHeaderCellDef>{{ col }}</mat-header-cell>
+          <mat-cell *matCellDef="let element">{{ element[col] }}</mat-cell>
+        </ng-container>
+        <mat-header-row *matHeaderRowDef="fwTableHeaders"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: fwTableHeaders"></mat-row>
+      </table>
+
+      <button mat-button (click)="updateTablesdsd()">uuuuuu</button>
+      <br />
+      -->
     </div>
   </div>
-  <randomgraph
-    [directed]="directed"
-    [weighted]="weighted"
-    [graph]="graph"
-    (graphFinished)="setGeneratedGraph($event)"
-  ></randomgraph>
-  <algorithms
-    #algorithmsComponent
-    [directed]="directed"
-    [weighted]="weighted"
-    [graph]="graph"
-    [graphIsConnected]="graphIsConnected"
-    [graphHasNegativeEdge]="graphHasNegativeEdge"
-    (generatorResultEmitter)="stepClicked($event)"
-    (resetAlgoEmitter)="resetAlgo()"
-    (algoNameEmitter)="selectedAlgorithm($event)"
-    (kruskalCostEmitter)="setKruskalCost($event)"
-    [events]="graphChangedEvent.asObservable()"
-  ></algorithms>
-  <!--
-  <player [directed]="directed" [weighted]="weighted"></player>
-  -->
+  <div style="background-color: #0096ff">
+    <randomgraph
+      [directed]="directed"
+      [weighted]="weighted"
+      [graph]="graph"
+      (graphFinished)="setGeneratedGraph($event)"
+    ></randomgraph>
+    <algorithms
+      #algorithmsComponent
+      [directed]="directed"
+      [weighted]="weighted"
+      [graph]="graph"
+      [graphIsConnected]="graphIsConnected"
+      [graphHasNegativeEdge]="graphHasNegativeEdge"
+      (generatorResultEmitter)="stepClicked($event)"
+      (resetAlgoEmitter)="resetAlgo()"
+      (algoNameEmitter)="selectedAlgorithm($event)"
+      (kruskalCostEmitter)="setKruskalCost($event)"
+      [events]="graphChangedEvent.asObservable()"
+    ></algorithms>
+    <!--
+<player [directed]="directed" [weighted]="weighted"></player>
+-->
+  </div>
 </div>

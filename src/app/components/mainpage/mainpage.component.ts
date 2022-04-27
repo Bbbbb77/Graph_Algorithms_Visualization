@@ -133,6 +133,23 @@ export class MainPage implements OnInit {
       for (let i = 0; i < nodes.length; i++) {
         this.kruskalNodeHelper.set(nodes[i], 0);
       }
+    } else if (algorithmName == 'floydWarshall') {
+      this.selectedAlgorithmName = 'floydWarshall';
+      this.fwData = [[]];
+      this.fwTableHeaders = ['Node'];
+      let nodes = this.graph.getNodes();
+      for (let i = 0; i < nodes.length; i++) {
+        this.fwTableHeaders.push(String(nodes[i]));
+        let temp = [String(nodes[i])];
+        for (let j = 0; j < nodes.length; j++) {
+          if (i == j) {
+            temp.push('0');
+          } else {
+            temp.push('INF');
+          }
+        }
+        this.fwData.push(temp);
+      }
     } else {
       this.selectedAlgorithmName = '';
     }
@@ -279,11 +296,52 @@ export class MainPage implements OnInit {
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
 
+  @ViewChild('fwtable')
+  fwtable;
+  fwData: string[][];
+  fwTableHeaders: string[] = ['Node', '1', '2', '3', '4'];
+
   constructor(
     public dialog: MatDialog,
     private graphBuilderService: GraphBuilderService,
     private storageSaveService: StorageSaveService
-  ) {}
+  ) {
+    this.fwData = [[]];
+    let nodes = [1, 2, 3, 4];
+    //this.fwData.push(['Node', '1', '2', '3', '4']);
+    this.fwData.push(['1', '0', '-1', '5', '7']);
+    this.fwData.push(['2', '5', '0', '3', 'INF']);
+    this.fwData.push(['3', '4', 'INF', '0', '4']);
+    this.fwData.push(['4', '-4', '2', '3', '0']);
+    //this.fwtable.renderRows();
+  }
+
+  updateTablesdsd(): void {
+    this.fwData = [[]];
+    let nodes = [1, 2, 3, 4];
+    //this.fwData.push(['Node', '1', '2', '3', '4']);
+    this.fwData.push(['1', '0', '1', '1', '1']);
+    this.fwData.push(['2', '1', '0', '1', 'INF']);
+    this.fwData.push(['3', '1', 'INF', '0', '4']);
+    this.fwData.push(['4', '1', '1', '1', '0']);
+  }
+
+  updateFloydWarshallTable(distances): void {
+    this.fwData = [[]];
+    distances.forEach((value, key, map) => {
+      let temp = [String(key)];
+      value.map((node) => {
+        let v;
+        if (node.weight == Number.MAX_VALUE) {
+          v = 'INF';
+        } else {
+          v = String(node.weight);
+        }
+        temp.push(v);
+      });
+      this.fwData.push(temp);
+    });
+  }
 
   @ViewChild('algorithmsComponent')
   algorithmsComponent: Algorithms;
@@ -750,6 +808,11 @@ export class MainPage implements OnInit {
       return;
     }
 
+    if (this.selectedAlgorithmName == 'floydWarshall') {
+      this.updateFloydWarshallTable(value.distances);
+      return;
+    }
+
     if (value.startNode != undefined) {
       this.colorNode(value.startNode, this.nodeVisitedColor);
     }
@@ -760,6 +823,21 @@ export class MainPage implements OnInit {
         this.colorNode(node, this.nodeVisitedColor);
         this.colorEdge(value.current, node, this.edgeHighlightColor);
       });
+    }
+
+    if (value.from != undefined) {
+      this.colorNode(value.from, this.nodeFinishedColor, this.nodeTextColor);
+    }
+
+    if (value.newTo != undefined) {
+      this.colorNode(value.newTo, this.nodeFinishedColor, this.nodeTextColor);
+      this.colorEdge(value.from, value.newTo, this.edgeHighlightColor);
+      this.colorEdge(value.prevFrom, value.newTo, this.baseEdgeColor);
+    }
+
+    if (value.to != undefined) {
+      this.colorNode(value.to, this.nodeFinishedColor, this.nodeTextColor);
+      this.colorEdge(value.from, value.to, this.edgeHighlightColor);
     }
 
     if (value.current != undefined) {
@@ -960,6 +1038,13 @@ export class MainPage implements OnInit {
   }
 
   stepBack(value): void {
+    console.log('stepBack value', value);
+    if (this.selectedAlgorithmName == 'floydWarshall') {
+      console.log('stepBack floydWarshall');
+      this.updateFloydWarshallTable(value.distances);
+      return;
+    }
+
     if (this.selectedAlgorithmName == 'bfs') {
       if (value.startNode) {
         this.bfsQueue.pop();
