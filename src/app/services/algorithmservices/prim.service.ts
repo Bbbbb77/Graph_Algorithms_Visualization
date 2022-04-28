@@ -54,17 +54,17 @@ export class PrimService {
             return a.weight - b.weight;
           });
           if (newNext) {
-            let prev = pervDestNodes.get(vertex);
+            let prevFrom = pervDestNodes.get(vertex);
             pervDestNodes.set(vertex, nodePair.node);
             yield {
-              current: nodePair.node,
-              newNext: vertex,
+              from: nodePair.node,
+              newTo: vertex,
               weight: weight,
-              prevCurrent: prev,
+              prevFrom: prevFrom,
             };
           } else {
             pervDestNodes.set(vertex, nodePair.node);
-            yield { current: nodePair.node, next: vertex, weight: weight };
+            yield { from: nodePair.node, to: vertex, weight: weight };
           }
         }
       }

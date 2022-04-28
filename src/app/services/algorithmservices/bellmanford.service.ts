@@ -40,23 +40,23 @@ export class BellmanFordService {
         let edge = edges[j];
         this.stepCounter++;
         if (dist.get(edge.from) + edge.weight < dist.get(edge.to)) {
-          let newNext = dist.get(edge.to) != Number.MAX_VALUE;
+          let newTo = dist.get(edge.to) != Number.MAX_VALUE;
           dist.set(edge.to, dist.get(edge.from) + edge.weight);
 
-          if (newNext) {
-            let prev = pervDestNodes.get(edge.to);
+          if (newTo) {
+            let prevFrom = pervDestNodes.get(edge.to);
             pervDestNodes.set(edge.to, edge.from);
             yield {
-              current: edge.from,
-              newNext: edge.to,
+              from: edge.from,
+              newTo: edge.to,
               weight: dist.get(edge.from) + edge.weight,
-              prevCurrent: prev,
+              prevFrom: prevFrom,
             };
           } else {
             pervDestNodes.set(edge.to, edge.from);
             yield {
-              current: edge.from,
-              next: edge.to,
+              from: edge.from,
+              to: edge.to,
               weight: dist.get(edge.from) + edge.weight,
             };
           }

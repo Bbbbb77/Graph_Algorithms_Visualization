@@ -189,6 +189,11 @@ export class MainPage implements OnInit {
       edges
     );
 
+    if (nodesAndEdges.error != undefined) {
+      this.reset();
+      return;
+    }
+
     let nodes = [
       { id: 1, label: '1', x: 100, y: 75 },
       { id: 2, label: '2', x: 200, y: 75 },
@@ -230,6 +235,11 @@ export class MainPage implements OnInit {
       nodesRaw,
       edges
     );
+
+    if (nodesAndEdges.error != undefined) {
+      this.reset();
+      return;
+    }
 
     let nodes = [
       { id: 1, label: '1', x: 160, y: 75 },
@@ -280,6 +290,11 @@ export class MainPage implements OnInit {
       nodesRaw,
       edges
     );
+
+    if (nodesAndEdges.error != undefined) {
+      this.reset();
+      return;
+    }
 
     let nodes = [
       { id: 1, label: '1', x: 260, y: 20 },
@@ -575,6 +590,30 @@ export class MainPage implements OnInit {
   drawGraph(graphText): void {
     var graphObject = JSON.parse(graphText);
 
+    if (graphObject.weighted == undefined) {
+      this.dialog.open(MessageDialog, {
+        width: '300px',
+        height: '200px',
+        data: {
+          title: 'Error',
+          errorMessage: 'Weighted property is not provided!',
+          error: true,
+        },
+      });
+    }
+
+    if (graphObject.directed == undefined) {
+      this.dialog.open(MessageDialog, {
+        width: '300px',
+        height: '200px',
+        data: {
+          title: 'Error',
+          errorMessage: 'Directed property is not provided!',
+          error: true,
+        },
+      });
+    }
+
     this.weighted = graphObject.weighted;
     this.directed = graphObject.directed;
     this.createGraph();
@@ -583,6 +622,11 @@ export class MainPage implements OnInit {
       graphObject.nodes,
       graphObject.edges
     );
+
+    if (nodesAndEdges.error != undefined) {
+      this.reset();
+      return;
+    }
 
     let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
     let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
@@ -689,6 +733,11 @@ export class MainPage implements OnInit {
             result.nodes,
             result.edges
           );
+
+          if (nodesAndEdges.error != undefined) {
+            this.reset();
+            return;
+          }
 
           let nodesDataSet = new vis.DataSet(nodesAndEdges.nodes);
           let edgesDataSet = new vis.DataSet(nodesAndEdges.edges);
@@ -893,13 +942,13 @@ export class MainPage implements OnInit {
       if (this.weighted) {
         if (value.startNode != undefined) {
           this.setStartNodeInTable(value.startNode);
-        } else if (value.current != undefined && value.weight != undefined) {
-          let valueNext = value.next;
-          if (valueNext == undefined) {
-            valueNext = value.newNext;
+        } else if (value.from != undefined && value.weight != undefined) {
+          let valueTo = value.to;
+          if (valueTo == undefined) {
+            valueTo = value.newTo;
           }
 
-          this.updateTable(value.current, valueNext, value.weight);
+          this.updateTable(value.from, valueTo, value.weight);
         }
       }
     }

@@ -1,10 +1,15 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MessageDialog } from '../components/message.dialog/message.dialog';
 
 @Injectable()
 export class GraphBuilderService {
-  constructor() {}
+  isNodeNumber?: Boolean;
+
+  constructor(public dialog: MatDialog) {}
 
   buildGraph(graph, nodes, edges) {
+    this.isNodeNumber = undefined;
     let networkNodes: { id: number; label: string }[] = [];
     let networkEdges: {
       id: string;
@@ -15,6 +20,23 @@ export class GraphBuilderService {
     }[] = [];
 
     for (let i = 0; i < nodes.length; i++) {
+      if (this.isNodeNumber == undefined) {
+        this.isNodeNumber = !isNaN(nodes[i]);
+      }
+
+      if (this.isNodeNumber && isNaN(nodes[i])) {
+        this.dialog.open(MessageDialog, {
+          width: '300px',
+          height: '200px',
+          data: {
+            title: 'Error',
+            errorMessage: 'Nodes are not matched!',
+            error: true,
+          },
+        });
+        return { error: true };
+      }
+
       graph.addNode(nodes[i]);
       if (networkNodes.find((obj) => obj.id == nodes[i]) == undefined) {
         networkNodes.push({
@@ -25,6 +47,35 @@ export class GraphBuilderService {
     }
 
     for (let i = 0; i < edges.length; i++) {
+      if (
+        (this.isNodeNumber && (isNaN(edges[i].from) || isNaN(edges[i].to))) ||
+        (!this.isNodeNumber && (!isNaN(edges[i].from) || !isNaN(edges[i].to)))
+      ) {
+        this.dialog.open(MessageDialog, {
+          width: '300px',
+          height: '200px',
+          data: {
+            title: 'Error',
+            errorMessage: 'Nodes in edges are not matched!',
+            error: true,
+          },
+        });
+        return { error: true };
+      }
+
+      if (!nodes.includes(edges[i].from) || !nodes.includes(edges[i].to)) {
+        this.dialog.open(MessageDialog, {
+          width: '300px',
+          height: '200px',
+          data: {
+            title: 'Error',
+            errorMessage:
+              'There is a node in the edges which is not in the nodes property!',
+            error: true,
+          },
+        });
+        return { error: true };
+      }
       if (!graph.isWeighted()) {
         graph.addEdge(edges[i].from, edges[i].to);
         if (graph.isDirected()) {
