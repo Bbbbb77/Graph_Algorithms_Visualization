@@ -4,7 +4,12 @@
       <h2>Saved graphs</h2>
       <label>(Max 5 saved graphs)</label>
     </div>
-    <button mat-icon-button (click)="closeDialog()">X</button>
+    <div>
+      <button mat-button (click)="closeAndDeleteDialog()">
+        Close and delete
+      </button>
+      <button mat-button (click)="closeDialog()">Close</button>
+    </div>
   </div>
   <mat-list *ngFor="let g of savedGraphs">
     <mat-list-item style="width: 500px; height: 450px">

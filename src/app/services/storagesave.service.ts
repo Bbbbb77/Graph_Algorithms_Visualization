@@ -117,30 +117,12 @@ export class StorageSaveService {
       };
     }[] = [];
 
-    let first = localStorage.getItem('first');
-    if (first != undefined) {
-      graphList.push({ key: 'first', graph: JSON.parse(first) });
-    }
-
-    let second = localStorage.getItem('second');
-    if (second != undefined) {
-      graphList.push({ key: 'second', graph: JSON.parse(second) });
-    }
-
-    let third = localStorage.getItem('third');
-    if (third != undefined) {
-      graphList.push({ key: 'third', graph: JSON.parse(third) });
-    }
-
-    let fourth = localStorage.getItem('fourth');
-    if (fourth != undefined) {
-      graphList.push({ key: 'fourth', graph: JSON.parse(fourth) });
-    }
-
-    let fifth = localStorage.getItem('fifth');
-    if (fifth != undefined) {
-      graphList.push({ key: 'fifth', graph: JSON.parse(fifth) });
-    }
+    this.keysHelper.map((key) => {
+      let value = localStorage.getItem(key);
+      if (value != undefined) {
+        graphList.push({ key: key, graph: JSON.parse(value) });
+      }
+    });
 
     return graphList;
   }

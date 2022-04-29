@@ -42,6 +42,10 @@ export class StorageSavedDialog implements OnInit {
   }
 
   closeDialog(): void {
+    this.dialogRef.close({});
+  }
+
+  closeAndDeleteDialog(): void {
     this.dialogRef.close({ deleteKeys: this.deleteKeys });
   }
 }

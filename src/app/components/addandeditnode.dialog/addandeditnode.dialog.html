@@ -3,7 +3,7 @@
 <div mat-dialog-content style="height: 70%">
   <mat-form-field>
     <mat-label>Node</mat-label>
-    <input matInput [(ngModel)]="nodeValue" />
+    <input matInput maxlength="3" [(ngModel)]="nodeValue" />
   </mat-form-field>
   <mat-dialog-actions>
     <button mat-button (click)="addPerEdit()">

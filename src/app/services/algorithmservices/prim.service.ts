@@ -46,14 +46,14 @@ export class PrimService {
         let weight = neighbours[i].weight;
         let vertex = neighbours[i].node;
         if (!visited.get(vertex) && value.get(vertex) > weight) {
-          let newNext = value.get(vertex) != Number.MAX_VALUE;
+          let newTo = value.get(vertex) != Number.MAX_VALUE;
           value.set(vertex, weight);
           connection.set(vertex, nodePair.node);
           queue.push({ node: vertex, weight: weight });
           queue.sort(function (a, b) {
             return a.weight - b.weight;
           });
-          if (newNext) {
+          if (newTo) {
             let prevFrom = pervDestNodes.get(vertex);
             pervDestNodes.set(vertex, nodePair.node);
             yield {

@@ -10,6 +10,7 @@ export class RandomGraph implements OnInit {
   edges;
 
   edgeChance: number = 1;
+  withNegativeWeight: boolean = false;
 
   @Input()
   directed?: boolean;
@@ -34,7 +35,7 @@ export class RandomGraph implements OnInit {
   generateGraph(size: number) {
     this.nodes = [];
     this.edges = [];
-    this.graph.clear();
+    this.graph.reset();
 
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
@@ -47,11 +48,18 @@ export class RandomGraph implements OnInit {
           continue;
         }
 
+        this.graph.addNode(i);
+        this.graph.addNode(j);
+
         let random = Math.random();
         if (random < this.edgeChance * 0.01) {
           let randomWeight = Math.floor(Math.random() * 20);
           if (randomWeight == 0) randomWeight += 1;
-
+          if (this.withNegativeWeight) {
+            if (Math.random() > 0.5) {
+              randomWeight *= -1;
+            }
+          }
           if (this.weighted) {
             this.graph.addEdge(i, j, randomWeight);
           } else {

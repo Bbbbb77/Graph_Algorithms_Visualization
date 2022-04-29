@@ -209,11 +209,15 @@ export class Graph {
     return false;
   }
 
-  clear() {
+  reset() {
     this.nodes = [];
     this.singleEdges.clear();
     this.adjList.clear();
     this.hasNegativeWeight = false;
+  }
+
+  clear() {
+    this.reset();
     this.isNodesNumber = true;
     this.weighted = false;
   }

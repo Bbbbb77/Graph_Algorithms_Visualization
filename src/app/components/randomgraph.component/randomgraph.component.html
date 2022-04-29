@@ -11,6 +11,12 @@
       min="1"
       max="100"
     ></mat-slider>
+    <mat-checkbox
+      [(ngModel)]="withNegativeWeight"
+      [disabled]="graph == undefined || !weighted"
+    >
+      With negative weight
+    </mat-checkbox>
     <button
       mat-button
       (click)="generateGraph(5)"
