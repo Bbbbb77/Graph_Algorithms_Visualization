@@ -96,7 +96,6 @@
       #infoArea
       *ngIf="selectedAlgorithmName != ''"
       style="
-        display: inline-block;
         width: auto;
         border-color: black;
         border-style: solid;
@@ -159,7 +158,6 @@
 
       <table
         mat-table
-        class="infoTable"
         #bellmanfordtable
         [dataSource]="bellmanFordTable"
         *ngIf="selectedAlgorithmName == 'bellmanford'"
@@ -172,7 +170,6 @@
           <th mat-header-cell *matHeaderCellDef>Distance</th>
           <td mat-cell *matCellDef="let element">{{ element.Distance }}</td>
         </ng-container>
-
         <tr mat-header-row *matHeaderRowDef="distaceColumnHeaders"></tr>
         <tr mat-row *matRowDef="let row; columns: distaceColumnHeaders"></tr>
       </table>
@@ -250,6 +247,7 @@
       [directed]="directed"
       [weighted]="weighted"
       [graph]="graph"
+      [startNode]="selectedNode"
       [graphIsConnected]="graphIsConnected"
       [graphHasNegativeEdge]="graphHasNegativeEdge"
       (generatorResultEmitter)="stepClicked($event)"
