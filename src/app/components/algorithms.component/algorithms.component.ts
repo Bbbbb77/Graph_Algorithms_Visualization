@@ -47,7 +47,6 @@ export class Algorithms implements OnInit {
   remainingTime: number = 0;
   startTimeMs: number = 0;
   isAlgorithmEnded: boolean = false;
-  startNode: String = '';
   selectedAlgo: string = '';
   generator;
   algoStepsMap = new Map();
@@ -60,6 +59,9 @@ export class Algorithms implements OnInit {
 
   @Input()
   weighted?: boolean;
+
+  @Input()
+  startNode: String = '';
 
   @Input()
   graphIsConnected: boolean;

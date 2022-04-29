@@ -66,6 +66,9 @@ export class MainPage implements OnInit {
   @Output()
   graph: any;
 
+  @Output()
+  selectedNode;
+
   kruskalMinimumCost?: number;
 
   graphChangedEvent: Subject<void> = new Subject<void>();
@@ -120,6 +123,9 @@ export class MainPage implements OnInit {
 
   selectedAlgorithmName: string = '';
   selectedAlgorithm(algorithmName) {
+    if (this.network != undefined) {
+      this.network.unselectAll();
+    }
     let n = this.graph.getNodes();
     for (let i = 0; i < n.length; i++) {
       this.nodeColoringHelper.set(n[i], 0);
@@ -573,6 +579,9 @@ export class MainPage implements OnInit {
     this.network = new vis.Network(container, this.baseData, options);
     this.network.on('afterDrawing', (ctx) => {
       this.canvasContext = ctx;
+    });
+    this.network.on('selectNode', (properties) => {
+      this.selectedNode = String(properties.nodes[0]);
     });
   }
 
