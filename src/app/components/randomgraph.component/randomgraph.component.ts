@@ -55,7 +55,7 @@ export class RandomGraph implements OnInit {
         height: '200px',
         data: {
           title: 'Error',
-          Message: 'Minimum or maximum weight is undefined!',
+          message: 'Minimum or maximum weight is undefined!',
           error: true,
         },
       });

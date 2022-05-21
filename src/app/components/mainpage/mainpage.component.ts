@@ -452,7 +452,7 @@ export class MainPage implements OnInit {
 
         if (result.graph != undefined) {
           this.reset();
-          this.drawGraph(result.graph);
+          this.drawGraph(result.graph.graphJson);
         }
       });
   }
@@ -561,7 +561,7 @@ export class MainPage implements OnInit {
                 height: '200px',
                 data: {
                   title: 'Error',
-                  Message: 'Node cannot be connected with itsel!',
+                  message: 'Node cannot be connected with itself!',
                   error: true,
                 },
               })
@@ -583,7 +583,7 @@ export class MainPage implements OnInit {
                   height: '200px',
                   data: {
                     title: 'Error',
-                    errorMessage:
+                    message:
                       'Edge cannot be edited because the graph is not weighted!',
                     error: true,
                   },
@@ -634,7 +634,7 @@ export class MainPage implements OnInit {
         height: '200px',
         data: {
           title: 'Error',
-          errorMessage: 'Weighted property is not provided!',
+          message: 'Weighted property is not provided!',
           error: true,
         },
       });
@@ -646,7 +646,7 @@ export class MainPage implements OnInit {
         height: '200px',
         data: {
           title: 'Error',
-          errorMessage: 'Directed property is not provided!',
+          message: 'Directed property is not provided!',
           error: true,
         },
       });
@@ -722,6 +722,7 @@ export class MainPage implements OnInit {
                 from: data.id,
                 to: edge.to,
                 label: edge.label,
+                arrows: this.directed ? 'to' : '',
               });
             } else if (edge.to == prevNodeValue) {
               newEdges.push({
@@ -729,11 +730,12 @@ export class MainPage implements OnInit {
                 from: edge.from,
                 to: data.id,
                 label: edge.label,
+                arrows: this.directed ? 'to' : '',
               });
             }
           });
 
-          if (!this.graph.containsNode(data.id)) {
+          if (!this.graph.isNodeInGraph(data.id)) {
             this.graph.editNode(prevNodeValue, data.id);
             //callback(data);
             this.baseData.nodes.remove(Number(prevNodeValue));

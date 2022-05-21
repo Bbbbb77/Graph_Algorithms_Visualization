@@ -30,7 +30,7 @@ export class GraphBuilderService {
           height: '200px',
           data: {
             title: 'Error',
-            errorMessage: 'Nodes are not matched!',
+            message: 'Nodes are not matched!',
             error: true,
           },
         });
@@ -56,7 +56,7 @@ export class GraphBuilderService {
           height: '200px',
           data: {
             title: 'Error',
-            errorMessage: 'Nodes in edges are not matched!',
+            message: 'Nodes in edges are not matched!',
             error: true,
           },
         });
@@ -69,7 +69,7 @@ export class GraphBuilderService {
           height: '200px',
           data: {
             title: 'Error',
-            errorMessage:
+            message:
               'There is a node in the edges which is not in the nodes property!',
             error: true,
           },

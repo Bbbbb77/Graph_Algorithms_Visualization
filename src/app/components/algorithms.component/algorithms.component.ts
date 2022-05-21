@@ -141,7 +141,7 @@ export class Algorithms implements OnInit {
       this.dialog.open(MessageDialog, {
         width: '300px',
         height: '200px',
-        data: { title: 'Error', errorMessage: error, error: true },
+        data: { title: 'Error', message: error, error: true },
       });
       return false;
     } else {
