@@ -30,7 +30,6 @@ export class DirectedUnweightedGraph extends Graph {
       }
     }
     super.removeEdge(node_a, node_b);
-    this.print();
   }
 
   override removeNode(node: any) {
@@ -39,13 +38,10 @@ export class DirectedUnweightedGraph extends Graph {
       let filteredValue = value.filter((toNode) => toNode != node);
       this.adjList.set(key, filteredValue);
     });
-
     super.removeNode(node);
-    this.print();
   }
 
   override editNode(oldNode: any, newNode: any) {
-    super.editNode(oldNode, newNode);
     var edgeList = this.adjList.get(oldNode);
     this.adjList.delete(oldNode);
     this.adjList.forEach((value, key, map) => {
@@ -56,5 +52,6 @@ export class DirectedUnweightedGraph extends Graph {
       }
     });
     this.adjList.set(newNode, edgeList);
+    super.editNode(oldNode, newNode);
   }
 }

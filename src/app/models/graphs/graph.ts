@@ -21,14 +21,14 @@ export function compareWeightedCharacters(
 }
 
 export class Graph {
-  nodes: any[] = [];
-  singleEdges = new Map();
-  adjList = new Map();
-  hasNegativeWeight: boolean = false;
-  isNodesNumber: boolean = true;
-  weighted: boolean = false;
-  directed: boolean = false;
-  visited;
+  private nodes: any[] = [];
+  protected singleEdges = new Map();
+  protected adjList = new Map();
+  private hasNegativeWeight: boolean = false;
+  private areNodesNumber: boolean = true;
+  protected weighted: boolean = false;
+  protected directed: boolean = false;
+  private visited;
 
   constructor() {}
 
@@ -41,18 +41,14 @@ export class Graph {
   }
 
   isNodeInGraph(node): boolean {
-    if (this.isNodesNumber) {
+    if (this.areNodesNumber) {
       return this.nodes.includes(Number(node));
     } else {
       return this.nodes.includes(node);
     }
   }
 
-  addEdge(node_a: any, node_b: any, weight?: number) {
-    if (this.isNodesNumber == undefined) {
-      this.isNodesNumber = !isNaN(node_a);
-    }
-
+  addEdge(node_a: any, node_b: any, weight?: number): void {
     if (
       !this.singleEdges.has(node_b) ||
       (this.singleEdges.has(node_b) &&
@@ -65,28 +61,12 @@ export class Graph {
       }
     }
 
-    if (!this.nodes.includes(node_a)) {
-      this.nodes.push(node_a);
-    }
-
-    if (!this.nodes.includes(node_b)) {
-      this.nodes.push(node_b);
-    }
-    /*
-    if (!this.visited.has(node_a)) {
-      this.visited.set(node_a, false);
-    }
-
-    if (!this.visited.has(node_b)) {
-      this.visited.set(node_b, false);
-    }
-*/
     if (weight && weight < 0) {
       this.hasNegativeWeight = true;
     }
   }
 
-  removeEdge(node_a: any, node_b: any) {
+  removeEdge(node_a: any, node_b: any): void {
     if (this.singleEdges.get(node_a) != undefined) {
       var index = -1;
       if (!this.weighted) {
@@ -102,7 +82,7 @@ export class Graph {
     }
   }
 
-  addNode(node: any) {
+  addNode(node: any): boolean {
     if (!this.singleEdges.has(node)) {
       this.singleEdges.set(node, []);
     }
@@ -114,8 +94,8 @@ export class Graph {
     if (!this.nodes.includes(node)) {
       this.nodes.push(node);
 
-      if (this.isNodesNumber == undefined) {
-        this.isNodesNumber = !isNaN(node);
+      if (this.areNodesNumber == undefined) {
+        this.areNodesNumber = !isNaN(node);
       }
       return true;
     } else {
@@ -123,7 +103,7 @@ export class Graph {
     }
   }
 
-  removeNode(node: any) {
+  removeNode(node: any): void {
     const index = this.nodes.indexOf(node);
     if (index > -1) {
       this.nodes.splice(index, 1);
@@ -141,12 +121,14 @@ export class Graph {
     });
   }
 
-  editNode(oldNode: any, newNode: any) {
+  editNode(oldNode: any, newNode: any): void {
     const index = this.nodes.indexOf(oldNode);
     if (index > -1) {
       this.nodes.splice(index, 1);
     }
     this.nodes.push(newNode);
+
+    //TODO sort
 
     var edgeList = this.singleEdges.get(oldNode);
     this.singleEdges.delete(oldNode);
@@ -166,20 +148,12 @@ export class Graph {
     this.singleEdges.set(newNode, edgeList);
   }
 
-  containsNode(node: any) {
-    return this.nodes.includes(node);
-  }
-
   getAdjList() {
     return this.adjList;
   }
 
   getNodes() {
     return this.nodes;
-  }
-
-  getSingleEdges() {
-    return this.singleEdges;
   }
 
   clearEdges(): void {
@@ -189,7 +163,8 @@ export class Graph {
     });
   }
 
-  getHasNegativeWeight() {
+  //TODO use in edit edge
+  getHasNegativeWeight(): boolean {
     if (!this.weighted) {
       return false;
     }
@@ -209,28 +184,21 @@ export class Graph {
     return false;
   }
 
-  reset() {
+  reset(): void {
     this.nodes = [];
     this.singleEdges.clear();
     this.adjList.clear();
     this.hasNegativeWeight = false;
   }
 
-  clear() {
+  clear(): void {
     this.reset();
-    this.isNodesNumber = true;
+    this.areNodesNumber = true;
+    //TODO delet
     this.weighted = false;
   }
 
-  /*
-  resetVisited() {
-    this.visited.forEach((value, key) => {
-      this.visited.set(key, false);
-    });
-  }
-*/
-
-  dfs(node) {
+  private dfs(node) {
     this.visited.set(node, true);
     for (let i = 0; i < this.adjList.get(node).length; i++) {
       if (this.weighted) {
@@ -262,7 +230,7 @@ export class Graph {
     return true;
   }
 
-  hasNegativeCycle(sourceNode) {
+  hasNegativeCycle(sourceNode): boolean {
     let edges: any[] = [];
     let distances = new Map();
     this.nodes.map((node) => {
@@ -303,6 +271,7 @@ export class Graph {
     return false;
   }
 
+  //TODO delete
   print() {
     console.log('\n\n');
     console.log('nodes', this.nodes);
@@ -311,7 +280,7 @@ export class Graph {
     console.log('\n\n');
   }
 
-  save() {
+  save(): string {
     let thereIsEdge = false;
 
     let saveStr = '{\n';
@@ -335,7 +304,6 @@ export class Graph {
         });
       }
     });
-    console.log('singleEdges', this.singleEdges);
 
     if (thereIsEdge) {
       saveStr = saveStr.slice(0, -2) + '\n';
@@ -343,8 +311,7 @@ export class Graph {
       saveStr = saveStr.slice(0, -1);
     }
     saveStr += ']\n}';
-    console.log('saveStr', saveStr);
-    console.log('json', JSON.parse(saveStr));
+
     return saveStr;
   }
 }

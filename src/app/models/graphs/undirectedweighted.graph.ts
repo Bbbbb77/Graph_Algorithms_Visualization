@@ -48,8 +48,6 @@ export class UndirectedWeightedGraph extends Graph {
         break;
       }
     }
-
-    this.print();
   }
 
   override removeEdge(node_a, node_b) {
@@ -71,7 +69,6 @@ export class UndirectedWeightedGraph extends Graph {
       }
     }
     super.removeEdge(node_a, node_b);
-    this.print();
   }
 
   override removeNode(node) {
@@ -80,13 +77,10 @@ export class UndirectedWeightedGraph extends Graph {
       let filteredValue = value.filter((toNode) => toNode.node != node);
       this.adjList.set(key, filteredValue);
     });
-
     super.removeNode(node);
-    this.print();
   }
 
   override editNode(oldNode, newNode) {
-    super.editNode(oldNode, newNode);
     var edgeList = this.adjList.get(oldNode);
     this.adjList.delete(oldNode);
     this.adjList.forEach((value, key, map) => {
@@ -97,5 +91,6 @@ export class UndirectedWeightedGraph extends Graph {
       }
     });
     this.adjList.set(newNode, edgeList);
+    super.editNode(oldNode, newNode);
   }
 }
