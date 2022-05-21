@@ -1,48 +1,53 @@
 <div style="margin: 10px">
   <label>Random graph</label>
   <div>
-    <label style="margin-right: 10px">Edge chance:</label>
+    <label style="margin-right: 10px">Edge chance(parcentage):</label>
     <mat-slider
       thumbLabel
       [(ngModel)]="edgeChance"
-      [displayWith]="formatLabel"
+      [displayWith]="edgeChanceLabel"
       tickInterval="1"
       step="1"
       min="1"
       max="100"
     ></mat-slider>
-    <mat-checkbox
-      [(ngModel)]="withNegativeWeight"
+    <label style="margin: 10px">Number of nodes</label>
+    <mat-slider
+      thumbLabel
+      [(ngModel)]="numberOfNodes"
+      [displayWith]="numberOfNodesLabel"
+      tickInterval="1"
+      step="1"
+      min="2"
+      max="15"
+    >
+    </mat-slider>
+    <label style="margin-right: 10px"> Minimum weight: </label>
+    <input
+      type="number"
+      style="width: 30px"
       [disabled]="graph == undefined || !weighted"
-    >
-      With negative weight
-    </mat-checkbox>
+      [(ngModel)]="minimumWeigth"
+      max="{{ maximumWeigth }}"
+    />
+
+    <label style="margin-right: 10px"> Maximum weight: </label>
+    <input
+      type="number"
+      style="width: 30px"
+      [disabled]="graph == undefined || !weighted"
+      [(ngModel)]="maximumWeigth"
+      min="{{ minimumWeigth }}"
+    />
+
     <button
       mat-button
-      (click)="generateGraph(5)"
+      (click)="generateGraph()"
       [disabled]="
         directed == undefined || weighted == undefined || graph == undefined
       "
     >
-      Small
-    </button>
-    <button
-      mat-button
-      (click)="generateGraph(7)"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph == undefined
-      "
-    >
-      Medium
-    </button>
-    <button
-      mat-button
-      (click)="generateGraph(9)"
-      [disabled]="
-        directed == undefined || weighted == undefined || graph == undefined
-      "
-    >
-      Large
+      Generate
     </button>
   </div>
 </div>

@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MessageDialog } from '../message.dialog/message.dialog';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'randomgraph',
@@ -9,8 +11,11 @@ export class RandomGraph implements OnInit {
   nodes;
   edges;
 
-  edgeChance: number = 1;
-  withNegativeWeight: boolean = false;
+  minimumWeigth: number = -5;
+  maximumWeigth: number = 5;
+
+  edgeChance: number = 50;
+  numberOfNodes: number = 8;
 
   @Input()
   directed?: boolean;
@@ -24,21 +29,41 @@ export class RandomGraph implements OnInit {
   @Output()
   graphFinished = new EventEmitter();
 
-  constructor() {}
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {}
 
-  formatLabel(value: number) {
+  edgeChanceLabel(value: number) {
     return value;
   }
 
-  generateGraph(size: number) {
+  numberOfNodesLabel(value: number) {
+    return value;
+  }
+
+  generateGraph() {
     this.nodes = [];
     this.edges = [];
     this.graph.reset();
 
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < size; j++) {
+    if (
+      (this.weighted && this.minimumWeigth == undefined) ||
+      this.maximumWeigth == undefined
+    ) {
+      this.dialog.open(MessageDialog, {
+        width: '300px',
+        height: '200px',
+        data: {
+          title: 'Error',
+          Message: 'Minimum or maximum weight is undefined!',
+          error: true,
+        },
+      });
+      return;
+    }
+
+    for (let i = 0; i < this.numberOfNodes; i++) {
+      for (let j = 0; j < this.numberOfNodes; j++) {
         if (i == j) continue;
         if (
           !this.directed &&
@@ -53,13 +78,17 @@ export class RandomGraph implements OnInit {
 
         let random = Math.random();
         if (random < this.edgeChance * 0.01) {
-          let randomWeight = Math.floor(Math.random() * 20);
-          if (randomWeight == 0) randomWeight += 1;
-          if (this.withNegativeWeight) {
-            if (Math.random() > 0.5) {
-              randomWeight *= -1;
-            }
+          let randomWeight = Math.floor(
+            Math.random() * (this.maximumWeigth - this.minimumWeigth + 1) +
+              this.minimumWeigth
+          );
+          while (randomWeight == 0) {
+            randomWeight = Math.floor(
+              Math.random() * (this.maximumWeigth - this.minimumWeigth + 1) +
+                this.minimumWeigth
+            );
           }
+
           if (this.weighted) {
             this.graph.addEdge(i, j, randomWeight);
           } else {
