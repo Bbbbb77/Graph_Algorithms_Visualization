@@ -4,7 +4,6 @@ import { Observable, Subscription } from 'rxjs';
 
 import { CommandService } from '../../services/command.service';
 
-//import { AlgorithmsBaseService } from '../../services/algorithmservices/algorithmsbaseservice';
 import { BfsService } from '../../services/algorithmservices/bfs.service';
 import { DfsService } from '../../services/algorithmservices/dfs.service';
 import { DijkstraService } from '../../services/algorithmservices/dijkstra.service';
@@ -15,14 +14,6 @@ import { BellmanFordService } from '../../services/algorithmservices/bellmanford
 
 import { MessageDialog } from '../message.dialog/message.dialog';
 import { StepsCounterDialog } from '../stepscounter.dialog/stepscounter.dialog';
-
-import { bfs } from '../../models/algorithms/bfs';
-import { dfs } from '../../models/algorithms/dfs';
-import { dijkstra } from '../../models/algorithms/dijkstra';
-import { primMST } from '../../models/algorithms/prim';
-import { kruskal } from '../../models/algorithms/kruskal';
-import { bellmanFord } from '../../models/algorithms/bellmanford';
-import { floydWarshall } from '../../models/algorithms/floydWarshall';
 
 @Component({
   selector: 'algorithms',
@@ -84,6 +75,13 @@ export class Algorithms implements OnInit {
   @Output()
   kruskalCostEmitter = new EventEmitter();
 
+  @Output()
+  startNodeSelectedEmitter = new EventEmitter();
+
+  startNodeChanges(value): void {
+    this.startNodeSelectedEmitter.emit(value);
+  }
+
   constructor(
     private bfsService: BfsService,
     private dfsService: DfsService,
@@ -92,15 +90,12 @@ export class Algorithms implements OnInit {
     private kruskalService: KruskalService,
     private bellmanFordService: BellmanFordService,
     private floydWarshallService: FloydWarshallService,
-    //private algorithmsBaseService: AlgorithmsBaseService,
     private commandService: CommandService,
     public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
     this.eventsSubscription = this.events.subscribe(() => {
-      console.log('graph changed');
-      //this.algorithmsBaseService.resetStepCounter();
       this.bfsService.resetStepCounter();
       this.dfsService.resetStepCounter();
       this.dijkstraService.resetStepCounter();
@@ -160,11 +155,6 @@ export class Algorithms implements OnInit {
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
     );
-    /*
-    this.generator = bfs(
-      this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
-      this.graph
-    );*/
     this.commandService.setAlgoGenerator(this.generator);
   }
 
@@ -179,10 +169,6 @@ export class Algorithms implements OnInit {
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
     );
-    /*this.generator = dfs(
-      this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
-      this.graph
-    );*/
     this.commandService.setAlgoGenerator(this.generator);
   }
 
@@ -197,10 +183,6 @@ export class Algorithms implements OnInit {
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
     );
-    /*this.generator = dijkstra(
-      this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
-      this.graph
-    );*/
     this.commandService.setAlgoGenerator(this.generator);
   }
 
@@ -215,11 +197,6 @@ export class Algorithms implements OnInit {
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
     );
-    /*
-    this.generator = primMST(
-      this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
-      this.graph
-    );*/
     this.commandService.setAlgoGenerator(this.generator);
   }
 
@@ -228,7 +205,6 @@ export class Algorithms implements OnInit {
     this.algoNameEmitter.emit(this.selectedAlgo);
     this.kruskalService.resetStepCounter();
     this.generator = this.kruskalService.kruskal(this.graph);
-    //this.generator = kruskal(this.graph);
     this.commandService.setAlgoGenerator(this.generator);
   }
 
@@ -243,10 +219,6 @@ export class Algorithms implements OnInit {
       this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
       this.graph
     );
-    /*this.generator = bellmanFord(
-      this.isNumeric(this.startNode) ? Number(this.startNode) : this.startNode,
-      this.graph
-    );*/
     this.commandService.setAlgoGenerator(this.generator);
   }
 
@@ -255,7 +227,6 @@ export class Algorithms implements OnInit {
     this.algoNameEmitter.emit(this.selectedAlgo);
     this.floydWarshallService.resetStepCounter();
     this.generator = this.floydWarshallService.floydWarshall(this.graph);
-    //this.generator = floydWarshall(this.graph);
     this.commandService.setAlgoGenerator(this.generator);
   }
 
@@ -293,6 +264,15 @@ export class Algorithms implements OnInit {
     }
 
     if (generatorResult.done) {
+      this.dialog.open(MessageDialog, {
+        width: '300px',
+        height: '200px',
+        data: {
+          title: 'Info',
+          message: 'Algorithm is ended!',
+          error: false,
+        },
+      });
       this.isAlgorithmEnded = true;
       if (this.selectedAlgo == 'bfs') {
         this.algoStepsMap.set('bfs', this.bfsService.getStepCounter());
@@ -326,7 +306,6 @@ export class Algorithms implements OnInit {
         );
         this.floydWarshallService.resetStepCounter();
       }
-      //this.algorithmsBaseService.resetStepCounter();
     }
     return generatorResult;
   }
@@ -353,7 +332,6 @@ export class Algorithms implements OnInit {
   }
 
   openStats(): void {
-    console.log('algosteps', this.algoStepsMap);
     this.dialog.open(StepsCounterDialog, {
       width: '225px',
       height: '400px',
