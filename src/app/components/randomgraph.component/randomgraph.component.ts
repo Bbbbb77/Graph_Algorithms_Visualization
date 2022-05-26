@@ -76,6 +76,20 @@ export class RandomGraph implements OnInit {
         this.graph.addNode(i);
         this.graph.addNode(j);
 
+        if (this.nodes.find((obj) => obj.id == i) == undefined) {
+          this.nodes.push({
+            id: i,
+            label: String(i),
+          });
+        }
+
+        if (this.nodes.find((obj) => obj.id == j) == undefined) {
+          this.nodes.push({
+            id: j,
+            label: String(j),
+          });
+        }
+
         let random = Math.random();
         if (random < this.edgeChance * 0.01) {
           let randomWeight = Math.floor(
@@ -103,23 +117,9 @@ export class RandomGraph implements OnInit {
             label: this.weighted ? String(randomWeight) : null,
           });
         }
-
-        if (this.nodes.find((obj) => obj.id == i) == undefined) {
-          this.nodes.push({
-            id: i,
-            label: String(i),
-          });
-        }
-
-        if (this.nodes.find((obj) => obj.id == j) == undefined) {
-          this.nodes.push({
-            id: j,
-            label: String(j),
-          });
-        }
       }
     }
-    this.graph.print();
+
     this.graphFinished.emit({ nodes: this.nodes, edges: this.edges });
   }
 }
