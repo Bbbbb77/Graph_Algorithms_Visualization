@@ -24,7 +24,6 @@ export class Graph {
   private nodes: any[] = [];
   protected singleEdges = new Map();
   protected adjList = new Map();
-  private hasNegativeWeight: boolean = false;
   private areNodesNumber: boolean = true;
   protected weighted: boolean = false;
   protected directed: boolean = false;
@@ -60,10 +59,6 @@ export class Graph {
         this.singleEdges.get(node_a).push({ node: node_b, weight });
       }
     }
-
-    if (weight && weight < 0) {
-      this.hasNegativeWeight = true;
-    }
   }
 
   removeEdge(node_a: any, node_b: any): void {
@@ -93,6 +88,7 @@ export class Graph {
 
     if (!this.nodes.includes(node)) {
       this.nodes.push(node);
+      this.nodes.sort();
 
       if (this.areNodesNumber == undefined) {
         this.areNodesNumber = !isNaN(node);
@@ -108,6 +104,7 @@ export class Graph {
     if (index > -1) {
       this.nodes.splice(index, 1);
     }
+    this.nodes.sort();
 
     this.singleEdges.delete(node);
     this.singleEdges.forEach((value, key, map) => {
@@ -127,8 +124,7 @@ export class Graph {
       this.nodes.splice(index, 1);
     }
     this.nodes.push(newNode);
-
-    //TODO sort
+    this.nodes.sort();
 
     var edgeList = this.singleEdges.get(oldNode);
     this.singleEdges.delete(oldNode);
@@ -163,18 +159,13 @@ export class Graph {
     });
   }
 
-  //TODO use in edit edge
   getHasNegativeWeight(): boolean {
     if (!this.weighted) {
       return false;
     }
 
-    let hasNegativeWeight = false;
     for (let i = 0; i < this.nodes.length; i++) {
       let edges = this.adjList.get(this.nodes[i]);
-      if (edges.length == 0) {
-        continue;
-      }
       for (let j = 0; j < edges.length; j++) {
         if (edges[j].weight < 0) {
           return true;
@@ -188,14 +179,7 @@ export class Graph {
     this.nodes = [];
     this.singleEdges.clear();
     this.adjList.clear();
-    this.hasNegativeWeight = false;
-  }
-
-  clear(): void {
-    this.reset();
     this.areNodesNumber = true;
-    //TODO delet
-    this.weighted = false;
   }
 
   private dfs(node) {
@@ -230,6 +214,7 @@ export class Graph {
     return true;
   }
 
+  //TODO delete or do something
   hasNegativeCycle(sourceNode): boolean {
     let edges: any[] = [];
     let distances = new Map();
