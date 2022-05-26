@@ -151,13 +151,14 @@ export class MainPage implements OnInit {
     if (this.network != undefined) {
       this.network.unselectAll();
     }
-    let n = [];
+
     if (this.graph != undefined) {
-      this.graph.getNodes();
+      let nodes = this.graph.getNodes();
+      for (let i = 0; i < nodes.length; i++) {
+        this.nodeColoringHelper.set(nodes[i], 0);
+      }
     }
-    for (let i = 0; i < n.length; i++) {
-      this.nodeColoringHelper.set(n[i], 0);
-    }
+
     if (algorithmName == 'bfs') {
       this.selectedAlgorithmName = 'bfs';
     } else if (algorithmName == 'bellmanford') {
@@ -512,7 +513,6 @@ export class MainPage implements OnInit {
     }
     this.destroy();
     this.algorithmsComponent.resetAlgo();
-    this.graphChangedEvent.next();
     this.setupNetwork();
   }
 
@@ -590,6 +590,12 @@ export class MainPage implements OnInit {
     };
 
     var container = this.networkContainer.nativeElement;
+    if (this.baseData == undefined) {
+      let nodesDataSet = new vis.DataSet([]);
+      let edgesDataSet = new vis.DataSet([]);
+      this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+    }
+
     this.network = new vis.Network(container, this.baseData, options);
     this.network.on('afterDrawing', (ctx) => {
       this.canvasContext = ctx;
@@ -674,7 +680,7 @@ export class MainPage implements OnInit {
       .open(AddAndEditNodeDialog, {
         width: '230px',
         height: '250px',
-        data: { label: 'Add new node', nodeValue: '5', editMode: false },
+        data: { label: 'Add new node', nodeValue: '', editMode: false },
       })
       .afterClosed()
       .subscribe((result) => {
@@ -739,9 +745,9 @@ export class MainPage implements OnInit {
             this.baseData.edges.remove(edgeIdsOfNode);
             this.baseData.edges.add(newEdges);
             this.graphChangedEvent.next();
-          } /*else {
-            console.log('node not edited');
-          }*/
+          } else {
+            callback(null);
+          }
         } else {
           callback(null);
         }
@@ -1013,11 +1019,7 @@ export class MainPage implements OnInit {
       this.bfsStep(value);
     }
 
-    if (value.from != undefined) {
-      this.colorNode(value.from, this.nodeFinishedColor, this.nodeTextColor);
-    }
-
-    if (value.newTo != undefined) {
+    if (value.newTo != undefined && value.from != undefined) {
       let counter = this.nodeColoringHelper.get(value.prevFrom);
       this.nodeColoringHelper.set(value.prevFrom, counter - 1);
 
@@ -1032,13 +1034,14 @@ export class MainPage implements OnInit {
       this.colorEdge(value.prevFrom, value.newTo, this.baseEdgeColor);
     }
 
-    if (value.to != undefined) {
+    if (value.to != undefined && value.from != undefined) {
       let counter = this.nodeColoringHelper.get(value.from);
       this.nodeColoringHelper.set(value.from, counter + 1);
 
       counter = this.nodeColoringHelper.get(value.to);
       this.nodeColoringHelper.set(value.to, counter + 1);
 
+      this.colorNode(value.from, this.nodeFinishedColor, this.nodeTextColor);
       this.colorNode(value.to, this.nodeFinishedColor, this.nodeTextColor);
       this.colorEdge(value.from, value.to, this.edgeHighlightColor);
     }
@@ -1310,12 +1313,15 @@ export class MainPage implements OnInit {
   clearEdges(): void {
     this.baseData.edges.clear();
     this.graph.clearEdges();
+    this.graphIsConnected = this.graph.isConnected();
+    this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
   }
 
   clearAll(): void {
     this.baseData.edges.clear();
     this.baseData.nodes.clear();
     this.graph.reset();
+    this.graphChangedEvent.next();
   }
 
   reset(): void {
@@ -1400,6 +1406,7 @@ export class MainPage implements OnInit {
     this.setupNetwork();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.graphChangedEvent.next();
   }
 
   setKruskalCost(value): void {

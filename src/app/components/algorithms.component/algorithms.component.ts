@@ -41,6 +41,7 @@ export class Algorithms implements OnInit {
   selectedAlgo: string = '';
   generator;
   algoStepsMap = new Map();
+  isAdjListEmpty: boolean = true;
 
   @Input()
   graph;
@@ -96,6 +97,7 @@ export class Algorithms implements OnInit {
 
   ngOnInit(): void {
     this.eventsSubscription = this.events.subscribe(() => {
+      this.isAdjListEmpty = this.graph.isAdjListEmpty();
       this.bfsService.resetStepCounter();
       this.dfsService.resetStepCounter();
       this.dijkstraService.resetStepCounter();

@@ -17,7 +17,12 @@
       [ngStyle]="{
         border: selectedAlgo == 'bfs' ? '2px solid black' : '0'
       }"
-      [disabled]="graph == undefined || generator != undefined || weighted"
+      [disabled]="
+        graph == undefined ||
+        isAdjListEmpty ||
+        generator != undefined ||
+        weighted
+      "
     >
       BFS
     </button>
@@ -28,7 +33,12 @@
       [ngStyle]="{
         border: selectedAlgo == 'dfs' ? '2px solid black' : '0'
       }"
-      [disabled]="graph == undefined || generator != undefined || weighted"
+      [disabled]="
+        graph == undefined ||
+        isAdjListEmpty ||
+        generator != undefined ||
+        weighted
+      "
     >
       DFS
     </button>
@@ -41,6 +51,7 @@
       }"
       [disabled]="
         graph == undefined ||
+        isAdjListEmpty ||
         generator != undefined ||
         !weighted ||
         graphHasNegativeEdge
@@ -57,6 +68,7 @@
       }"
       [disabled]="
         graph == undefined ||
+        isAdjListEmpty ||
         generator != undefined ||
         directed ||
         !weighted ||
@@ -74,6 +86,7 @@
       }"
       [disabled]="
         graph == undefined ||
+        isAdjListEmpty ||
         generator != undefined ||
         directed ||
         !weighted ||
@@ -89,7 +102,12 @@
       [ngStyle]="{
         border: selectedAlgo == 'bellmanford' ? '2px solid black' : '0'
       }"
-      [disabled]="graph == undefined || generator != undefined || !weighted"
+      [disabled]="
+        graph == undefined ||
+        isAdjListEmpty ||
+        generator != undefined ||
+        !weighted
+      "
     >
       BELLMANFORD
     </button>
@@ -100,7 +118,12 @@
       [ngStyle]="{
         border: selectedAlgo == 'floydWarshall' ? '2px solid black' : '0'
       }"
-      [disabled]="graph == undefined || generator != undefined || !weighted"
+      [disabled]="
+        graph == undefined ||
+        isAdjListEmpty ||
+        generator != undefined ||
+        !weighted
+      "
     >
       FLOYDWARSHALL
     </button>

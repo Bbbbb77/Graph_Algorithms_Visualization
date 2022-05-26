@@ -67,9 +67,9 @@ export class Graph {
       if (!this.weighted) {
         index = this.singleEdges.get(node_a).indexOf(node_b);
       } else {
-        index = this.singleEdges.get(node_a).findIndex((node) => {
-          node.node == node_b;
-        });
+        index = this.singleEdges
+          .get(node_a)
+          .findIndex((node) => node.node == node_b);
       }
       if (index > -1) {
         this.singleEdges.get(node_a).splice(index, 1);
@@ -197,7 +197,15 @@ export class Graph {
     }
   }
 
+  isAdjListEmpty(): boolean {
+    return this.adjList.size == 0;
+  }
+
   isConnected(): boolean {
+    if (this.nodes.length == 0) {
+      return false;
+    }
+
     this.visited = new Map();
     this.nodes.map((node) => {
       this.visited.set(node, false);
@@ -266,6 +274,7 @@ export class Graph {
   }
 
   save(): string {
+    this.print(); //TODO delete
     let thereIsEdge = false;
 
     let saveStr = '{\n';

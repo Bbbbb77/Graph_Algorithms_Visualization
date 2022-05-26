@@ -10,9 +10,7 @@ export class DirectedWeightedGraph extends Graph {
   override addEdge(node_a: any, node_b: any, weight: number) {
     if (
       this.adjList.get(node_a) &&
-      this.adjList.get(node_a).findIndex((node) => {
-        return node.node == node_b;
-      }) == -1
+      this.adjList.get(node_a).findIndex((node) => node.node == node_b) == -1
     ) {
       this.adjList.get(node_a).push({ node: node_b, weight });
       this.adjList.get(node_a).sort(compareWeightedNodes);
@@ -37,9 +35,9 @@ export class DirectedWeightedGraph extends Graph {
 
   override removeEdge(node_a: any, node_b: any) {
     if (this.adjList.get(node_a) != undefined) {
-      var index = this.adjList.get(node_a).findIndex((node) => {
-        node.node == node_b;
-      });
+      var index = this.adjList
+        .get(node_a)
+        .findIndex((node) => node.node == node_b);
       if (index > -1) {
         this.adjList.get(node_a).splice(index, 1);
       }

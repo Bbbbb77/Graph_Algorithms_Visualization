@@ -10,13 +10,9 @@ export class UndirectedWeightedGraph extends Graph {
   override addEdge(node_a, node_b, weight) {
     if (
       this.adjList.get(node_a) &&
-      this.adjList.get(node_a).findIndex((node) => {
-        return node.node == node_b;
-      }) == -1 &&
+      this.adjList.get(node_a).findIndex((node) => node.node == node_b) == -1 &&
       this.adjList.get(node_b) &&
-      this.adjList.get(node_b).findIndex((node) => {
-        return node.node == node_a;
-      }) == -1
+      this.adjList.get(node_b).findIndex((node) => node.node == node_a) == -1
     ) {
       this.adjList.get(node_a).push({ node: node_b, weight });
       this.adjList.get(node_a).sort(compareWeightedNodes);
@@ -52,18 +48,18 @@ export class UndirectedWeightedGraph extends Graph {
 
   override removeEdge(node_a, node_b) {
     if (this.adjList.get(node_a) != undefined) {
-      var index = this.adjList.get(node_a).findIndex((node) => {
-        node.node == node_b;
-      });
+      var index = this.adjList
+        .get(node_a)
+        .findIndex((node) => node.node == node_b);
       if (index > -1) {
         this.adjList.get(node_a).splice(index, 1);
       }
     }
 
     if (this.adjList.get(node_b) != undefined) {
-      var index = this.adjList.get(node_b).findIndex((node) => {
-        node.node == node_a;
-      });
+      var index = this.adjList
+        .get(node_b)
+        .findIndex((node) => node.node == node_a);
       if (index > -1) {
         this.adjList.get(node_b).splice(index, 1);
       }
