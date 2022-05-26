@@ -14,29 +14,12 @@ export class StorageSaveService {
       img: img,
     });
 
-    if (localStorage.getItem('first') == undefined) {
-      localStorage.setItem('first', newValue);
-      return;
-    }
-
-    if (localStorage.getItem('second') == undefined) {
-      localStorage.setItem('second', newValue);
-      return;
-    }
-
-    if (localStorage.getItem('third') == undefined) {
-      localStorage.setItem('third', newValue);
-      return;
-    }
-
-    if (localStorage.getItem('fourth') == undefined) {
-      localStorage.setItem('fourth', newValue);
-      return;
-    }
-
-    if (localStorage.getItem('fifth') == undefined) {
-      localStorage.setItem('fifth', newValue);
-      return;
+    for (let i = 0; i < this.keysHelper.length; i++) {
+      let key = this.keysHelper[i];
+      if (localStorage.getItem(key) == undefined) {
+        localStorage.setItem(key, newValue);
+        return;
+      }
     }
 
     this.dialog
@@ -83,22 +66,6 @@ export class StorageSaveService {
 
     for (let i = 0; i < listObjects.length; i++) {
       localStorage.setItem(this.keysHelper[i], listObjects[i]);
-    }
-  }
-
-  delete(deleteKey: string) {
-    localStorage.removeItem(deleteKey);
-    let index = this.keysHelper.findIndex((k) => k == deleteKey);
-
-    let prevKey = deleteKey;
-    for (; index < this.keysHelper.length; index++) {
-      let key = this.keysHelper[index];
-      let value = localStorage.getItem(key);
-      if (value != undefined) {
-        localStorage.setItem(prevKey, value);
-      }
-      prevKey = key;
-      localStorage.removeItem(key);
     }
   }
 
