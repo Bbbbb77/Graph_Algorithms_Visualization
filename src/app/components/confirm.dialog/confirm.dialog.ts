@@ -14,7 +14,6 @@ export class ConfirmDialog implements OnInit {
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
     this.message = data.message;
-    //dialogRef.disableClose = true;
   }
 
   ngOnInit(): void {}

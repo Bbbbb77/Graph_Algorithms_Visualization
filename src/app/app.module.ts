@@ -14,7 +14,6 @@ import { AddGraphDialog } from './components/addgraph.dialog/addgraph.dialog';
 import { AddAndEditWeightedEdge } from './components/addandeditweightededge.dialog/addandeditweightededge.dialog';
 import { RandomGraph } from './components/randomgraph.component/randomgraph.component';
 import { Algorithms } from './components/algorithms.component/algorithms.component';
-import { Player } from './components/player.component/player.component';
 import { MessageDialog } from './components/message.dialog/message.dialog';
 import { StorageSavedDialog } from './components/storagesaved.dialog/storagesaved.dialog';
 import { StepsCounterDialog } from './components/stepscounter.dialog/stepscounter.dialog';
@@ -29,7 +28,6 @@ import { ConfirmDialog } from './components/confirm.dialog/confirm.dialog';
     AddAndEditWeightedEdge,
     RandomGraph,
     Algorithms,
-    Player,
     MessageDialog,
     StorageSavedDialog,
     StepsCounterDialog,
@@ -51,7 +49,6 @@ import { ConfirmDialog } from './components/confirm.dialog/confirm.dialog';
     AddAndEditWeightedEdge,
     RandomGraph,
     Algorithms,
-    Player,
     MessageDialog,
     StorageSavedDialog,
     StepsCounterDialog,

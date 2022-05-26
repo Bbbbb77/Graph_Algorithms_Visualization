@@ -68,7 +68,5 @@ export class FloydWarshallService {
         }
       }
     }
-
-    console.log('dist', dist);
   }
 }
