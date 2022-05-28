@@ -14,63 +14,67 @@ export class PrimService {
     this.stepCounter = 0;
   }
 
+  updateEdgeList(edgeList, visited, adjList, node) {
+    let neighbours = adjList.get(node);
+    for (let i = 0; i < neighbours.length; i++) {
+      let weight = neighbours[i].weight;
+      let vertex = neighbours[i].node;
+      let tmpObject = { from: node, to: vertex, weight: weight };
+
+      let index = edgeList.findIndex(
+        (obj) =>
+          obj.from == tmpObject.from &&
+          obj.to == tmpObject.to &&
+          obj.weight == tmpObject.weight
+      );
+
+      if (!visited.get(vertex) && index == -1) {
+        edgeList.push(tmpObject);
+      }
+    }
+    edgeList.sort(function (a, b) {
+      return a.weight - b.weight;
+    });
+  }
+
   *primMST(startNode, Graph) {
     let adjList = Graph.getAdjList();
     let visited = new Map();
     let value = new Map();
-    let connection = new Map();
-    let pervDestNodes = new Map();
 
     Graph.getNodes().map((node) => {
       value.set(node, Number.MAX_VALUE);
       visited.set(node, false);
-      connection.set(node, -1);
     });
 
-    let queue: any[] = [];
-    queue.push({ node: startNode, weight: 0 });
+    let edgeList: any[] = [];
     value.set(startNode, 0);
+    visited.set(startNode, true);
 
     this.stepCounter++;
     yield { startNode: startNode };
 
-    while (queue.length != 0) {
+    this.updateEdgeList(edgeList, visited, adjList, startNode);
+
+    while (edgeList.length != 0) {
       this.stepCounter++;
-      let nodePair = queue.shift();
-      visited.set(nodePair.node, true);
+      let nodePair = edgeList.shift();
 
-      let neighbours = adjList.get(nodePair.node);
+      this.updateEdgeList(edgeList, visited, adjList, nodePair.to);
 
-      for (let i = 0; i < neighbours.length; i++) {
-        this.stepCounter++;
-        let weight = neighbours[i].weight;
-        let vertex = neighbours[i].node;
-        if (!visited.get(vertex) && value.get(vertex) > weight) {
-          let newTo = value.get(vertex) != Number.MAX_VALUE;
-          value.set(vertex, weight);
-          connection.set(vertex, nodePair.node);
-          queue.push({ node: vertex, weight: weight });
-          queue.sort(function (a, b) {
-            return a.weight - b.weight;
-          });
-          if (newTo) {
-            let prevFrom = pervDestNodes.get(vertex);
-            pervDestNodes.set(vertex, nodePair.node);
-            yield {
-              from: nodePair.node,
-              newTo: vertex,
-              weight: weight,
-              prevFrom: prevFrom,
-            };
-          } else {
-            pervDestNodes.set(vertex, nodePair.node);
-            yield { from: nodePair.node, to: vertex, weight: weight };
-          }
-        }
+      if (
+        !visited.get(nodePair.to) &&
+        value.get(nodePair.to) > nodePair.weight
+      ) {
+        value.set(nodePair.to, nodePair.weight);
+
+        yield {
+          from: nodePair.from,
+          to: nodePair.to,
+          weight: nodePair.weight,
+        };
       }
+      visited.set(nodePair.to, true);
     }
-
-    console.log('connection', connection);
-    console.log('value', value);
   }
 }

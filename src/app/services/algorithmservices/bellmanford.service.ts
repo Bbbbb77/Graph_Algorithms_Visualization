@@ -39,7 +39,10 @@ export class BellmanFordService {
       for (let j = 0; j < edges.length; j++) {
         let edge = edges[j];
         this.stepCounter++;
-        if (dist.get(edge.from) + edge.weight < dist.get(edge.to)) {
+        if (
+          dist.get(edge.from) != Number.MAX_VALUE &&
+          dist.get(edge.from) + edge.weight < dist.get(edge.to)
+        ) {
           let newTo = dist.get(edge.to) != Number.MAX_VALUE;
           dist.set(edge.to, dist.get(edge.from) + edge.weight);
 

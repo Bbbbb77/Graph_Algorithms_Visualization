@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
-//import { AlgorithmsBaseService } from './algorithmsbaseservice';
 
 @Injectable()
-export class BfsService /* extends AlgorithmsBaseService*/ {
+export class BfsService {
   stepCounter: number = 0;
 
-  constructor() {
-    //super();
-  }
+  constructor() {}
 
   getStepCounter(): number {
     return this.stepCounter;
@@ -31,9 +28,9 @@ export class BfsService /* extends AlgorithmsBaseService*/ {
 
     yield { startNode: start };
     while (queue.length != 0) {
+      this.stepCounter++;
       let s = queue.shift();
       var notVisited = adj.get(s).filter((node) => {
-        this.stepCounter++;
         return !visited.get(node);
       });
       notVisited.forEach((node) => {

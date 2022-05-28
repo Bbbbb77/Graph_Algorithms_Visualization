@@ -22,14 +22,12 @@ export class KruskalService {
 
   find(i) {
     while (this.parent.get(i) != i) {
-      this.stepCounter++;
       i = this.parent.get(i);
     }
     return i;
   }
 
   union(i, j) {
-    this.stepCounter++;
     var a = this.find(i);
     var b = this.find(j);
 
@@ -79,7 +77,7 @@ export class KruskalService {
       if (this.find(edge.from) != this.find(edge.to)) {
         this.union(edge.from, edge.to);
         this.minimumCost += edge.weight;
-        yield { current: edge.from, next: edge.to, weight: edge.weight };
+        yield { from: edge.from, to: edge.to, weight: edge.weight };
       }
     }
   }

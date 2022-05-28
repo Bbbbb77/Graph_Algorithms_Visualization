@@ -24,7 +24,6 @@ export class FloydWarshallService {
       dist.set(node1, []);
       nodes.forEach((node2) => {
         if (node1 == node2) {
-          console.log('node 1 2', node1, node2);
           dist.get(node1).push({ node: node2, weight: 0 });
         } else {
           let edge = adjList.get(node1).find((f) => f.node == node2);
@@ -37,9 +36,7 @@ export class FloydWarshallService {
       });
     });
 
-    console.log('dist');
-    console.table(dist);
-
+    this.stepCounter++;
     yield { distances: new Map(JSON.parse(JSON.stringify(Array.from(dist)))) };
 
     for (let k = 0; k < nodes.length; k++) {
@@ -55,14 +52,15 @@ export class FloydWarshallService {
           let weight3 = dist
             .get(nodes[k])
             .find((f) => f.node == nodes[j]).weight;
-          if (weight1 > weight2 + weight3) {
-            dist.get(nodes[i]).find((f) => f.node == nodes[j]).weight =
-              weight2 + weight3;
-            console.table(dist);
+          if (
+            weight1 > weight2 + weight3 &&
+            weight2 != Number.MAX_VALUE &&
+            weight2 != Number.MAX_VALUE
+          ) {
+            let index = dist.get(nodes[i]).findIndex((f) => f.node == nodes[j]);
+            dist.get(nodes[i])[index].weight = weight2 + weight3;
             yield {
-              /* current: nodes[i], next: nodes[j],*/ distances: new Map(
-                JSON.parse(JSON.stringify(Array.from(dist)))
-              ),
+              distances: new Map(JSON.parse(JSON.stringify(Array.from(dist)))),
             };
           }
         }

@@ -26,7 +26,6 @@ export class DfsService {
 
     this.counter = 1;
 
-    console.log('startnode', node);
     this.stepCounter++;
     yield { startNode: node, startCounter: this.counter };
     yield* this.dfsUtil(node, adjList);
@@ -36,8 +35,8 @@ export class DfsService {
         continue;
       }
 
-      console.log('startnode', nodes[i]);
       this.counter++;
+      this.stepCounter++;
       yield { startNode: nodes[i], startCounter: this.counter };
       yield* this.dfsUtil(nodes[i], adjList);
     }
@@ -45,15 +44,13 @@ export class DfsService {
 
   *dfsUtil(node, adjList) {
     this.stepCounter++;
-    console.log('util node', node);
     this.visited.set(node, true);
-    let visitedCounter = 0;
     let neighbours = adjList.get(node);
 
     for (let i = 0; i < neighbours.length; i++) {
-      visitedCounter++;
       if (!this.visited.get(adjList.get(node)[i])) {
         this.counter++;
+        this.stepCounter++;
         yield {
           current: node,
           next: neighbours[i],
@@ -63,9 +60,8 @@ export class DfsService {
       }
     }
 
-    if (neighbours.length == visitedCounter) {
-      this.counter++;
-      yield { current: node, endCounter: this.counter };
-    }
+    this.counter++;
+    this.stepCounter++;
+    yield { current: node, endCounter: this.counter };
   }
 }

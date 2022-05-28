@@ -44,11 +44,12 @@ export class DijkstraService {
     yield { startNode: start, weight: 0 };
 
     for (let j = 0; j < graph.getNodes().length; j++) {
+      this.stepCounter++;
       let u = this.minDistance(distances, sptSet, graph);
-      let from, to, w;
       sptSet.set(u, true);
 
       for (let v = 0; v < adj.get(u).length; v++) {
+        this.stepCounter++;
         if (
           !sptSet.get(adj.get(u)[v].node) &&
           distances.get(u) != Number.MAX_VALUE &&
@@ -62,9 +63,8 @@ export class DijkstraService {
             distances.get(u) + adj.get(u)[v].weight
           );
 
-          from = u;
-          to = adj.get(u)[v].node;
-          w = adj.get(u)[v].weight;
+          let from = u;
+          let to = adj.get(u)[v].node;
 
           if (newTo) {
             let prevFrom = pervDestNodes.get(to);
