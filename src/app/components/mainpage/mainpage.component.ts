@@ -16,6 +16,7 @@ import { RandomGraph } from '../randomgraph.component/randomgraph.component';
 import { Algorithms } from '../algorithms.component/algorithms.component';
 import { MessageDialog } from '../message.dialog/message.dialog';
 import { StorageSavedDialog } from '../storagesaved.dialog/storagesaved.dialog';
+import { ConfirmDialog } from '../confirm.dialog/confirm.dialog';
 
 import { Graph } from '../../models/graphs/graph';
 import { DirectedWeightedGraph } from '../../models/graphs/directedweighted.graph';
@@ -48,6 +49,7 @@ export interface DfsNode {
 })
 export class MainPage implements OnInit {
   kruskalMinimumCost?: number;
+  kruskalUserColoring: boolean = false;
 
   graphChangedEvent: Subject<void> = new Subject<void>();
 
@@ -118,6 +120,9 @@ export class MainPage implements OnInit {
   @Output()
   selectedNode;
 
+  @Output()
+  isAdjListEmpty;
+
   @ViewChild('inputFile')
   inputFile: ElementRef;
 
@@ -174,6 +179,20 @@ export class MainPage implements OnInit {
       for (let i = 0; i < nodes.length; i++) {
         this.kruskalNodeHelper.set(nodes[i], 0);
       }
+      this.dialog
+        .open(ConfirmDialog, {
+          width: '300px',
+          height: '225px',
+          data: {
+            message:
+              'Would you like to use different coloring for the node sets?',
+            note: 'Note: in coloring step back option will be disabled!',
+          },
+        })
+        .afterClosed()
+        .subscribe((result) => {
+          this.kruskalUserColoring = result;
+        });
     } else if (algorithmName == 'floydWarshall') {
       this.selectedAlgorithmName = 'floydWarshall';
       this.fwData = [[]];
@@ -239,6 +258,7 @@ export class MainPage implements OnInit {
     this.setupNetwork();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.isAdjListEmpty = this.graph.isAdjListEmpty();
   }
 
   complete(): void {
@@ -285,6 +305,7 @@ export class MainPage implements OnInit {
     this.setupNetwork();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.isAdjListEmpty = this.graph.isAdjListEmpty();
   }
 
   housesWells(): void {
@@ -333,6 +354,7 @@ export class MainPage implements OnInit {
     this.setupNetwork();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.isAdjListEmpty = this.graph.isAdjListEmpty();
   }
 
   petersenGraph(): void {
@@ -392,6 +414,7 @@ export class MainPage implements OnInit {
     this.setupNetwork();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.isAdjListEmpty = this.graph.isAdjListEmpty();
   }
 
   updateFloydWarshallTable(distances): void {
@@ -459,6 +482,9 @@ export class MainPage implements OnInit {
 
   openFileInput(): void {
     this.inputFile.nativeElement.click();
+    this.inputFile.nativeElement.onclick = () => {
+      this.inputFile.nativeElement.value = null;
+    };
   }
 
   onFileSelected(event): void {
@@ -514,6 +540,7 @@ export class MainPage implements OnInit {
     this.destroy();
     this.algorithmsComponent.resetAlgo();
     this.setupNetwork();
+    this.graphChangedEvent.next();
   }
 
   setupNetwork(): void {
@@ -525,7 +552,7 @@ export class MainPage implements OnInit {
         smooth: { enabled: true, type: this.smoothType },
         color: {
           color: this.baseEdgeColor,
-          inherit: false /*, highlight: ''*/,
+          inherit: false,
         },
       },
       manipulation: {
@@ -594,6 +621,7 @@ export class MainPage implements OnInit {
       let nodesDataSet = new vis.DataSet([]);
       let edgesDataSet = new vis.DataSet([]);
       this.baseData = { nodes: nodesDataSet, edges: edgesDataSet };
+      this.isAdjListEmpty = true;
     }
 
     this.network = new vis.Network(container, this.baseData, options);
@@ -673,6 +701,8 @@ export class MainPage implements OnInit {
     this.setupNetwork();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.isAdjListEmpty = this.graph.isAdjListEmpty();
+    this.graphChangedEvent.next();
   }
 
   addNode(data, callback): void {
@@ -689,6 +719,7 @@ export class MainPage implements OnInit {
           data.id = Number(result);
           if (this.graph.addNode(data.id)) {
             this.graphIsConnected = this.graph.isConnected();
+            this.isAdjListEmpty = this.graph.isAdjListEmpty();
             callback(data);
             this.graphChangedEvent.next();
           }
@@ -784,6 +815,7 @@ export class MainPage implements OnInit {
           this.setupNetwork();
           this.graphIsConnected = this.graph.isConnected();
           this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+          this.isAdjListEmpty = this.graph.isAdjListEmpty();
         }
       });
   }
@@ -794,6 +826,7 @@ export class MainPage implements OnInit {
     this.graphChangedEvent.next();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.isAdjListEmpty = this.graph.isAdjListEmpty();
   }
 
   addEdgeWithoutDrag(data, callback): void {
@@ -853,6 +886,7 @@ export class MainPage implements OnInit {
     this.graphChangedEvent.next();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.isAdjListEmpty = this.graph.isAdjListEmpty();
   }
 
   saveEdgeData(data, callback, edgeWeigth?: number): void {
@@ -884,6 +918,7 @@ export class MainPage implements OnInit {
     if (isEdgeAdded) {
       this.graphIsConnected = this.graph.isConnected();
       this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+      this.isAdjListEmpty = this.graph.isAdjListEmpty();
       callback(data);
       this.graphChangedEvent.next();
     } else {
@@ -973,50 +1008,40 @@ export class MainPage implements OnInit {
       this.colorNode(value.startNode, this.nodeVisitedColor);
     }
 
-    if (value.current != undefined && value.newInQueue != undefined) {
-      this.colorNode(value.current, this.nodeFinishedColor, this.nodeTextColor);
-      value.newInQueue.forEach((node) => {
-        this.colorNode(node, this.nodeVisitedColor);
-        this.colorEdge(value.current, node, this.edgeHighlightColor);
-      });
+    if (this.selectedAlgorithmName == 'bfs') {
+      this.bfsStep(value);
+      return;
     }
 
-    if (value.current != undefined && this.selectedAlgorithmName != 'kruskal') {
-      this.colorNode(value.current, this.nodeFinishedColor, this.nodeTextColor);
-    }
-
-    if (value.next != undefined) {
-      if (this.selectedAlgorithmName == 'kruskal') {
-        this.updateKruskalColoringHelper(value.current, value.next);
-        //this.colorNode(value.next, this.nodeFinishedColor, this.nodeTextColor);
-        let counter = this.kruskalNodeHelper.get(value.current);
-        this.kruskalNodeHelper.set(value.current, counter + 1);
-        counter = this.kruskalNodeHelper.get(value.next);
-        this.kruskalNodeHelper.set(value.next, counter + 1);
+    if (
+      this.selectedAlgorithmName == 'kruskal' &&
+      value.from != undefined &&
+      value.to != undefined
+    ) {
+      if (this.kruskalUserColoring) {
+        this.updateKruskalColoringHelper(value.from, value.to);
       } else {
-        this.colorNode(value.next, this.nodeVisitedColor);
+        let counter = this.kruskalNodeHelper.get(value.from);
+        this.kruskalNodeHelper.set(value.from, counter + 1);
+        counter = this.kruskalNodeHelper.get(value.to);
+        this.kruskalNodeHelper.set(value.to, counter + 1);
+        this.colorNode(value.from, this.nodeFinishedColor, this.nodeTextColor);
+        this.colorNode(value.to, this.nodeFinishedColor, this.nodeTextColor);
       }
-
-      this.colorEdge(value.current, value.next, this.edgeHighlightColor);
+      this.colorEdge(value.from, value.to, this.edgeHighlightColor);
+      return;
     }
 
     if (this.selectedAlgorithmName == 'bellmanford') {
-      if (this.weighted) {
-        if (value.startNode != undefined) {
-          this.setStartNodeInTable(value.startNode);
-        } else if (value.from != undefined && value.weight != undefined) {
-          let valueTo = value.to;
-          if (valueTo == undefined) {
-            valueTo = value.newTo;
-          }
-
-          this.updateTable(valueTo, value.weight);
+      if (value.startNode != undefined) {
+        this.setStartNodeInTable(value.startNode);
+      } else if (value.from != undefined && value.weight != undefined) {
+        let valueTo = value.to;
+        if (valueTo == undefined) {
+          valueTo = value.newTo;
         }
+        this.updateTable(valueTo, value.weight);
       }
-    }
-
-    if (this.selectedAlgorithmName == 'bfs') {
-      this.bfsStep(value);
     }
 
     if (value.newTo != undefined && value.from != undefined) {
@@ -1030,8 +1055,8 @@ export class MainPage implements OnInit {
       this.nodeColoringHelper.set(value.newTo, counter + 1);
 
       this.colorNode(value.newTo, this.nodeFinishedColor, this.nodeTextColor);
-      this.colorEdge(value.from, value.newTo, this.edgeHighlightColor);
       this.colorEdge(value.prevFrom, value.newTo, this.baseEdgeColor);
+      this.colorEdge(value.from, value.newTo, this.edgeHighlightColor);
     }
 
     if (value.to != undefined && value.from != undefined) {
@@ -1048,6 +1073,14 @@ export class MainPage implements OnInit {
   }
 
   bfsStep(value): void {
+    if (value.current != undefined && value.newInQueue != undefined) {
+      this.colorNode(value.current, this.nodeFinishedColor, this.nodeTextColor);
+      value.newInQueue.forEach((node) => {
+        this.colorNode(node, this.nodeVisitedColor);
+        this.colorEdge(value.current, node, this.edgeHighlightColor);
+      });
+    }
+
     if (this.bfsQueue.length != 0) {
       this.bfsQueue.shift();
     }
@@ -1315,11 +1348,13 @@ export class MainPage implements OnInit {
     this.graph.clearEdges();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.isAdjListEmpty = this.graph.isAdjListEmpty();
   }
 
   clearAll(): void {
     this.baseData.edges.clear();
     this.baseData.nodes.clear();
+    this.isAdjListEmpty = true;
     this.graph.reset();
     this.graphChangedEvent.next();
   }
@@ -1406,10 +1441,15 @@ export class MainPage implements OnInit {
     this.setupNetwork();
     this.graphIsConnected = this.graph.isConnected();
     this.graphHasNegativeEdge = this.graph.getHasNegativeWeight();
+    this.isAdjListEmpty = this.graph.isAdjListEmpty();
     this.graphChangedEvent.next();
   }
 
   setKruskalCost(value): void {
     this.kruskalMinimumCost = value;
+  }
+
+  setKruskalUseColoring(use): void {
+    this.kruskalUserColoring = use;
   }
 }

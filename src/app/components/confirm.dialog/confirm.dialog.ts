@@ -8,12 +8,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class ConfirmDialog implements OnInit {
   message: string;
+  note: string;
 
   constructor(
     private dialogRef: MatDialogRef<ConfirmDialog>,
     @Inject(MAT_DIALOG_DATA) data: any
   ) {
     this.message = data.message;
+    this.note = data.note;
   }
 
   ngOnInit(): void {}

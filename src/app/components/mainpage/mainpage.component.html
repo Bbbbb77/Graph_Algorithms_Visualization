@@ -194,6 +194,8 @@
       [startNode]="selectedNode"
       [graphIsConnected]="graphIsConnected"
       [graphHasNegativeEdge]="graphHasNegativeEdge"
+      [isAdjListEmpty]="isAdjListEmpty"
+      [kruskalUserColoring]="kruskalUserColoring"
       (startNodeSelectedEmitter)="startNodeSelected($event)"
       (generatorResultEmitter)="stepClicked($event)"
       (resetAlgoEmitter)="resetAlgo()"

@@ -33,7 +33,7 @@ import { StepsCounterDialog } from '../stepscounter.dialog/stepscounter.dialog';
 export class Algorithms implements OnInit {
   private eventsSubscription: Subscription;
 
-  speed: number;
+  speed: number = 2;
   timerId: number;
   remainingTime: number = 0;
   startTimeMs: number = 0;
@@ -41,7 +41,6 @@ export class Algorithms implements OnInit {
   selectedAlgo: string = '';
   generator;
   algoStepsMap = new Map();
-  isAdjListEmpty: boolean = true;
 
   @Input()
   graph;
@@ -63,6 +62,12 @@ export class Algorithms implements OnInit {
 
   @Input()
   events: Observable<void>;
+
+  @Input()
+  isAdjListEmpty: boolean = true;
+
+  @Input()
+  kruskalUserColoring: boolean = false;
 
   @Output()
   generatorResultEmitter: EventEmitter<any> = new EventEmitter();
@@ -97,7 +102,6 @@ export class Algorithms implements OnInit {
 
   ngOnInit(): void {
     this.eventsSubscription = this.events.subscribe(() => {
-      this.isAdjListEmpty = this.graph.isAdjListEmpty();
       this.bfsService.resetStepCounter();
       this.dfsService.resetStepCounter();
       this.dijkstraService.resetStepCounter();
@@ -118,6 +122,7 @@ export class Algorithms implements OnInit {
     this.algoNameEmitter.emit(this.selectedAlgo);
     this.remainingTime = 0;
     this.startTimeMs = 0;
+    this.kruskalUserColoring = false;
     this.commandService.clear();
     this.resetAlgoEmitter.emit();
   }
