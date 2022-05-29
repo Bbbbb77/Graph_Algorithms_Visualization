@@ -31,7 +31,7 @@ import { MatTable } from '@angular/material/table';
 
 declare var vis: any;
 
-export interface BellmanFordTableElement {
+export interface DistanceTableElement {
   Node: string;
   Distance: string;
 }
@@ -69,18 +69,10 @@ export class MainPage implements OnInit {
   nodes: any[];
   edges: any[];
   baseData;
-  nodesFromJson;
-  edgesFromJson;
-
-  nodeIdIndex: number = 0;
-  idOfnode = new Map();
-
-  edgeIdIndex: number = 0;
-  edgesOfNode = new Map();
-  nodesOfEdge = new Map();
 
   selectedStartnode;
-  bellmanFordTable: BellmanFordTableElement[] = [];
+  bellmanFordTable: DistanceTableElement[] = [];
+  dijkstraTableData: DistanceTableElement[] = [];
   dfsCounterMap = new Map();
   dfsStack: string[] = [];
   topSort: string[] = [];
@@ -89,7 +81,7 @@ export class MainPage implements OnInit {
   nodeColoringHelper = new Map();
   kruskalColoringHelper: { nodes: number[]; color: string }[] = [];
 
-  distaceColumnHeaders: string[] = ['Node', 'Distance'];
+  distanceColumnHeaders: string[] = ['Node', 'Distance'];
   queueColumnHeaders: string[] = ['Node queue'];
   stackColumnHeaders: string[] = ['Node stack'];
   topSortColumnHeaders: string[] = ['Top sort'];
@@ -130,7 +122,10 @@ export class MainPage implements OnInit {
   algorithmsComponent: Algorithms;
 
   @ViewChild('bellmanfordtable')
-  bellmanfordtable: MatTable<BellmanFordTableElement>;
+  bellmanfordtable: MatTable<DistanceTableElement>;
+
+  @ViewChild('dijkstraTable')
+  dijkstraTable: MatTable<DistanceTableElement>;
 
   @ViewChild('bfsqueuetable')
   bfsqueuetable: MatTable<string>;
@@ -140,9 +135,6 @@ export class MainPage implements OnInit {
 
   @ViewChild('topsorttable')
   topsorttable: MatTable<string>;
-
-  @ViewChild('fwtable')
-  fwtable;
 
   constructor(
     public dialog: MatDialog,
@@ -166,6 +158,16 @@ export class MainPage implements OnInit {
 
     if (algorithmName == 'bfs') {
       this.selectedAlgorithmName = 'bfs';
+    } else if (algorithmName == 'dijkstra') {
+      this.selectedAlgorithmName = 'dijkstra';
+      this.dijkstraTableData = [];
+      let nodes = this.graph.getNodes().sort();
+      nodes.forEach((node) => {
+        this.dijkstraTableData.push({
+          Node: String(node),
+          Distance: 'INF',
+        });
+      });
     } else if (algorithmName == 'bellmanford') {
       this.selectedAlgorithmName = 'bellmanford';
       if (this.weighted) {
@@ -1044,6 +1046,25 @@ export class MainPage implements OnInit {
       }
     }
 
+    if (this.selectedAlgorithmName == 'dijkstra') {
+      if (value.startNode != undefined) {
+        let toIndex = this.dijkstraTableData.findIndex(
+          (b) => b.Node == String(value.startNode)
+        );
+        this.dijkstraTableData[toIndex].Distance = String(0);
+      } else {
+        let valueTo = value.to;
+        if (valueTo == undefined) {
+          valueTo = value.newTo;
+        }
+        let toIndex = this.dijkstraTableData.findIndex(
+          (b) => b.Node == String(valueTo)
+        );
+        this.dijkstraTableData[toIndex].Distance = String(value.weight);
+      }
+      this.dijkstraTable.renderRows();
+    }
+
     if (value.newTo != undefined && value.from != undefined) {
       let counter = this.nodeColoringHelper.get(value.prevFrom);
       this.nodeColoringHelper.set(value.prevFrom, counter - 1);
@@ -1366,6 +1387,7 @@ export class MainPage implements OnInit {
     this.graph = null;
     this.algorithmsComponent.resetAlgo();
     this.bellmanFordTable = [];
+    this.dijkstraTableData = [];
     this.dfsCounterMap = new Map();
     this.dfsStack = [];
     this.topSort = [];
@@ -1410,6 +1432,10 @@ export class MainPage implements OnInit {
       if (this.bellmanfordtable != undefined) {
         this.bellmanFordTable = [];
         this.bellmanfordtable.renderRows();
+      }
+      if (this.dijkstraTable != undefined) {
+        this.dijkstraTableData = [];
+        this.dijkstraTable.renderRows();
       }
       this.kruskalMinimumCost = undefined;
       this.fwTableHeaders = [];

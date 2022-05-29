@@ -48,7 +48,7 @@ export class DfsService {
     let neighbours = adjList.get(node);
 
     for (let i = 0; i < neighbours.length; i++) {
-      if (!this.visited.get(adjList.get(node)[i])) {
+      if (!this.visited.get(neighbours[i])) {
         this.counter++;
         this.stepCounter++;
         yield {

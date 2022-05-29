@@ -16,22 +16,22 @@ export class DijkstraService {
 
   minDistance(distances, sptSet, graph) {
     let min = Number.MAX_VALUE;
-    let min_index = -1;
+    let min_node = -1;
 
     graph.getNodes().map((node) => {
       if (distances.get(node) < min && sptSet.get(node) == false) {
         min = distances.get(node);
-        min_index = node;
+        min_node = node;
       }
     });
-    return min_index;
+    return min_node;
   }
 
   *dijkstra(start, graph) {
     let adj = graph.getAdjList();
     let distances = new Map();
     let sptSet = new Map();
-    let pervDestNodes = new Map();
+    let prevDestNodes = new Map();
 
     graph.getNodes().map((node) => {
       distances.set(node, Number.MAX_VALUE);
@@ -67,8 +67,8 @@ export class DijkstraService {
           let to = adj.get(u)[v].node;
 
           if (newTo) {
-            let prevFrom = pervDestNodes.get(to);
-            pervDestNodes.set(to, from);
+            let prevFrom = prevDestNodes.get(to);
+            prevDestNodes.set(to, from);
             yield {
               from: from,
               newTo: to,
@@ -76,7 +76,7 @@ export class DijkstraService {
               prevFrom: prevFrom,
             };
           } else {
-            pervDestNodes.set(to, from);
+            prevDestNodes.set(to, from);
             yield { from: from, to: to, weight: distances.get(to) };
           }
         }

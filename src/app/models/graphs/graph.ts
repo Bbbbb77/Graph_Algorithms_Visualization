@@ -227,7 +227,7 @@ export class Graph {
     let edges: any[] = [];
     let distances = new Map();
     this.nodes.map((node) => {
-      distances.set(node, false);
+      distances.set(node, Number.MAX_VALUE);
 
       let edgeTmp = this.adjList.get(node);
       if (edgeTmp) {
@@ -242,7 +242,10 @@ export class Graph {
     for (let i = 1; i <= this.nodes.length - 1; i++) {
       for (let j = 0; j < edges.length; j++) {
         let edge = edges[j];
-        if (distances.get(edge.from) + edge.weight < distances.get(edge.to)) {
+        if (
+          distances.get(edge.from) != Number.MAX_VALUE &&
+          distances.get(edge.from) + edge.weight < distances.get(edge.to)
+        ) {
           distances.set(edge.to, distances.get(edge.from) + edge.weight);
         }
       }

@@ -19,7 +19,7 @@ export class BellmanFordService {
     let nodes = Graph.getNodes();
     let dist = new Map();
     let edges: any[] = [];
-    let pervDestNodes = new Map();
+    let prevDestNodes = new Map();
 
     nodes.forEach((node) => {
       dist.set(node, Number.MAX_VALUE);
@@ -47,8 +47,8 @@ export class BellmanFordService {
           dist.set(edge.to, dist.get(edge.from) + edge.weight);
 
           if (newTo) {
-            let prevFrom = pervDestNodes.get(edge.to);
-            pervDestNodes.set(edge.to, edge.from);
+            let prevFrom = prevDestNodes.get(edge.to);
+            prevDestNodes.set(edge.to, edge.from);
             yield {
               from: edge.from,
               newTo: edge.to,
@@ -56,7 +56,7 @@ export class BellmanFordService {
               prevFrom: prevFrom,
             };
           } else {
-            pervDestNodes.set(edge.to, edge.from);
+            prevDestNodes.set(edge.to, edge.from);
             yield {
               from: edge.from,
               to: edge.to,
