@@ -2,24 +2,20 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class CommandService {
-  history: any[];
   executed: any[];
   unexecuted: any[];
-
   generator;
 
   constructor() {
-    this.history = [];
     this.executed = [];
     this.unexecuted = [];
   }
 
-  setAlgoGenerator(algoGenerator) {
+  setAlgoGenerator(algoGenerator): void {
     this.generator = algoGenerator;
   }
 
-  clear() {
-    this.history = [];
+  clear(): void {
     this.executed = [];
     this.unexecuted = [];
     this.generator = null;
@@ -35,22 +31,18 @@ export class CommandService {
 
   do() {
     let result = this.generator.next();
-    console.log('do command', result);
     this.executed.push(result);
-    this.history.push(result);
     return result;
   }
 
   undo() {
     let command = this.executed.pop();
-    console.log('undo command', command);
     this.unexecuted.push(command);
     return command;
   }
 
   redo() {
     let command = this.unexecuted.pop();
-    console.log('redo command', command);
     this.executed.push(command);
     return command;
   }
