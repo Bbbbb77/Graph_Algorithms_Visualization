@@ -22,8 +22,6 @@ export class AddGraphDialog implements OnInit {
 
   draw(graphInput): void {
     var graphObject = JSON.parse(graphInput);
-    console.log('graph obj', graphObject);
-
     var errorMessage = '';
 
     if (graphObject.directed == undefined) {
