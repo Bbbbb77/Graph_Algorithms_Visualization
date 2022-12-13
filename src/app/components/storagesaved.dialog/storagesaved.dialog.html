@@ -5,10 +5,10 @@
       <label>(Max 5 saved graphs)</label>
     </div>
     <div>
-      <button mat-button (click)="closeAndDeleteDialog()">
+      <button mat-raised-button (click)="closeAndDeleteDialog()">
         Close and delete
       </button>
-      <button mat-button (click)="closeDialog()">Close</button>
+      <button mat-raised-button (click)="closeDialog()">Close</button>
     </div>
   </div>
   <mat-list *ngFor="let g of savedGraphs">
@@ -16,10 +16,10 @@
       <div>
         <img src="{{g.graph.img}}" style="width: 500px; height: 400px" />
         <div>
-          <button mat-button (click)="select(g.graph)">
+          <button mat-raised-button (click)="select(g.graph)">
             <mat-icon>check</mat-icon>
           </button>
-          <button mat-button (click)="delete(g.key)">
+          <button mat-raised-button (click)="delete(g.key)">
             <mat-icon>close</mat-icon>
           </button>
         </div>

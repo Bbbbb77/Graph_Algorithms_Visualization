@@ -1,3 +1,5 @@
-.mat-dialog-container {
-  overflow-y: hidden !important;
+.buttons {
+  align-content: center;
+  justify-content: space-between;
+  margin-top: 20px;
 }

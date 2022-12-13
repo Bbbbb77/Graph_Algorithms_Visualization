@@ -1,93 +1,130 @@
 <div class="container">
-  <div style="background-color: #0096ff">
-    <h1>Graph algorithms vizualization</h1>
-    <div style="margin: 5px">
-      <button mat-button (click)="petersenGraph()">Petersen</button>
-      <button mat-button (click)="housesWells()">3 Houses 3 Wells</button>
-      <button mat-button (click)="butterfly()">Butterfly</button>
-      <button mat-button (click)="complete()">Complete</button>
-    </div>
-    <div style="margin: 5px">
-      <mat-button-toggle-group
-        [(ngModel)]="directed"
-        [disabled]="graph != undefined"
-      >
-        <mat-button-toggle [value]="true">Directed</mat-button-toggle>
-        <mat-button-toggle [value]="false">Undericted</mat-button-toggle>
-      </mat-button-toggle-group>
-      <mat-button-toggle-group
-        [(ngModel)]="weighted"
-        [disabled]="graph != undefined"
-      >
-        <mat-button-toggle [value]="true">Weighted</mat-button-toggle>
-        <mat-button-toggle [value]="false">Unweighted</mat-button-toggle>
-      </mat-button-toggle-group>
-      <button
-        mat-button
-        (click)="createGraph()"
-        [disabled]="
-          directed == undefined || weighted == undefined || graph != undefined
-        "
-      >
-        Create
-      </button>
-      <button mat-button (click)="addGraph()">Add graph</button>
-      <button mat-button (click)="loadGraph()">Load storage</button>
-      <button mat-button (click)="openFileInput()">Load file</button>
-      <input
-        #inputFile
-        type="file"
-        (change)="onFileSelected($event)"
-        style="display: none"
-      />
-    </div>
-    <div style="margin: 5px">
-      <button
-        mat-button
-        (click)="downloaGraph()"
-        [disabled]="
-          directed == undefined || weighted == undefined || graph == undefined
-        "
-      >
-        Download
-      </button>
-      <button
-        mat-button
-        (click)="saveGraph()"
-        [disabled]="
-          directed == undefined || weighted == undefined || graph == undefined
-        "
-      >
-        Save
-      </button>
-      <button
-        mat-button
-        (click)="clearEdges()"
-        [disabled]="
-          directed == undefined || weighted == undefined || graph == undefined
-        "
-      >
-        Clear edges
-      </button>
-      <button
-        mat-button
-        (click)="clearAll()"
-        [disabled]="
-          directed == undefined || weighted == undefined || graph == undefined
-        "
-      >
-        Clear all
-      </button>
-      <button
-        mat-button
-        (click)="reset()"
-        [disabled]="
-          directed == undefined || weighted == undefined || graph == undefined
-        "
-      >
-        Reset
-      </button>
-    </div>
+  <div style="background-color: #42a513be">
+    <h1 style="margin-left: 20px; padding-top: 20px">
+      <b>Graph algorithms vizualization</b>
+    </h1>
+    <section style="display: flex">
+      <section>
+        <div style="margin: 5px">
+          <button mat-raised-button (click)="petersenGraph()">Petersen</button>
+          <button mat-raised-button (click)="housesWells()">
+            3 Houses 3 Wells
+          </button>
+          <button mat-raised-button (click)="butterfly()">Butterfly</button>
+          <button mat-raised-button (click)="complete()">Complete</button>
+        </div>
+        <div style="margin: 5px">
+          <mat-radio-group
+            [(ngModel)]="directed"
+            [disabled]="graph != undefined"
+          >
+            <mat-radio-button class="radioToggle" [value]="true"
+              >Directed</mat-radio-button
+            >
+            <mat-radio-button class="radioToggle" [value]="false"
+              >Undericted</mat-radio-button
+            >
+          </mat-radio-group>
+          <mat-radio-group
+            [(ngModel)]="weighted"
+            [disabled]="graph != undefined"
+          >
+            <mat-radio-button class="radioToggle" [value]="true"
+              >Weighted</mat-radio-button
+            >
+            <mat-radio-button class="radioToggle" [value]="false"
+              >Unweighted</mat-radio-button
+            >
+          </mat-radio-group>
+          <button
+            mat-raised-button
+            (click)="createGraph()"
+            [disabled]="
+              directed == undefined ||
+              weighted == undefined ||
+              graph != undefined
+            "
+            matTooltip="Create button will be available if direction and weighting is selected."
+          >
+            Create
+          </button>
+          <button mat-raised-button (click)="addGraph()">Add graph</button>
+          <button mat-raised-button (click)="loadGraph()">Load storage</button>
+          <button mat-raised-button (click)="openFileInput()">Load file</button>
+          <input
+            #inputFile
+            type="file"
+            (change)="onFileSelected($event)"
+            style="display: none"
+          />
+        </div>
+        <div style="margin: 5px">
+          <button
+            mat-raised-button
+            (click)="downloaGraph()"
+            [disabled]="
+              directed == undefined ||
+              weighted == undefined ||
+              graph == undefined
+            "
+          >
+            Download
+          </button>
+          <button
+            mat-raised-button
+            (click)="saveGraph()"
+            [disabled]="
+              directed == undefined ||
+              weighted == undefined ||
+              graph == undefined
+            "
+          >
+            Save
+          </button>
+          <button
+            mat-raised-button
+            (click)="clearEdges()"
+            [disabled]="
+              directed == undefined ||
+              weighted == undefined ||
+              graph == undefined
+            "
+          >
+            Clear edges
+          </button>
+          <button
+            mat-raised-button
+            (click)="clearAll()"
+            [disabled]="
+              directed == undefined ||
+              weighted == undefined ||
+              graph == undefined
+            "
+          >
+            Clear all
+          </button>
+          <button
+            mat-raised-button
+            (click)="reset()"
+            [disabled]="
+              directed == undefined ||
+              weighted == undefined ||
+              graph == undefined
+            "
+          >
+            Reset
+          </button>
+        </div>
+      </section>
+      <section style="position: relative; bottom: 0">
+        <randomgraph
+          [directed]="directed"
+          [weighted]="weighted"
+          [graph]="graph"
+          (graphFinished)="setGeneratedGraph($event)"
+        ></randomgraph>
+      </section>
+    </section>
   </div>
   <div style="display: flex">
     <div id="mynetwork" #siteConfigNetwork></div>
@@ -197,13 +234,7 @@
       </table>
     </div>
   </div>
-  <div style="background-color: #0096ff">
-    <randomgraph
-      [directed]="directed"
-      [weighted]="weighted"
-      [graph]="graph"
-      (graphFinished)="setGeneratedGraph($event)"
-    ></randomgraph>
+  <div style="background-color: #45b90fbe">
     <algorithms
       #algorithmsComponent
       [directed]="directed"

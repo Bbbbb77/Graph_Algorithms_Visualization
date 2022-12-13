@@ -1,18 +1,18 @@
 <div style="margin: 10px">
   <div>
-    <button mat-button (click)="openStats()">Stats</button>
-    <button mat-button (click)="resetAlgo()">Reset algorithm</button>
+    <button mat-raised-button (click)="openStats()">Stats</button>
+    <button mat-raised-button (click)="resetAlgo()">Reset algorithm</button>
     <label>Start node:</label>
     <input
       matInput
-      type="text"
+      type="number"
       [(ngModel)]="startNode"
       (ngModelChange)="startNodeChanges($event)"
       style="width: 30px; margin-left: 10px"
     />
 
     <button
-      mat-button
+      mat-raised-button
       (click)="bfs()"
       [ngStyle]="{
         border: selectedAlgo == 'bfs' ? '2px solid black' : '0'
@@ -28,7 +28,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="dfs()"
       [ngStyle]="{
         border: selectedAlgo == 'dfs' ? '2px solid black' : '0'
@@ -44,7 +44,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="dijkstra()"
       [ngStyle]="{
         border: selectedAlgo == 'dijkstra' ? '2px solid black' : '0'
@@ -61,7 +61,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="prim()"
       [ngStyle]="{
         border: selectedAlgo == 'prim' ? '2px solid black' : '0'
@@ -79,7 +79,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="kruskal()"
       [ngStyle]="{
         border: selectedAlgo == 'kruskal' ? '2px solid black' : '0'
@@ -97,7 +97,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="bellmanford()"
       [ngStyle]="{
         border: selectedAlgo == 'bellmanford' ? '2px solid black' : '0'
@@ -113,7 +113,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="floydWarshall()"
       [ngStyle]="{
         border: selectedAlgo == 'floydWarshall' ? '2px solid black' : '0'
@@ -129,7 +129,9 @@
     </button>
   </div>
   <div>
-    <label style="margin-right: 10px">Speed:</label>
+    <label style="margin-right: 10px; margin-left: 5px"
+      >Speed ({{ speed }} sec):</label
+    >
     <mat-slider
       thumbLabel
       [(ngModel)]="speed"
@@ -141,7 +143,7 @@
     ></mat-slider>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="stepBackAlgo()"
       [disabled]="
         directed == undefined ||
@@ -155,7 +157,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="stepAlgo()"
       [disabled]="
         directed == undefined ||
@@ -168,7 +170,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="startLoop()"
       [disabled]="
         directed == undefined ||
@@ -181,7 +183,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="pause()"
       [disabled]="
         directed == undefined ||
@@ -194,7 +196,7 @@
     </button>
 
     <button
-      mat-button
+      mat-raised-button
       (click)="resume()"
       [disabled]="
         directed == undefined ||

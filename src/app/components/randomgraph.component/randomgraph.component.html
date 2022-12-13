@@ -1,47 +1,67 @@
 <div style="margin: 10px">
-  <label>Random graph</label>
+  <h3>Random graph</h3>
   <div>
-    <label style="margin-right: 10px">Edge chance (%):</label>
-    <mat-slider
-      thumbLabel
-      [(ngModel)]="edgeChance"
-      [displayWith]="edgeChanceLabel"
-      tickInterval="1"
-      step="1"
-      min="1"
-      max="100"
-    ></mat-slider>
-    <label style="margin: 10px">Number of nodes</label>
-    <mat-slider
-      thumbLabel
-      [(ngModel)]="numberOfNodes"
-      [displayWith]="numberOfNodesLabel"
-      tickInterval="1"
-      step="1"
-      min="2"
-      max="15"
-    >
-    </mat-slider>
-    <label style="margin-right: 10px"> Minimum weight: </label>
-    <input
-      type="number"
-      style="width: 30px"
-      [disabled]="graph == undefined || !weighted"
-      [(ngModel)]="minimumWeigth"
-      max="{{ maximumWeigth }}"
-    />
-
-    <label style="margin-right: 10px"> Maximum weight: </label>
-    <input
-      type="number"
-      style="width: 30px"
-      [disabled]="graph == undefined || !weighted"
-      [(ngModel)]="maximumWeigth"
-      min="{{ minimumWeigth }}"
-    />
-
+    <div>
+      <div style="display: flex">
+        <div>
+          <label style="margin-right: 15px"
+            >Edge chance ({{ edgeChance }}%):</label
+          >
+          <mat-slider
+            thumbLabel
+            [(ngModel)]="edgeChance"
+            [displayWith]="edgeChanceLabel"
+            tickInterval="1"
+            step="1"
+            min="1"
+            max="100"
+          ></mat-slider>
+        </div>
+        <div>
+          <div style="margin-top: 15px">
+            <label style="margin-right: 10px"> Minimum weight: </label>
+            <input
+              type="number"
+              style="width: 30px"
+              [disabled]="graph == undefined || !weighted"
+              [(ngModel)]="minimumWeigth"
+              max="{{ maximumWeigth }}"
+            />
+          </div>
+        </div>
+      </div>
+      <div style="display: flex">
+        <div>
+          <label style="margin-right: 5px"
+            >Number of nodes ({{ numberOfNodes }}):</label
+          >
+          <mat-slider
+            thumbLabel
+            [(ngModel)]="numberOfNodes"
+            [displayWith]="numberOfNodesLabel"
+            tickInterval="1"
+            step="1"
+            min="2"
+            max="15"
+          >
+          </mat-slider>
+        </div>
+        <div>
+          <div style="margin-top: 15px">
+            <label style="margin-right: 10px"> Maximum weight: </label>
+            <input
+              type="number"
+              style="width: 30px"
+              [disabled]="graph == undefined || !weighted"
+              [(ngModel)]="maximumWeigth"
+              min="{{ minimumWeigth }}"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
     <button
-      mat-button
+      mat-raised-button
       (click)="generateGraph()"
       [disabled]="
         directed == undefined || weighted == undefined || graph == undefined

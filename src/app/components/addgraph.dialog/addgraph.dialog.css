@@ -4,4 +4,5 @@
 
 .buttons {
   align-content: center;
+  justify-content: space-between;
 }

@@ -1,15 +1,14 @@
-<h2>{{label}}</h2>
-
-<div mat-dialog-content style="height: 70%">
+<div>
+  <h2>{{label}}</h2>
   <mat-form-field>
     <mat-label>Node</mat-label>
     <input matInput [(ngModel)]="edgeValue" />
   </mat-form-field>
-  <mat-dialog-actions>
-    <button mat-button (click)="addPerEdit()">
+  <mat-dialog-actions class="buttons">
+    <button mat-raised-button (click)="addPerEdit()">
       <label *ngIf="editMode">Edit</label>
       <label *ngIf="!editMode">Add</label>
     </button>
-    <button mat-button (click)="close()">Cancel</button>
+    <button mat-raised-button (click)="close()">Cancel</button>
   </mat-dialog-actions>
 </div>
